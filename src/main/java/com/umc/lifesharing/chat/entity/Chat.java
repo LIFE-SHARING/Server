@@ -17,7 +17,7 @@ public class Chat extends BaseEntity{
     @JoinColumn(name = "chatroom_id")
     public ChatRoom chatroom_id;
 
-    // 변경 예정
+    // 변경 예정 테스트
     @Column(nullable = false, length = 20)
     private Long user_id;
 
