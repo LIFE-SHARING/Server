@@ -1,4 +1,6 @@
 package com.umc.lifesharing.user.service;
 
-public interface UserQueryService {
+import org.springframework.security.core.userdetails.UserDetailsService;
+
+public interface UserQueryService extends UserDetailsService {
 }
