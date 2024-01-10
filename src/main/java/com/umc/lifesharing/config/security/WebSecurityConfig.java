@@ -22,11 +22,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
     private UserQueryService userQueryService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-//
-//    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers("/auth/**", "/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs");
-    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -39,7 +34,8 @@ public class WebSecurityConfig {
                 )
                 .authorizeHttpRequests(authorize -> authorize
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-                        .requestMatchers("/auth/**","/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs").permitAll()
+                        .requestMatchers("/auth/**","/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs",
+                                "*/**").permitAll() // */** 이건 임시
                         .anyRequest().authenticated()
                 )
 //                .exceptionHandling((exceptionConfig) ->
