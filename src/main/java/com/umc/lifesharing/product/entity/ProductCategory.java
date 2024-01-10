@@ -6,6 +6,9 @@ import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -24,4 +27,8 @@ public class ProductCategory extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(10) DEFAULT 'EXIST'")
     private ProductStatus status;  // 카테고리 존재 여부
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Product> productList = new ArrayList<>();
 }

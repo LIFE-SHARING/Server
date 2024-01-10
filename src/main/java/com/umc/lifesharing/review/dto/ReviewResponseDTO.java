@@ -1,4 +1,4 @@
-package com.umc.lifesharing.product.dto;
+package com.umc.lifesharing.review.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,13 +7,14 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-public class ProductResponseDTO {
+public class ReviewResponseDTO {
+
     @Builder
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class RegisterResultDTO{
-        Long productId;
+    public static class ReviewCreateResultDTO{
+        Long reviewId;
         LocalDateTime createdAt;
     }
 }

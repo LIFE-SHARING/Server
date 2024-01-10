@@ -1,5 +1,7 @@
 package com.umc.lifesharing.user.entity;
 
+import com.umc.lifesharing.product.entity.Product;
+import com.umc.lifesharing.review.entity.Review;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
@@ -11,6 +13,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -34,4 +39,9 @@ public class User {
     private String profileUrl;
 
     private Long point;
+
+    // Product와 연관 관계 매핑
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Product> productList = new ArrayList<>();
+
 }

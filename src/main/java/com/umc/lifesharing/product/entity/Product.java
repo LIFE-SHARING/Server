@@ -1,59 +1,81 @@
 package com.umc.lifesharing.product.entity;
 
 import com.umc.lifesharing.product.entity.common.BaseEntity;
+import com.umc.lifesharing.review.entity.Review;
+import com.umc.lifesharing.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
-@Entity
-@DynamicInsert
-@DynamicUpdate
-public class Product extends BaseEntity {
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
+@Entity
+@Getter
+@DynamicUpdate
+@DynamicInsert
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+public class Product extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, length = 200)
-    private String name;          // 제품 이름
+    private String name;
 
-    @Column
-    private Integer percent;      // 할인율
+    private Integer price;
 
-    @Column
-    private Integer price;        // 원가
+    private Integer day_price;
 
-    @Column
-    private Integer day_price;    // 일별 대여비
+    private Integer hour_price;
 
-    @Column
-    private Integer hour_price;    // 시간별 대여비
+    private Integer deposit;
 
-    @Column
-    private Integer deposit;     // 보증금
+    private String least_lent;
 
-    @Column
-    private String lending_period;  // 대여 기간
+    private String lending_period;
 
-    @Column
-    private String least_lent;  // 최소 대여기간
+    private Float score;
 
-    @Column
-    private Float score;          // 별점
+    private Integer score_count;
 
-    @Column
-    private Integer score_count;  // 별점 개수
+    @Column(nullable = false, length = 200)
+    private String content;
 
-    @Column
-    private Boolean is_pick;      // 찜 여부
+    private Boolean is_pick;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "VARCHAR(10) DEFAULT 'NOTEXIST'")
-    private ProductStatus status;  // 상태
+    @Column(columnDefinition = "VARCHAR(10) DEFAULT 'EXIST'")
+    private ProductStatus status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private ProductCategory category;
+
+//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<ProductImage> images = new ArrayList<>();   이미지를 리스트 형태로 받아와야함
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<Review> reviewList = new ArrayList<>();
+
+    //임시대책
+    @ElementCollection
+    private List<String> image_url;
+
+    public void setUser(User user){
+        this.user = user;
+    }
+
+    public void setCategory(ProductCategory category){
+        this.category = category;
+    }
 
 }
