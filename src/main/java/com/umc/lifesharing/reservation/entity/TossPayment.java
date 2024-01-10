@@ -1,9 +1,9 @@
-package com.umc.lifesharing.reservation.model;
+package com.umc.lifesharing.reservation.entity;
 
-import com.umc.lifesharing.reservation.model.common.BaseEntity;
+import com.umc.lifesharing.reservation.entity.common.BaseEntity;
+import com.umc.lifesharing.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.domain.Auditable;
 
 @Entity
 @Getter
@@ -22,23 +22,23 @@ public class TossPayment extends BaseEntity {
 
     @Column(nullable = false, name = "method")
     @Enumerated(EnumType.STRING)
-    private Method method;
+    private Method method;              // 결제 방법
     @Column(nullable = false, name = "pay_amount")
-    private Long amount;
+    private Long amount;                // 결제 금액
     @Column(nullable = false, name = "pay_name")
-    private String orderName;
+    private String orderName;           // 주문 이름
     @Column(nullable = false, name = "order_id")
-    private String orderId;
+    private String orderId;             // 주문 id
 
     @Column(name = "is_succeed")
-    private boolean isSucceed;
+    private boolean isSucceed;          // 성공 여부
     @Column(name = "payment_key")
-    private String paymentKey;
+    private String paymentKey;          // 결제 키
     @Column(name = "fail_resion")
-    private String failReason;
+    private String failReason;          // 실패 사유
     @Column(name = "is_canceled")
-    private boolean isCanceled;
+    private boolean isCanceled;         // 취소 여부
     @Column(name = "cancel_reason")
-    private String cancelReason;
+    private String cancelReason;        // 취소 사유
 
 }

@@ -1,7 +1,7 @@
 package com.umc.lifesharing.reservation.dto;
 
-import com.umc.lifesharing.reservation.model.Method;
-import com.umc.lifesharing.reservation.model.TossPayment;
+import com.umc.lifesharing.reservation.entity.Method;
+import com.umc.lifesharing.reservation.entity.TossPayment;
 import lombok.*;
 
 import java.util.UUID;
@@ -11,7 +11,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PaymentDto {
+public class TossPaymentDto { // 프론트에서 입력받을 때 사용
 
     @NonNull
     private Method payType;
@@ -22,6 +22,7 @@ public class PaymentDto {
 
     private String yourSuccessUrl;
     private String yourFailUrl;
+    private boolean isSucceed;
 
 
     public TossPayment toEntity() {
@@ -30,7 +31,7 @@ public class PaymentDto {
                 .amount(amount)
                 .orderName(orderName)
                 .orderId(UUID.randomUUID().toString())
-                .isSucceed(false)
+                .isSucceed(isSucceed)
                 .build();
     }
 }
