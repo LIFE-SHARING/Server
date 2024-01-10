@@ -11,6 +11,7 @@ import com.umc.lifesharing.user.entity.User;
 import com.umc.lifesharing.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserResponseDTO.JoinResponseDTO join(UserRequestDTO.JoinDTO joinDTO) {
@@ -26,7 +28,7 @@ public class UserServiceImpl implements UserService {
             throw new UserHandler(ErrorStatus.DUPLICATED_EMAIL);
         }
 
-        User user = UserConverter.toUser(joinDTO);
+        User user = UserConverter.toUser(joinDTO, passwordEncoder);
         user = userRepository.save(user);
 
         String token = jwtUtil.generateToken(new CustomUserDetails(user));

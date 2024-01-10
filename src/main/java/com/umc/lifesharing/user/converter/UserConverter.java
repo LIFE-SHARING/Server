@@ -3,14 +3,15 @@ package com.umc.lifesharing.user.converter;
 import com.umc.lifesharing.user.dto.UserRequestDTO;
 import com.umc.lifesharing.user.dto.UserResponseDTO;
 import com.umc.lifesharing.user.entity.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 
 public class UserConverter {
-    private static PasswordEncoder passwordEncoder;
+//    private PasswordEncoder passwordEncoder;
 
-    public static User toUser(UserRequestDTO.JoinDTO joinDTO) {
+    public static User toUser(UserRequestDTO.JoinDTO joinDTO, PasswordEncoder passwordEncoder) {
         return User.builder()
                 .email(joinDTO.getEmail())
                 .password(passwordEncoder.encode(joinDTO.getPassword()))
