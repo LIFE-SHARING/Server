@@ -1,5 +1,6 @@
 package com.umc.lifesharing.user.service;
 
+import com.umc.lifesharing.config.security.CustomUserDetails;
 import com.umc.lifesharing.user.entity.User;
 import com.umc.lifesharing.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -16,19 +17,23 @@ public class UserQueryServiceImpl implements UserQueryService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        String email = username;
+        User user = validUserByEmail(username);
 
-        User user = validUserByEmail(email);
-
-        return null;
+        return new CustomUserDetails(
+                user.getId(),
+                user.getEmail(),
+                user.getPassword(),
+                user.getName()
+        );
     }
 
-    public User validUserByEmail(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email);
+    // email(username)로 user를 찾는 메서드
+    public User validUserByEmail(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(username);
 
         if(user == null)
-            throw new UsernameNotFoundException(email);
-        else
-            return user;
+            throw new UsernameNotFoundException(username);
+
+        return user;
     }
 }
