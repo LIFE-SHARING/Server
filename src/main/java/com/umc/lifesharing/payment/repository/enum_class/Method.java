@@ -1,4 +1,4 @@
-package com.umc.lifesharing.reservation.entity;
+package com.umc.lifesharing.payment.repository.enum_class;
 
 public enum Method {
     CARD("카드"),

@@ -1,10 +1,6 @@
-package com.umc.lifesharing.reservation.dto;
+package com.umc.lifesharing.payment.dto;
 
-import com.umc.lifesharing.reservation.entity.Method;
-import com.umc.lifesharing.reservation.entity.TossPayment;
 import lombok.*;
-
-import java.util.UUID;
 
 @Setter
 @Getter
@@ -17,8 +13,8 @@ public class TossPaymentReqDto { // 실제 토스페이먼츠에 결제 요청 �
     private Long amount;
     private String orderName;
     private String orderId;
-    private String customerEmail;
-    private String customerName;
+    private String userEmail;
+    private String userName;
     private String successUrl;
     private String failUrl;
 
