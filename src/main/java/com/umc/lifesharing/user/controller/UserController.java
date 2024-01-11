@@ -4,9 +4,9 @@ import com.umc.lifesharing.apiPayload.ApiResponse;
 import com.umc.lifesharing.user.dto.UserRequestDTO;
 import com.umc.lifesharing.user.dto.UserResponseDTO;
 import com.umc.lifesharing.user.service.UserService;
-import com.umc.lifesharing.user.service.UserServiceImpl;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,12 +16,13 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/auth/login")
-    public ApiResponse<?> login(@Valid @RequestBody UserRequestDTO.loginDTO loginDTO) {
-        return null;
+    public ApiResponse<UserResponseDTO.ResponseDTO> login(@Valid @RequestBody UserRequestDTO.LoginDTO loginDTO) {
+        return ApiResponse.onSuccess(userService.login(loginDTO));
     }
 
+
     @PostMapping("/auth/join")
-    public ApiResponse<UserResponseDTO.JoinResponseDTO> join(@Valid @RequestBody UserRequestDTO.JoinDTO joinDTO) {
+    public ApiResponse<UserResponseDTO.ResponseDTO> join(@Valid @RequestBody UserRequestDTO.JoinDTO joinDTO) {
         return ApiResponse.onSuccess(userService.join(joinDTO));
     }
 }

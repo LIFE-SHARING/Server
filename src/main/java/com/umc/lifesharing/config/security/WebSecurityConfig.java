@@ -34,8 +34,9 @@ public class WebSecurityConfig {
                 )
                 .authorizeHttpRequests(authorize -> authorize
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-                        .requestMatchers("/auth/**","/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs",
-                                "*/**").permitAll() // */** 이건 임시
+                        .requestMatchers("/auth/**","/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs"
+
+                                ).permitAll() // */** 임시
                         .anyRequest().authenticated()
                 )
 //                .exceptionHandling((exceptionConfig) ->

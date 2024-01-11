@@ -9,13 +9,13 @@ import java.util.Collection;
 
 @Getter
 public class CustomUserDetails implements UserDetails {
-    private final String id;	// DB에서 PK 값
-    private final String email;		// 로그인용 ID 값
-    private final String password;	// 비밀번호
-    private final String name;	//닉네임
-    private boolean emailVerified;	//이메일 인증 여부
-    private boolean locked;	//계정 잠김 여부
-    private Collection<GrantedAuthority> authorities;	//권한 목록
+    private final String id;    // DB에서 PK 값
+    private final String email;        // 로그인용 ID 값
+    private final String password;    // 비밀번호
+    private final String name;    //닉네임
+    private boolean emailVerified;    //이메일 인증 여부
+    private boolean locked;    //계정 잠김 여부
+    private Collection<GrantedAuthority> authorities;    //권한 목록
 
     public CustomUserDetails(Long id, String email, String password, String name) {
         this.id = id.toString();
@@ -56,45 +56,23 @@ public class CustomUserDetails implements UserDetails {
         return id;
     }
 
-    /**
-     * 계정 만료 여부
-     * true : 만료 안됨
-     * false : 만료
-     */
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
-    /**
-     * 계정 잠김 여부
-     * true : 잠기지 않음
-     * false : 잠김
-     */
     @Override
     public boolean isAccountNonLocked() {
-        return locked;
+        return true;
     }
 
-    /**
-     * 비밀번호 만료 여부
-     * true : 만료 안됨
-     * false : 만료
-     */
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
-
-    /**
-     * 사용자 활성화 여부
-     * ture : 활성화
-     * false : 비활성화
-     */
     @Override
     public boolean isEnabled() {
-        //이메일이 인증되어 있고 계정이 잠겨있지 않으면 true
-        return (emailVerified && !locked);
+        return true;
     }
 }

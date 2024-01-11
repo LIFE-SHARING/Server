@@ -2,13 +2,10 @@ package com.umc.lifesharing.user.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Length;
-import com.umc.lifesharing.location.entity.Location;
 
 public class UserRequestDTO {
 
@@ -38,7 +35,7 @@ public class UserRequestDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Getter
-    public static class loginDTO {
+    public static class LoginDTO {
         @NotEmpty(message = "이메일은 필수 입력 값입니다.")
         @Email(message = "이메일 형식이 아닙니다.")
         private String email;
