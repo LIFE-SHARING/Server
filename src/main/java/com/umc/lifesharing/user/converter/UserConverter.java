@@ -3,7 +3,6 @@ package com.umc.lifesharing.user.converter;
 import com.umc.lifesharing.user.dto.UserRequestDTO;
 import com.umc.lifesharing.user.dto.UserResponseDTO;
 import com.umc.lifesharing.user.entity.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
@@ -20,8 +19,8 @@ public class UserConverter {
                 .build();
     }
 
-    public static UserResponseDTO.JoinResponseDTO toJoinResponseDTO(User user, String token) {
-        return UserResponseDTO.JoinResponseDTO.builder()
+    public static UserResponseDTO.ResponseDTO toResponseDTO(User user, String token) {
+        return UserResponseDTO.ResponseDTO.builder()
                 .id(user.getId())
                 .token(token)
                 .createdAt(LocalDateTime.now())

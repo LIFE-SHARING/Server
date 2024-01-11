@@ -9,6 +9,7 @@ import com.umc.lifesharing.user.dto.UserRequestDTO;
 import com.umc.lifesharing.user.dto.UserResponseDTO;
 import com.umc.lifesharing.user.entity.User;
 import com.umc.lifesharing.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,13 +18,14 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public UserResponseDTO.JoinResponseDTO join(UserRequestDTO.JoinDTO joinDTO) {
+    public UserResponseDTO.ResponseDTO join(UserRequestDTO.JoinDTO joinDTO) {
         if(isDuplicated(joinDTO.getEmail())) {
             throw new UserHandler(ErrorStatus.DUPLICATED_EMAIL);
         }
@@ -31,14 +33,33 @@ public class UserServiceImpl implements UserService {
         User user = UserConverter.toUser(joinDTO, passwordEncoder);
         user = userRepository.save(user);
 
-        String token = jwtUtil.generateToken(new CustomUserDetails(user));
+        String token = createToken(user);
 
-        return UserConverter.toJoinResponseDTO(user, token);
+        return UserConverter.toResponseDTO(user, token);
     }
 
-    public boolean isDuplicated(String email) {
-        User user = userRepository.findByEmail(email);
+    @Override
+    public UserResponseDTO.ResponseDTO login(UserRequestDTO.LoginDTO loginDTO) {
+        User user = validUserByEmail(loginDTO.getEmail());
 
-        return user != null;
+        if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
+            throw new UserHandler(ErrorStatus.INVALID_PASSWORD);
+        }
+
+        String token = createToken(user);
+
+        return UserConverter.toResponseDTO(user, token);
+    }
+
+    private String createToken(User user) {
+        return jwtUtil.generateToken(new CustomUserDetails(user));
+    }
+
+    private User validUserByEmail(String email)  {
+        return userRepository.findByEmail(email).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
+    }
+
+    private boolean isDuplicated(String email) {
+        return userRepository.findByEmail(email).isPresent();
     }
 }
