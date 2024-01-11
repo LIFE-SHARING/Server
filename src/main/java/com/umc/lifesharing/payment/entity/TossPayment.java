@@ -1,6 +1,8 @@
-package com.umc.lifesharing.reservation.entity;
+package com.umc.lifesharing.payment.entity;
 
+import com.umc.lifesharing.payment.dto.TossPaymentReqDto;
 import com.umc.lifesharing.reservation.entity.common.BaseEntity;
+import com.umc.lifesharing.reservation.entity.enum_class.Method;
 import com.umc.lifesharing.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,6 +10,7 @@ import lombok.*;
 @Entity
 @Getter
 @Builder
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class TossPayment extends BaseEntity {
@@ -24,7 +27,7 @@ public class TossPayment extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Method method;              // 결제 방법
     @Column(nullable = false, name = "pay_amount")
-    private Long amount;                // 결제 금액
+    private Long amount;                // 총 결제 금액
     @Column(nullable = false, name = "pay_name")
     private String orderName;           // 주문 이름
     @Column(nullable = false, name = "order_id")
@@ -40,5 +43,19 @@ public class TossPayment extends BaseEntity {
     private boolean isCanceled;         // 취소 여부
     @Column(name = "cancel_reason")
     private String cancelReason;        // 취소 사유
+
+    public TossPaymentReqDto toPaymentResDto() {
+        return TossPaymentReqDto.builder()
+                .payType(method.getDescription())
+                .amount(amount)
+                .orderName(orderName)
+                .orderId(orderId)
+                .userEmail(user.getEmail())
+                .userName(user.getName())
+                .createdAt(String.valueOf(getCreatedAt()))
+                .cancelYN(isCanceled)
+                .failReason(failReason)
+                .build();
+    }
 
 }

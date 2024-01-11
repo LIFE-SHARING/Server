@@ -1,6 +1,6 @@
 package com.umc.lifesharing.reservation.entity.common;
 
-import com.umc.lifesharing.reservation.entity.Status;
+import com.umc.lifesharing.reservation.entity.enum_class.Status;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
