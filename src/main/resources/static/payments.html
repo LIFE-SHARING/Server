@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ha">
+<head>
+    <meta charset="utf-8" />
+    <title>결제하기</title>
+    <!-- 토스페이먼츠 결제창 SDK 추가 -->
+    <script src="https://js.tosspayments.com/v1/payment"></script>
+</head>
+<body>
+<section>
+    <!--  충전하기 버튼 만들기  -->
+    <span>총 포인트 충전 금액 :</span>
+    <span>58500원</span>
+    <button id="payment-button">58500원 충전하기</button>
+</section>
+<script>
+    // ------ 클라이언트 키로 객체 초기화 ------
+    var clientKey = '테스트_클라이언트_키'
+    var tossPayments = TossPayments(clientKey)
+⠀
+    // ------ 충전하기 버튼에 기능 추가 ------
+    var button = document.getElementById('payment-button') // 충전하기 버튼
+    button.addEventListener('click', function () {
+    ⠀
+        // ------ 결제창 띄우기 ------
+        tossPayments.requestPayment('CARD', {
+            amount: 58500,
+            orderId: 'bec1d544-2a34-4f44-ada0-c5213d8fd8dd',
+            orderName: '포인트 충전',
+            customerName: '첫번째',
+            customerEmail: 'test1@gmail.com',
+            successUrl: 'http://localhost:8081/api/v1/payments/toss/success',
+            failUrl: 'http://localhost:8081/api/v1/payments/toss/fail'
+        })
+    })
+</script>
+</body>
+</html>
