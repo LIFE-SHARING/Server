@@ -18,10 +18,10 @@ public class TossPaymentConfig {
     @Value("${payment.toss.live_secrete_api_key}")
     private String LiveSeceretKey ;*/
 
-    @Value("${payment. toss.success_url}")
+    @Value("${payment.toss.success_url}")
     private String successUrl;
 
-    @Value("${payment. toss. fail url}")
+    @Value("${payment.toss.fail_url}")
     private String failUrl;
 
     public static final String PAYMENT_URL = "https://api.tosspayments.com/v1/payments/";
