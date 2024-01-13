@@ -39,14 +39,12 @@ public class WebSecurityConfig {
                                 ).permitAll() // */** 임시
                         .anyRequest().authenticated()
                 )
-//                .exceptionHandling((exceptionConfig) ->
-//                        exceptionConfig.authenticationEntryPoint(unauthorizedEntryPoint).accessDeniedHandler(accessDeniedHandler)
-//                )
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout((logoutConfig) -> logoutConfig.logoutSuccessUrl("/"))
+                .addFilterBefore(new ExceptionHandlerFilter(), UsernamePasswordAuthenticationFilter.class)
                 // Jwt 을 통한 인증 방식을 사용하는 JwtAuthenticationFilter를 사용
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .userDetailsService(userQueryService);

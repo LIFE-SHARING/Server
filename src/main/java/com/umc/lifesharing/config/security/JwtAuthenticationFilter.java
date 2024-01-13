@@ -1,5 +1,6 @@
 package com.umc.lifesharing.config.security;
 
+import com.umc.lifesharing.apiPayload.exception.GeneralException;
 import com.umc.lifesharing.user.service.UserQueryService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -25,7 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, GeneralException {
         String authorization = request.getHeader("Authorization"); // 헤더 파싱
         String username = "", token = "";
 
