@@ -20,13 +20,13 @@ public class UserController {
     private final UserService userService;
     private final UserQueryService userQueryService;
 
-    @GetMapping("/auth/login")
+    @GetMapping("/user/login")
     public ApiResponse<UserResponseDTO.ResponseDTO> login(@Valid @RequestBody UserRequestDTO.LoginDTO loginDTO) {
         return ApiResponse.onSuccess(userService.login(loginDTO));
     }
 
 
-    @PostMapping("/auth/join")
+    @PostMapping("/user/join")
     public ApiResponse<UserResponseDTO.ResponseDTO> join(@Valid @RequestBody UserRequestDTO.JoinDTO joinDTO) {
         return ApiResponse.onSuccess(userService.join(joinDTO));
     }
