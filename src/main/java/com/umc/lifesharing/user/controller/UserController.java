@@ -1,18 +1,15 @@
 package com.umc.lifesharing.user.controller;
 
 import com.umc.lifesharing.apiPayload.ApiResponse;
-import com.umc.lifesharing.config.security.CustomUserDetails;
 import com.umc.lifesharing.config.security.UserAdapter;
 import com.umc.lifesharing.user.dto.UserRequestDTO;
 import com.umc.lifesharing.user.dto.UserResponseDTO;
+import com.umc.lifesharing.user.service.UserQueryService;
 import com.umc.lifesharing.user.service.UserService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class UserController {
     private final UserService userService;
+    private final UserQueryService userQueryService;
 
     @GetMapping("/auth/login")
     public ApiResponse<UserResponseDTO.ResponseDTO> login(@Valid @RequestBody UserRequestDTO.LoginDTO loginDTO) {
@@ -31,6 +29,25 @@ public class UserController {
     @PostMapping("/auth/join")
     public ApiResponse<UserResponseDTO.ResponseDTO> join(@Valid @RequestBody UserRequestDTO.JoinDTO joinDTO) {
         return ApiResponse.onSuccess(userService.join(joinDTO));
+    }
+
+    // 마이 페이지에 진입했을 때
+    @GetMapping("/user/my-page")
+    public ApiResponse<UserResponseDTO.MyPageResponseDTO> getMyPage(@AuthenticationPrincipal UserAdapter userAdapter) {
+        return ApiResponse.onSuccess(userQueryService.getMyPage(userAdapter));
+    }
+
+    // 비밀번호 변경
+    @PostMapping("/user/password")
+    public ApiResponse<UserResponseDTO.ChangePasswordResponseDTO> getMyPage(@AuthenticationPrincipal UserAdapter userAdapter,
+                                                   @Valid @RequestBody UserRequestDTO.ChangePasswordDTO changePasswordDTO) {
+        return ApiResponse.onSuccess(userService.changePassword(userAdapter, changePasswordDTO));
+    }
+
+    // 개인 정보
+    @GetMapping("/user/info")
+    public ApiResponse<UserResponseDTO.UserInfoResponseDTO> getUserInfo(@AuthenticationPrincipal UserAdapter userAdapter) {
+        return ApiResponse.onSuccess(userQueryService.getUserInfo(userAdapter));
     }
 
 //    @GetMapping("/qtest")
