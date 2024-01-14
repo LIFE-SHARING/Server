@@ -46,5 +46,28 @@ public class UserRequestDTO {
         private String password;
     }
 
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class ChangePasswordDTO {
+        @NotEmpty(message = "기존 비밀번호는 필수 입력 값입니다.")
+//        @Length(min = 8, max = 16)
+//        @Pattern(regexp = "^[a-zA-Z0-9!@#$%^&*]{8,16}$", message = "비밀번호는 8~16자의 영문 대소문자, 숫자, 특수문자로 이루어져야 합니다.")
+        private String oldPassword;
+
+        @NotEmpty(message = "새 비밀번호는 필수 입력 값입니다.")
+//        @Length(min = 8, max = 16)
+//        @Pattern(regexp = "^[a-zA-Z0-9!@#$%^&*]{8,16}$", message = "비밀번호는 8~16자의 영문 대소문자, 숫자, 특수문자로 이루어져야 합니다.")
+        private String newPassword;
+
+        // TODO: 확인 해야하나?..
+//        @NotEmpty(message = "새 비밀번호는 확인은 필수 입력 값입니다.")
+//        @Length(min = 8, max = 16)
+//        @Pattern(regexp = "^[a-zA-Z0-9!@#$%^&*]{8,16}$", message = "비밀번호는 8~16자의 영문 대소문자, 숫자, 특수문자로 이루어져야 합니다.")
+//        private String newPasswordConfirm;
+    }
+
+
 
 }

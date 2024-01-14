@@ -31,9 +31,17 @@ public class UserController {
         return ApiResponse.onSuccess(userService.join(joinDTO));
     }
 
+    // 마이 페이지에 진입했을 때
     @GetMapping("/user/my-page")
     public ApiResponse<UserResponseDTO.MyPageResponseDTO> getMyPage(@AuthenticationPrincipal UserAdapter userAdapter) {
         return ApiResponse.onSuccess(userQueryService.getMyPage(userAdapter));
+    }
+
+    // 비밀번호 변경
+    @PostMapping("/user/password")
+    public ApiResponse<UserResponseDTO.ChangePasswordResponseDTO> getMyPage(@AuthenticationPrincipal UserAdapter userAdapter,
+                                                   @Valid @RequestBody UserRequestDTO.ChangePasswordDTO changePasswordDTO) {
+        return ApiResponse.onSuccess(userService.changePassword(userAdapter, changePasswordDTO));
     }
 
 //    @GetMapping("/qtest")
