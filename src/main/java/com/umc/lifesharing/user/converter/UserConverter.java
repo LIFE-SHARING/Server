@@ -33,7 +33,7 @@ public class UserConverter {
 
     public static UserResponseDTO.ResponseDTO toResponseDTO(User user, String token) {
         return UserResponseDTO.ResponseDTO.builder()
-                .id(user.getId())
+                .userId(user.getId())
                 .token(token)
                 .createdAt(LocalDateTime.now())
                 .build();
@@ -45,7 +45,7 @@ public class UserConverter {
                 .point(user.getPoint())
                 .area(user.getLocationList().get(0).getArea())
                 .score(4)      // TODO: 내 product에 대한 score의 평균을 구해서 넣어야함
-                .name(user.getName())
+                .nickname(user.getName())
                 .build();
     }
 }
