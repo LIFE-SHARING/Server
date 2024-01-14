@@ -1,5 +1,7 @@
 package com.umc.lifesharing.user.converter;
 
+import com.umc.lifesharing.config.security.UserAdapter;
+import com.umc.lifesharing.location.dto.LocationDTO;
 import com.umc.lifesharing.user.dto.UserRequestDTO;
 import com.umc.lifesharing.user.dto.UserResponseDTO;
 import com.umc.lifesharing.user.entity.User;
@@ -16,6 +18,16 @@ public class UserConverter {
                 .password(passwordEncoder.encode(joinDTO.getPassword()))
                 .phone(joinDTO.getPhone())
                 .name(joinDTO.getName())
+                .build();
+    }
+
+    public static UserResponseDTO.UserInfoResponseDTO toUserInfoResponseDTO(User user) {
+        return UserResponseDTO.UserInfoResponseDTO.builder()
+                .userId(user.getId())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .nickname(user.getName())
+                .locationDTO(new LocationDTO(user.getLocationList().get(0)))
                 .build();
     }
 

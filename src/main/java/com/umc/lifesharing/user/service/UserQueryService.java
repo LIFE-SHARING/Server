@@ -6,4 +6,5 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface UserQueryService extends UserDetailsService {
     UserResponseDTO.MyPageResponseDTO getMyPage(UserAdapter userAdapter);
+    UserResponseDTO.UserInfoResponseDTO getUserInfo(UserAdapter userAdapter);
 }

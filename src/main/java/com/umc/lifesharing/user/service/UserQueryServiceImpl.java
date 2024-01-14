@@ -42,6 +42,13 @@ public class UserQueryServiceImpl implements UserQueryService  {
         return UserConverter.toMyPageResponseDTO(user);
     }
 
+    @Override
+    public UserResponseDTO.UserInfoResponseDTO getUserInfo(UserAdapter userAdapter) {
+        User user = userRepository.findByEmail(userAdapter.getUser().getEmail()).get();
+
+        return UserConverter.toUserInfoResponseDTO(user);
+    }
+
     // email(username)로 user를 찾는 메서드
     public User validUserByEmail(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email).get();

@@ -44,6 +44,12 @@ public class UserController {
         return ApiResponse.onSuccess(userService.changePassword(userAdapter, changePasswordDTO));
     }
 
+    // 개인 정보
+    @GetMapping("/user/info")
+    public ApiResponse<UserResponseDTO.UserInfoResponseDTO> getUserInfo(@AuthenticationPrincipal UserAdapter userAdapter) {
+        return ApiResponse.onSuccess(userQueryService.getUserInfo(userAdapter));
+    }
+
 //    @GetMapping("/qtest")
 //    public ApiResponse<?> test(@Valid @AuthenticationPrincipal UserAdapter userAdapter) {
 //        log.info("test@@@@@@@@@@@@@@@");
