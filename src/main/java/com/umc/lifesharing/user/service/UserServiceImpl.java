@@ -24,6 +24,8 @@ public class UserServiceImpl implements UserService {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
+    // TODO: 비밀번호 변경 추가
+
     @Override
     public UserResponseDTO.ResponseDTO join(UserRequestDTO.JoinDTO joinDTO) {
         if(isDuplicated(joinDTO.getEmail())) {
