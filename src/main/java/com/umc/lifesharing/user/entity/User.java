@@ -1,13 +1,14 @@
 package com.umc.lifesharing.user.entity;
 
+import com.umc.lifesharing.location.entity.Location;
+import com.umc.lifesharing.product.entity.Product;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -34,4 +35,14 @@ public class User {
     private String profileUrl;
 
     private Long point;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Product> productList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Location> locationList = new ArrayList<>();
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

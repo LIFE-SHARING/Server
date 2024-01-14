@@ -4,6 +4,8 @@ import com.umc.lifesharing.apiPayload.code.status.ErrorStatus;
 import com.umc.lifesharing.apiPayload.exception.handler.UserHandler;
 import com.umc.lifesharing.config.security.CustomUserDetails;
 import com.umc.lifesharing.config.security.JwtUtil;
+import com.umc.lifesharing.config.security.PasswordEncoderConfig;
+import com.umc.lifesharing.config.security.UserAdapter;
 import com.umc.lifesharing.user.converter.UserConverter;
 import com.umc.lifesharing.user.dto.UserRequestDTO;
 import com.umc.lifesharing.user.dto.UserResponseDTO;
@@ -15,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -23,6 +27,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
+
+    // TODO: 비밀번호 변경 추가
 
     @Override
     public UserResponseDTO.ResponseDTO join(UserRequestDTO.JoinDTO joinDTO) {
@@ -49,6 +55,25 @@ public class UserServiceImpl implements UserService {
         String token = createToken(user);
 
         return UserConverter.toResponseDTO(user, token);
+    }
+
+    @Override
+    public UserResponseDTO.ChangePasswordResponseDTO changePassword(UserAdapter userAdapter, UserRequestDTO.ChangePasswordDTO changePasswordDTO) {
+        // 변경 감지를 위해..
+        User user = userRepository.findByEmail(userAdapter.getUser().getEmail()).get();
+
+        // 비밀번호 불일치
+        if(!passwordEncoder.matches(changePasswordDTO.getOldPassword(), user.getPassword())) {
+            throw new UserHandler(ErrorStatus.INVALID_PASSWORD);
+        }
+
+        user.setPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
+        userRepository.save(user);
+
+        return UserResponseDTO.ChangePasswordResponseDTO.builder()
+                .isChanged(true)
+                .updatedAt(LocalDateTime.now())
+                .build();
     }
 
     private String createToken(User user) {
