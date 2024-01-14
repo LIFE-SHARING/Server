@@ -31,6 +31,13 @@ public class UserResponseDTO {
         private Long point;
     }
 
-
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class ChangePasswordResponseDTO {
+        private Boolean isChanged;
+        private LocalDateTime updatedAt;
+    }
 
 }
