@@ -26,4 +26,14 @@ public class UserConverter {
                 .createdAt(LocalDateTime.now())
                 .build();
     }
+
+    public static UserResponseDTO.MyPageResponseDTO toMyPageResponseDTO(User user) {
+        return UserResponseDTO.MyPageResponseDTO.builder()
+                .userId(user.getId())
+                .point(user.getPoint())
+                .area(user.getLocationList().get(0).getArea())
+                .score(4)      // TODO: 내 product에 대한 score의 평균을 구해서 넣어야함
+                .name(user.getName())
+                .build();
+    }
 }
