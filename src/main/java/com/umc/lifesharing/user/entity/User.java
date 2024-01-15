@@ -34,4 +34,8 @@ public class User {
 
     private Long point;
 
+    public void updateAddPoint(Long addPoint){
+        this.point = this.point + addPoint;
+    }
+
 }

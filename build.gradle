@@ -7,6 +7,7 @@ plugins {
 
 group = 'com.umc'
 version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
 
 java {
 }
@@ -33,7 +34,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     // https://mvnrepository.com/artifact/org.json/json
-    implementation group: 'org.json', name: 'json', version: '20160810'
+    implementation group: 'org.json', name: 'json', version: '20231013'
 }
 
 tasks.named('bootBuildImage') {
