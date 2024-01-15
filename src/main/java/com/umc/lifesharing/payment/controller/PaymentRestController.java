@@ -11,9 +11,12 @@ import com.umc.lifesharing.reservation.service.ReservationCommandService;
 import com.umc.lifesharing.reservation.service.ReservationQueryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.parser.ParseException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,7 +41,7 @@ public class PaymentRestController {
             @RequestParam String paymentKey,
             @RequestParam String orderId,
             @RequestParam Long amount
-    ) {
+    ) throws IOException, ParseException {
 
         return ApiResponse.onSuccess(paymentCommandService.tossPaymentSuccess(paymentKey, orderId, amount));
     }

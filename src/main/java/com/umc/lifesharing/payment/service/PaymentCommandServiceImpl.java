@@ -1,5 +1,6 @@
 package com.umc.lifesharing.payment.service;
 
+import com.google.gson.Gson;
 import com.umc.lifesharing.apiPayload.code.status.ErrorStatus;
 import com.umc.lifesharing.apiPayload.exception.handler.PaymentHandler;
 import com.umc.lifesharing.apiPayload.exception.handler.UserHandler;
@@ -11,24 +12,18 @@ import com.umc.lifesharing.user.entity.User;
 import com.umc.lifesharing.user.repository.UserRepository;
 import com.umc.lifesharing.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
-import org.json.JSONObject;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.umc.lifesharing.config.TossPaymentConfig.PAYMENT_URL;
 
 @Service
 @RequiredArgsConstructor
@@ -51,7 +46,7 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
 
     @Transactional // 결제 요청 성공시
     @Override
-    public TossPaymentSuccessDto tossPaymentSuccess(String paymentKey, String orderId, Long amount) {
+    public TossPaymentSuccessDto tossPaymentSuccess(String paymentKey, String orderId, Long amount) throws IOException, ParseException {
         TossPayment payment = verifyPayment(orderId, amount);
         TossPaymentSuccessDto result = requestPaymentAccept(paymentKey, orderId, amount);
         payment.setPaymentKey(paymentKey);//추후 결제 취소 / 결제 조회
@@ -73,38 +68,47 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
     }
     @Transactional
     @Override
-    public TossPaymentSuccessDto requestPaymentAccept(String paymentKey, String orderId, Long amount) {
-        RestTemplate rest = new RestTemplate();
+    public TossPaymentSuccessDto requestPaymentAccept(String paymentKey, String orderId, Long amount) throws IOException, ParseException {
 
-        HttpHeaders headers = new HttpHeaders();
+        String secretKey = tossPaymentConfig.getTestSecretKey() + ":";
 
-        String testSecretApiKey = tossPaymentConfig.getTestSecretKey() + ":";
-        String encodedAuth = new String(Base64.getEncoder().encode(testSecretApiKey.getBytes(StandardCharsets.UTF_8)));
+        Base64.Encoder encoder = Base64.getEncoder();
+        byte[] encodedBytes = encoder.encode(secretKey.getBytes(StandardCharsets.UTF_8));
+        String authorizations = "Basic " + new String(encodedBytes, 0, encodedBytes.length);
 
-        headers.setBasicAuth(encodedAuth);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        paymentKey = URLEncoder.encode(paymentKey, StandardCharsets.UTF_8);
 
-        JSONObject param = new JSONObject();
-        param.put("paymentKey", paymentKey);
-        param.put("orderId", orderId);
-        param.put("amount", amount.longValue());
+        URL url = new URL("https://api.tosspayments.com/v1/payments/confirm");
 
-        return rest.postForEntity(
-                PAYMENT_URL + paymentKey,
-                new HttpEntity<>(param, headers),
-                TossPaymentSuccessDto.class
-        ).getBody();
-    }
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestProperty("Authorization", authorizations);
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setRequestMethod("POST");
+        connection.setDoOutput(true);
 
-    private HttpHeaders getHeaders() {
-        HttpHeaders headers = new HttpHeaders();
-        String encodedAuthKey = new String(
-                Base64.getEncoder().encode((tossPaymentConfig.getTestSecretKey() + ":").getBytes(StandardCharsets.UTF_8)));
-        headers.setBasicAuth(encodedAuthKey);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        return headers;
+        JSONObject obj = new JSONObject();
+        obj.put("paymentKey", paymentKey);
+        obj.put("orderId", orderId);
+        obj.put("amount", amount.toString());
+
+        try (OutputStream outputStream = connection.getOutputStream()) {
+            outputStream.write(obj.toString().getBytes(StandardCharsets.UTF_8));
+        }
+
+        int code = connection.getResponseCode();
+        boolean isSuccess = code == 200;
+
+        InputStream responseStream = isSuccess ? connection.getInputStream() : connection.getErrorStream();
+
+        Reader reader = new InputStreamReader(responseStream, StandardCharsets.UTF_8);
+        JSONParser parser = new JSONParser();
+        JSONObject jsonObject = (JSONObject) parser.parse(reader);
+        responseStream.close();
+        System.out.println(jsonObject);
+
+        Gson gson = new Gson();
+
+        return gson.fromJson(String.valueOf(jsonObject), TossPaymentSuccessDto.class);
     }
 
 }
