@@ -26,6 +26,7 @@ public enum ErrorStatus implements BaseErrorCode {
     PAYMENT_AMOUNT_EXP(HttpStatus.BAD_REQUEST, "PAYMENT4002", "결제 금액이 일치하지 않습니다."),
     PAYMENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "PAYMENT4003", "결제 내역을 찾을 수 없습니다."),
     ALREADY_APPROVED(HttpStatus.BAD_REQUEST, "PAYMENT4004", "이미 인증된 결제입니다."),
+    ORDER_ID_NOT_FOUND(HttpStatus.BAD_REQUEST, "PAYMENT4003", "주문 번호를 찾을 수 없습니다."),
 
     // 예시,,,
     ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "ARTICLE4001", "게시글이 없습니다."),

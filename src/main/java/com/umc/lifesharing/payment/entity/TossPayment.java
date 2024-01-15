@@ -34,26 +34,27 @@ public class TossPayment extends BaseEntity {
     private String orderId;             // 주문 id
 
     @Column(name = "is_succeed")
-    private boolean isSucceed;          // 성공 여부
+    private Boolean isSucceed;          // 성공 여부
     @Column(name = "payment_key")
     private String paymentKey;          // 결제 키
     @Column(name = "fail_resion")
     private String failReason;          // 실패 사유
-    @Column(name = "is_canceled")
-    private boolean isCanceled;         // 취소 여부
+    @Column(name = "is_canceled", nullable = true)
+    @Builder.Default
+    private Boolean isCanceled = false;         // 취소 여부
     @Column(name = "cancel_reason")
     private String cancelReason;        // 취소 사유
 
     public TossPaymentReqDto toPaymentResDto() {
         return TossPaymentReqDto.builder()
-                .payType(method.getDescription())
+                .payType(String.valueOf(method))
                 .amount(amount)
                 .orderName(orderName)
                 .orderId(orderId)
                 .userEmail(user.getEmail())
                 .userName(user.getName())
                 .createdAt(String.valueOf(getCreatedAt()))
-                .cancelYN(isCanceled)
+                .cancelYN(false)
                 .failReason(failReason)
                 .build();
     }
