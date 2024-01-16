@@ -3,11 +3,17 @@ package com.umc.lifesharing.payment.service;
 import com.google.gson.Gson;
 import com.umc.lifesharing.apiPayload.code.status.ErrorStatus;
 import com.umc.lifesharing.apiPayload.exception.handler.PaymentHandler;
+import com.umc.lifesharing.apiPayload.exception.handler.ProductHandler;
 import com.umc.lifesharing.apiPayload.exception.handler.UserHandler;
 import com.umc.lifesharing.config.TossPaymentConfig;
+import com.umc.lifesharing.payment.dto.TossPaymentDto;
 import com.umc.lifesharing.payment.dto.TossPaymentSuccessDto;
 import com.umc.lifesharing.payment.entity.TossPayment;
 import com.umc.lifesharing.payment.repository.TossPaymentRepository;
+import com.umc.lifesharing.product.entity.Product;
+import com.umc.lifesharing.product.repository.ProductRepository;
+import com.umc.lifesharing.reservation.entity.Reservation;
+import com.umc.lifesharing.reservation.repository.ReservationRepository;
 import com.umc.lifesharing.user.entity.User;
 import com.umc.lifesharing.user.repository.UserRepository;
 import com.umc.lifesharing.user.service.UserQueryService;
@@ -29,18 +35,36 @@ import java.util.Base64;
 @RequiredArgsConstructor
 public class PaymentCommandServiceImpl implements PaymentCommandService {
     private final TossPaymentRepository tossPaymentRepository;
+    private final ReservationRepository reservationRepository;
+    private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final TossPaymentConfig tossPaymentConfig;
     private final UserQueryService userQueryService;
 
     @Override // 결제 요청
-    public TossPayment requestTossPayment(TossPayment payment, Long userId) {
+    public TossPayment requestTossPayment(TossPaymentDto tossPaymentDto, Long userId, Long productId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductHandler(ErrorStatus.INVALID_PRODUCT_ID));
+        TossPayment payment = tossPaymentDto.toEntity();
         if (payment.getAmount() < 1000) {
-            throw new PaymentHandler(ErrorStatus.INVALID_PAYMENT_AMOUNT);
+            throw new PaymentHandler(ErrorStatus.CHARGE_POINT);
         }
+        // 결제 내역 생성
+        Reservation reservation = Reservation.builder()
+                .user(user)
+                .product(product)
+                .amount(tossPaymentDto.getAmount())
+                .deposit(tossPaymentDto.getDeposit())
+                .start_date(tossPaymentDto.getStartDate())
+                .end_date(tossPaymentDto.getEndDate())
+                .total_time(tossPaymentDto.getTotalTime())
+                .build();
+        reservationRepository.save(reservation);
+
         payment.setUser(user);
+        payment.setAmount(tossPaymentDto.getAmount() + tossPaymentDto.getDeposit());
         return tossPaymentRepository.save(payment);
     }
 
@@ -109,6 +133,16 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
         Gson gson = new Gson();
 
         return gson.fromJson(String.valueOf(jsonObject), TossPaymentSuccessDto.class);
+    }
+
+    @Transactional
+    @Override
+    public void tossPaymentFail(String code, String message, String orderId) {
+        TossPayment payment = tossPaymentRepository.findByOrderId(orderId).orElseThrow(() -> {
+            throw new PaymentHandler(ErrorStatus.PAYMENT_NOT_FOUND);
+        });
+        payment.setIsSucceed(false);
+        payment.setFailReason(message);
     }
 
 }
