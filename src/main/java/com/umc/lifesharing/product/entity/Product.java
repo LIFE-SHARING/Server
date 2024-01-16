@@ -1,6 +1,7 @@
 package com.umc.lifesharing.product.entity;
 
 import com.umc.lifesharing.product.entity.common.BaseEntity;
+import com.umc.lifesharing.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
@@ -55,5 +56,9 @@ public class Product extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(10) DEFAULT 'NOTEXIST'")
     private ProductStatus status;  // 상태
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
 }

@@ -13,6 +13,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+
 @Service
 @Slf4j
 public class KakaoService implements OauthService {
@@ -75,7 +78,25 @@ public class KakaoService implements OauthService {
         return accessToken;
     }
 
-    public HashMap<String, Object> getUserInfo(String accessToken) {
+    public HashMap<String, Object> getUserInfo2IdTkn(String idToken) {
+        String postURL = "https://kapi.kakao.com/oauth/tokeninfo";
+
+        try {
+            URL url = new URL(postURL);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+//            conn.setRequestMethod("POST");
+//            conn.setRequestProperty("Authorization", "Bearer " + );
+
+        } catch (Exception e) {
+
+        }
+
+        return null;
+    }
+
+    @Override
+    public HashMap<String, Object> getUserInfo2accessTkn(String accessToken) {
         HashMap<String, Object> userInfo = new HashMap<>();
         String postURL = "https://kapi.kakao.com/v2/user/me";
 

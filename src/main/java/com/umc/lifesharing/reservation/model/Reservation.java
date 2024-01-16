@@ -1,6 +1,8 @@
 package com.umc.lifesharing.reservation.model;
 
+import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.reservation.model.common.BaseEntity;
+import com.umc.lifesharing.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
