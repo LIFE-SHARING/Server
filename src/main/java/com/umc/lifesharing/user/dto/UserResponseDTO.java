@@ -17,7 +17,7 @@ public class UserResponseDTO {
     public static class ProductPreviewDTO{
         String name;
         String location;
-        Float score;
+        Integer score;
         Integer score_count;
         Integer deposit;
         Integer day_price;

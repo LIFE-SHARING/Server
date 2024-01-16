@@ -4,13 +4,16 @@ import com.umc.lifesharing.product.entity.common.BaseEntity;
 import com.umc.lifesharing.review.entity.Review;
 import com.umc.lifesharing.user.entity.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -27,30 +30,31 @@ public class Product extends BaseEntity {
     @Column(nullable = false, length = 200)
     private String name;
 
-    private Integer price;
+    private Integer dayPrice;
 
-    private Integer day_price;
-
-    private Integer hour_price;
+    private Integer hourPrice;
 
     private Integer deposit;
 
-    private String least_lent;
+    private String lendingPeriod;
 
-    private String lending_period;
+    @Column(columnDefinition = "integer default 0")
+    @Max(5)
+    private Integer score;
 
-    private Float score;
-
-    private Integer score_count;
+    @Column(columnDefinition = "integer default 0")
+    private Integer reviewCount;
 
     @Column(nullable = false, length = 200)
     private String content;
 
-    private Boolean is_pick;
+    private Boolean isPick;
+
+    private String imageUrl;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "VARCHAR(10) DEFAULT 'EXIST'")
-    private ProductStatus status;
+    @ColumnDefault("'EXIST'")
+    private ProductStatus product_status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -60,15 +64,16 @@ public class Product extends BaseEntity {
     @JoinColumn(name = "category_id")
     private ProductCategory category;
 
-//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<ProductImage> images = new ArrayList<>();   이미지를 리스트 형태로 받아와야함
-
+    @Builder.Default
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<Review> reviewList = new ArrayList<>();
 
+//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<ProductImage> images = new ArrayList<>();   //이미지를 리스트 형태로 받아와야함
+
     //임시대책
-    @ElementCollection
-    private List<String> image_url;
+//    @ElementCollection
+//    private List<String> image_url;
 
     public void setUser(User user){
         this.user = user;
