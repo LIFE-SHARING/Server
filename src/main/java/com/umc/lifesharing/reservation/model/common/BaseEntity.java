@@ -16,8 +16,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
-@DynamicUpdate
-@DynamicInsert
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 public abstract class BaseEntity {

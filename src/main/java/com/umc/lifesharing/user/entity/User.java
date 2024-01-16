@@ -2,6 +2,7 @@ package com.umc.lifesharing.user.entity;
 
 import com.umc.lifesharing.location.entity.Location;
 import com.umc.lifesharing.product.entity.Product;
+import com.umc.lifesharing.review.entity.Review;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;

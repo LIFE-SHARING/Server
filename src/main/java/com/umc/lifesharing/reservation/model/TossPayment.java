@@ -1,9 +1,9 @@
 package com.umc.lifesharing.reservation.model;
 
 import com.umc.lifesharing.reservation.model.common.BaseEntity;
+import com.umc.lifesharing.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.domain.Auditable;
 
 @Entity
 @Getter

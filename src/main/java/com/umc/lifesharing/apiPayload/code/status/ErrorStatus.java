@@ -30,12 +30,11 @@ public enum ErrorStatus implements BaseErrorCode {
     TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "이거는 테스트"),
 
     // FoodCategory Error
-    FOOD_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "FOOD_CATEGORY4001", "음식 카테고리가 없습니다."),
+    CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "CATEGORY4001", "해당 카테고리가 없습니다."),
 
     // Store Error
 
     STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "STORE_4001","가게가 없습니다."),
-
     // User
     DUPLICATED_EMAIL(HttpStatus.BAD_REQUEST, "USER_400_1", "사용자 이메일이 중복입니다."),
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "USER_400_2", "사용자의 비밀번호가 잘못되었습니다."),
@@ -45,11 +44,9 @@ public enum ErrorStatus implements BaseErrorCode {
     // token
     TOKEN_NOT_EXIST(HttpStatus.BAD_REQUEST, "TOKEN_400_1", "헤더에 토큰이 존재하지 않음"),
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "TOKEN_401_1", "토큰이 만료됨"),
-    TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "TOKEN_401_2", "토큰이 유효하지 않음")
+    TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "TOKEN_401_2", "토큰이 유효하지 않음"),
 
-
-    ;
-
+    PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "PRODUCT4001", "없는 제품입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
