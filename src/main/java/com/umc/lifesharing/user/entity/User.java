@@ -4,14 +4,7 @@ import com.umc.lifesharing.location.entity.Location;
 import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.review.entity.Review;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -20,6 +13,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @DynamicInsert
@@ -27,6 +21,7 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "user_id")
     private Long id;
 
     private String email;
@@ -37,15 +32,18 @@ public class User {
 
     private String name;
 
+    @Column(nullable = true)
     private String profileUrl;
 
     private Long point;
 
-    // Product와 연관 관계 매핑
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Product> productList = new ArrayList<>();
 
-    // Location과 매핑
-    @OneToMany (mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Location> location;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Location> locationList = new ArrayList<>();
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }
