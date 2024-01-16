@@ -1,6 +1,7 @@
 package com.umc.lifesharing.chat.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.umc.lifesharing.chat.converter.ChatConverter;
 import com.umc.lifesharing.chat.dto.ChatDTO;
 import com.umc.lifesharing.chat.dto.ChatResponseDTO;
 import com.umc.lifesharing.chat.entity.Chat;
@@ -16,6 +17,8 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -47,12 +50,26 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public boolean chatMessage(ChatDTO.ChatMessageDTO messageDTO){
+
         Chat chat = Chat.builder()
                 .message(messageDTO.getMessage())
                 .sender(messageDTO.getSender())
                 .roomId(messageDTO.getRoomId())
                 .build();
+
         chatRepository.save(chat);
         return true;
     }
+
+    @Override
+    public List<ChatResponseDTO.RoomDetailResponseDTO> roomList(Long sender){
+        List<ChatRoom> chatRooms = chatRoomRepository.findAllBySender(sender);
+
+        List<ChatResponseDTO.RoomDetailResponseDTO> roomList = chatRooms.stream()
+                .map(ChatConverter::toRoomDetail).toList();
+
+        return roomList;
+    }
+
+
 }

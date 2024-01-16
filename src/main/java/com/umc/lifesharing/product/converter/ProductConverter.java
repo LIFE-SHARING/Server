@@ -40,8 +40,8 @@ public class ProductConverter {
                         review.getId(),
                         review.getUser().getId(),
                         review.getCreatedAt(),
-                        review.getLent_day(),
-                        review.getImage_url(),
+                        review.getLentDay(),
+                        review.getImageUrl(),
                         review.getScore(),
                         review.getContent()
                 ))
