@@ -27,5 +27,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findAllByOrderByScoreDesc();
 
     // 리뷰순 필터
-    List<Product> findAllByOrderByScoreCountDesc();
+    List<Product> findAllByOrderByReviewCountDesc();
 }

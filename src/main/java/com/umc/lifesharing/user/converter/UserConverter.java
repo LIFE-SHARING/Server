@@ -20,9 +20,9 @@ public class UserConverter {
         return UserResponseDTO.ProductPreviewDTO.builder()
                 .name(product.getName())
                 .deposit(product.getDeposit())
-                .day_price(product.getDay_price())
+                .day_price(product.getDayPrice())
                 .score(product.getScore()) //별점(평균으로 가져오도록 해야함 - 구현전)
-                .score_count(product.getScore_count()) //리뷰 개수(해당 제품에 대한 리뷰 개수를 카운트해야함 - 구현전)
+                .score_count(product.getReviewCount()) //리뷰 개수(해당 제품에 대한 리뷰 개수를 카운트해야함 - 구현전)
                 //위치
                 .build();
     }
