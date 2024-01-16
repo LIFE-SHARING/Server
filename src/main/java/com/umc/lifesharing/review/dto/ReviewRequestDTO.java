@@ -14,8 +14,8 @@ public class ReviewRequestDTO {
         @NotNull
         String content;
         @NotNull
-        Float score;
+        Integer score;
         @NotNull
-        List<String> image_url;
+        List<String> imageUrl;
     }
 }

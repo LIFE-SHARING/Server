@@ -1,6 +1,7 @@
 package com.umc.lifesharing.product.dto;
 
 import com.umc.lifesharing.product.entity.ProductCategory;
+import com.umc.lifesharing.validation.annotation.ExistCategories;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,25 +15,23 @@ public class ProductRequestDTO {
     @Getter
     public static class RegisterProductDTO{
         @NotNull
-        Long member_id;
-        @NotNull
-        Long category_id;  // 1/10일 - 카테고리 id를 리스트로 돌려받아야함
+        Long memberId;
+        @ExistCategories
+        Long categoryId;
         @NotNull @Size(max = 200)
         String name;
         @NotNull @Size(max = 200)
         String content;
         @NotNull
-        Integer day_price;
+        Integer dayPrice;
         @NotNull
-        Integer hour_price;
+        Integer hourPrice;
         @NotNull
         Integer deposit;
         @NotNull
-        String least_lent;
+        String lendingPeriod;
         @NotNull
-        String lending_period;
-        @NotNull
-        List<String> image_url;
+        List<String> imageUrl;
 
     }
 }

@@ -1,5 +1,6 @@
 package com.umc.lifesharing.user.entity;
 
+import com.umc.lifesharing.location.entity.Location;
 import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.review.entity.Review;
 import jakarta.persistence.*;
@@ -44,4 +45,7 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Product> productList = new ArrayList<>();
 
+    // Location과 매핑
+    @OneToMany (mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Location> location;
 }

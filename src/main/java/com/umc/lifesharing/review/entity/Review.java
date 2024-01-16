@@ -24,18 +24,16 @@ public class Review extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String product_name;
-
     @Column(length = 200)
     private String content;
 
     @Max(value = 5)
-    private Float score;
+    private Integer score;
 
-    private Integer lent_day;
+    private Integer lentDay;
 
     @ElementCollection
-    private List<String> image_url;
+    private List<String> imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

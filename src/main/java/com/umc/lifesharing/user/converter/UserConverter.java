@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 public class UserConverter {
 
+    // 회원별 제품 조회 응답
     public static UserResponseDTO.ProductPreviewDTO productPreviewDTO(Product product){
         return UserResponseDTO.ProductPreviewDTO.builder()
                 .name(product.getName())

@@ -16,19 +16,18 @@ import java.util.List;
 @Entity
 @DynamicInsert
 @DynamicUpdate
-public class ProductCategory extends BaseEntity {
+public class ProductCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 200)
-    private String name;  // 카테고리 이름
+    private String name;
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(10) DEFAULT 'EXIST'")
-    private ProductStatus status;  // 카테고리 존재 여부
+    private ProductStatus status;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     @Builder.Default
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Product> productList = new ArrayList<>();
 }

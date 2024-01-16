@@ -2,6 +2,7 @@ package com.umc.lifesharing.validation.validator;
 
 import com.umc.lifesharing.apiPayload.code.status.ErrorStatus;
 import com.umc.lifesharing.user.entity.User;
+import com.umc.lifesharing.user.repository.UserRepository;
 import com.umc.lifesharing.user.service.UserQueryService;
 import com.umc.lifesharing.validation.annotation.ExistMembers;
 import jakarta.validation.ConstraintValidator;
@@ -14,7 +15,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MembersExistValidator implements ConstraintValidator<ExistMembers, Long> {
 
-    private final UserQueryService userQueryService;
+    private final UserRepository userRepository;
 
     @Override
     public void initialize(ExistMembers constraintAnnotation) {
@@ -23,7 +24,7 @@ public class MembersExistValidator implements ConstraintValidator<ExistMembers, 
 
     @Override
     public boolean isValid(Long value, ConstraintValidatorContext context) {
-        Optional<User> target = userQueryService.findByUser(value);
+        Optional<User> target = userRepository.findById(value);
         if (target.isEmpty()){
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(ErrorStatus.MEMBER_NOT_FOUND.toString()).addConstraintViolation();
