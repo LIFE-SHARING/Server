@@ -29,14 +29,13 @@ public class Reservation extends BaseEntity {
     private Product product;
 
     @Column(nullable = false, name = "start_date")
-    private LocalDateTime startDate;        // 예약 시작일
+    private LocalDateTime start_date;        // 예약 시작일
 
     @Column(nullable = false, name = "end_date")
     private LocalDateTime end_date;         // 예약 종료일
 
-    @Column(nullable = false, name = "payment_type")
-    @Enumerated(EnumType.STRING)
-    private PaymentType payment_type;       // 결제 유형
+    @Column(nullable = false, name = "total_time")
+    private String total_time;       // 총 대여 시간
 
     @Column(nullable = false, name = "amount")
     private Long amount;                    // 결제 금액 (보증금 제외)

@@ -10,8 +10,8 @@
 <section>
     <!--  충전하기 버튼 만들기  -->
     <span>총 포인트 충전 금액 :</span>
-    <span>3247원</span>
-    <button id="payment-button">3247원 충전하기</button>
+    <span>6000원</span>
+    <button id="payment-button">6000원 충전하기</button>
 </section>
 <script>
     // ------ 클라이언트 키로 객체 초기화 ------
@@ -23,8 +23,8 @@
     button.addEventListener('click', function () {
         // ------ 결제창 띄우기 ------
         tossPayments.requestPayment('CARD', {
-            amount: 3247,
-            orderId: 'yec1d544-2a34-4f44-ada0-c5213d8fd8da',
+            amount: 6000,
+            orderId: 'mec1d544-2a34-4f44-ada0-c5213d8fd8da',
             orderName: '포인트 충전',
             customerName: 'max',
             customerEmail: 'test1@gmail.com',
