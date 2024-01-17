@@ -23,6 +23,18 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4001", "사용자가 없습니다."),
     NICKNAME_NOT_EXIST(HttpStatus.BAD_REQUEST, "MEMBER4002", "닉네임은 필수 입니다."),
 
+    // 결제 관련 에러
+    INVALID_PAYMENT_AMOUNT(HttpStatus.BAD_REQUEST, "PAYMENT4001", "결제 불가능한 금액입니다."),
+    PAYMENT_AMOUNT_EXP(HttpStatus.BAD_REQUEST, "PAYMENT4002", "결제 금액이 일치하지 않습니다."),
+    PAYMENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "PAYMENT4003", "결제 내역을 찾을 수 없습니다."),
+    ALREADY_APPROVED(HttpStatus.BAD_REQUEST, "PAYMENT4004", "이미 인증된 결제입니다."),
+    ORDER_ID_NOT_FOUND(HttpStatus.BAD_REQUEST, "PAYMENT4003", "주문 번호를 찾을 수 없습니다."),
+
+    CHARGE_POINT(HttpStatus.BAD_REQUEST, "PAYMENT4101", "캐쉬가 부족합니다."),
+
+    // 제품 관련 에러
+    INVALID_PRODUCT_ID(HttpStatus.BAD_REQUEST, "PRODUCT4001", "존재하지 않은 제품번호입니다."),
+
     // 예시,,,
     ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "ARTICLE4001", "게시글이 없습니다."),
 

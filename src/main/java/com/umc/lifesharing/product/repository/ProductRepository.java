@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
+    Optional<Product> findById(Long id);
+
     List<Product> findByCategoryId(Long categoryId);
 
     // 제품의 평점과 리뷰 개수 업데이트
