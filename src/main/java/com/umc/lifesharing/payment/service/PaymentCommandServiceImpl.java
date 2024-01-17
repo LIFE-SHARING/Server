@@ -12,7 +12,7 @@ import com.umc.lifesharing.payment.entity.TossPayment;
 import com.umc.lifesharing.payment.repository.TossPaymentRepository;
 import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.product.repository.ProductRepository;
-import com.umc.lifesharing.reservation.entity.Reservation;
+import com.umc.lifesharing.reservation.entity.*;
 import com.umc.lifesharing.reservation.repository.ReservationRepository;
 import com.umc.lifesharing.user.entity.User;
 import com.umc.lifesharing.user.repository.UserRepository;
@@ -59,7 +59,7 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
                 .deposit(tossPaymentDto.getDeposit())
                 .start_date(tossPaymentDto.getStartDate())
                 .end_date(tossPaymentDto.getEndDate())
-                .total_time(tossPaymentDto.getTotalTime())
+//                .total_time(tossPaymentDto.getTotalTime())
                 .build();
         reservationRepository.save(reservation);
 
