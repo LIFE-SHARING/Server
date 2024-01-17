@@ -36,9 +36,8 @@ public class Reservation extends BaseEntity {
     @Column(nullable = false, name = "end_date")
     private LocalDateTime end_date;
 
-    @Column(nullable = false, name = "payment_type")
-    @Enumerated(EnumType.STRING)
-    private PaymentType payment_type;
+    @Column(nullable = false, name = "total_time")
+    private String total_time;       // 총 대여 시간
 
     @Column(nullable = false, name = "amount")
     private Long amount;

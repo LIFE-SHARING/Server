@@ -59,7 +59,7 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
                 .deposit(tossPaymentDto.getDeposit())
                 .start_date(tossPaymentDto.getStartDate())
                 .end_date(tossPaymentDto.getEndDate())
-//                .total_time(tossPaymentDto.getTotalTime())
+                .total_time(tossPaymentDto.getTotalTime())
                 .build();
         reservationRepository.save(reservation);
 
