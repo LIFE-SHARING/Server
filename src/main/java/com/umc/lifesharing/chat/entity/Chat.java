@@ -1,26 +1,30 @@
 package com.umc.lifesharing.chat.entity;
 
-import jakarta.persistence.*;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Chat extends BaseEntity{
+@DynamicInsert
+@DynamicUpdate
+public class Chat {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chatroom_id")
-    public ChatRoom chatroom_id;
+    // 나중에 채팅방과 연동 에정
+    private String roomId;
 
-    // 변경 예정 테스트
-    @Column(nullable = false, length = 20)
-    private Long user_id;
-
-    @Column(nullable = false, length = 200)
+    // 나중에 유저랑 연동 예정
+    private String sender;
     private String message;
 }
