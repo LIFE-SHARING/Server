@@ -1,8 +1,8 @@
 package com.umc.lifesharing.payment.entity;
 
 import com.umc.lifesharing.payment.dto.TossPaymentReqDto;
+import com.umc.lifesharing.payment.entity.enum_class.Method;
 import com.umc.lifesharing.reservation.entity.common.BaseEntity;
-import com.umc.lifesharing.reservation.entity.enum_class.Method;
 import com.umc.lifesharing.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;

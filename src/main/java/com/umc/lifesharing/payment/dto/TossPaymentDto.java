@@ -1,10 +1,9 @@
 package com.umc.lifesharing.payment.dto;
 
-import com.umc.lifesharing.reservation.entity.enum_class.Method;
 import com.umc.lifesharing.payment.entity.TossPayment;
+import com.umc.lifesharing.payment.entity.enum_class.Method;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
