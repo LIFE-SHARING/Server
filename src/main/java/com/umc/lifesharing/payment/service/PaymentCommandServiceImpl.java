@@ -46,7 +46,7 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ProductHandler(ErrorStatus.INVALID_PRODUCT_ID));
+                .orElseThrow(() -> new ProductHandler(ErrorStatus.PRODUCT_NOT_FOUND));
         TossPayment payment = tossPaymentDto.toEntity();
         if (payment.getAmount() < 1000) {
             throw new PaymentHandler(ErrorStatus.CHARGE_POINT);
