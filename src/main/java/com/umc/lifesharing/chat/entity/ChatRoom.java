@@ -11,8 +11,6 @@ import org.hibernate.annotations.DynamicUpdate;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@DynamicInsert
-@DynamicUpdate
 public class ChatRoom {
 
     @Id
@@ -20,10 +18,9 @@ public class ChatRoom {
     private Long id;
 
     // 유저로 수정 예정
-    //@ManyToOne
+    //@ManyToOne(fetch = FetchType.LAZY)
     private Long sender;
-    //@ManyToOne
+
+    //@ManyToOne(fetch = FetchType.LAZY)
     private Long receiver;
-
-
 }
