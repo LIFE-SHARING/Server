@@ -32,9 +32,6 @@ public enum ErrorStatus implements BaseErrorCode {
 
     CHARGE_POINT(HttpStatus.BAD_REQUEST, "PAYMENT4101", "캐쉬가 부족합니다."),
 
-    // 제품 관련 에러
-    INVALID_PRODUCT_ID(HttpStatus.BAD_REQUEST, "PRODUCT4001", "존재하지 않은 제품번호입니다."),
-
     // 예시,,,
     ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "ARTICLE4001", "게시글이 없습니다."),
 
