@@ -5,9 +5,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConfigurationProperties(prefix = "kakao")
+@ConfigurationProperties(prefix = "auth.oidc.kakao")
 @Data
 public class KakaoProperties {
     String restApiKey;
-    String redirectUri;
+    String iss;
+    String aud;
 }
