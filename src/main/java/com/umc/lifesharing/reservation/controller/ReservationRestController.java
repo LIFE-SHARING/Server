@@ -1,8 +1,10 @@
 package com.umc.lifesharing.reservation.controller;
 
 import com.umc.lifesharing.apiPayload.ApiResponse;
-import com.umc.lifesharing.payment.dto.TossPaymentReqDto;
-import com.umc.lifesharing.reservation.dto.ReservationListDto;
+import com.umc.lifesharing.config.security.UserAdapter;
+import com.umc.lifesharing.reservation.converter.ReservationConverter;
+import com.umc.lifesharing.reservation.dto.ReservationResponseDto;
+import com.umc.lifesharing.reservation.entity.Reservation;
 import com.umc.lifesharing.reservation.service.ReservationCommandService;
 import com.umc.lifesharing.reservation.service.ReservationQueryService;
 import com.umc.lifesharing.user.entity.User;
@@ -35,12 +37,12 @@ public class ReservationRestController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "acess 토큰 모양이 이상함",content = @Content(schema = @Schema(implementation = ApiResponse.class))),
     })
     @Parameters({
-            @Parameter(name = "filter", description = "필터 종류(default = 전체), Query Params 입니다!"),
+            @Parameter(name = "filter", description = "필터 종류(default = 전체), Query Params 입니다! 현재는 전체, MY 두가지 필터만 사용가능합니다."),
     })
-    public ApiResponse<List<ReservationListDto>> getReservationList(@AuthenticationPrincipal User user, @RequestParam(name = "filter", value = "전체", required = false) String filter) {
-        List<ReservationListDto> reservationList = reservationCommandService.getReservationList(user, filter);
+    public ApiResponse<ReservationResponseDto.ReservationPreViewListDTO> getReservationList(@AuthenticationPrincipal UserAdapter userAdapter, @RequestParam(name = "filter", defaultValue = "전체", required = false) String filter) {
+        List<Reservation> reservationList = reservationCommandService.getReservationList(userAdapter, filter);
 
-        return ApiResponse.onSuccess(reservationList);
+        return ApiResponse.onSuccess(ReservationConverter.toReservationListDto(reservationList, userAdapter.getUser().getId(), filter));
     }
 
 
