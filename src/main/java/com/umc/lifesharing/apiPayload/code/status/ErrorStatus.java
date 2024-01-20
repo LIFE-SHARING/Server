@@ -58,7 +58,9 @@ public enum ErrorStatus implements BaseErrorCode {
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "TOKEN_401_1", "토큰이 만료됨"),
     TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "TOKEN_401_2", "토큰이 유효하지 않음"),
 
-    PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "PRODUCT4001", "없는 제품입니다.");
+    PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "PRODUCT4001", "없는 제품입니다."),
+    ALREADY_HEART(HttpStatus.ALREADY_REPORTED, "HEART4001", "이미 좋아요한 제품입니다."),
+    ALREADY_REMOVE(HttpStatus.ALREADY_REPORTED, "HEART4002", "이미 취소한 제품입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

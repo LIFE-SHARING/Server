@@ -19,12 +19,13 @@ public class UserResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ProductPreviewDTO{
+        Long productId;
         String name;
         String location;
         Integer score;
-        Integer score_count;
+        Integer reviewCount;
         Integer deposit;
-        Integer day_price;
+        Integer dayPrice;
     }
 
     @Builder

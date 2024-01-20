@@ -18,11 +18,12 @@ public class UserConverter {
       // 회원별 제품 조회 응답
     public static UserResponseDTO.ProductPreviewDTO productPreviewDTO(Product product){
         return UserResponseDTO.ProductPreviewDTO.builder()
+                .productId(product.getId())
                 .name(product.getName())
                 .deposit(product.getDeposit())
-                .day_price(product.getDayPrice())
+                .dayPrice(product.getDayPrice())
                 .score(product.getScore()) //별점(평균으로 가져오도록 해야함 - 구현전)
-                .score_count(product.getReviewCount()) //리뷰 개수(해당 제품에 대한 리뷰 개수를 카운트해야함 - 구현전)
+                .reviewCount(product.getReviewCount()) //리뷰 개수(해당 제품에 대한 리뷰 개수를 카운트해야함 - 구현전)
                 //위치
                 .build();
     }
