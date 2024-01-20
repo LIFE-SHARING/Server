@@ -30,4 +30,8 @@ public class ProductCategory {
     @Builder.Default
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Product> productList = new ArrayList<>();
+
+//    @Builder.Default
+//    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+//    private List<ProductPrefer> productPreferList = new ArrayList<>();
 }

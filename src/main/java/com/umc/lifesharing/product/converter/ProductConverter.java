@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ProductConverter {
+
     public static Product toProduct(ProductRequestDTO.RegisterProductDTO request){
 
         return Product.builder()
@@ -22,8 +23,7 @@ public class ProductConverter {
 //                .image_url(new ArrayList<>())  // 1/10일 - 이미지도 리스트 형태로 받아와야함(구현전)
                 .build();
     }
-
-
+    
     // 제품 등록 응답
     public static ProductResponseDTO.RegisterResultDTO toRegisterResultDTO(Product product){
         return ProductResponseDTO.RegisterResultDTO.builder()
@@ -61,36 +61,37 @@ public class ProductConverter {
                 .content(product.getContent())
                 .reviewList(reviewList)
 //                찜여부
-//                .location(getLocationInfo(product.getUser()))
+                .location("사용자로부터 받아오기")
 //                .mapInfo(generateMapInfo(product.getUser())
                 .build();
     }
 
     // Product 엔티티를 ProductResponseDTO로 변환하는 로직을 작성
     public static ProductResponseDTO.ProductPreViewDTO convertToResponseDTO(Product product) {
-        return new ProductResponseDTO.ProductPreViewDTO(
-                product.getId(),
-                product.getName(),
-                product.getDayPrice(),
-                product.getDeposit(),
-                product.getScore(),
-                product.getReviewCount()
-                // 위치 product.get_location
-                // 나머지 필드들에 대한 매핑
-        );
+        return ProductResponseDTO.ProductPreViewDTO.builder()
+                .productId(product.getId())
+                .name(product.getName())
+                .score(product.getScore())
+                .reviewCount(product.getReviewCount())
+                .dayPrice(product.getDayPrice())
+                .deposit(product.getDeposit())
+                //product.get_location
+                // 이미지
+                .build();
     }
 
-//    public static ProductResponseDTO.MapInfoDTO generateMapInfo(Location locationInfo) {
-//        // 여기에서 위치 정보를 이용하여 지도 정보를 생성하는 로직을 구현
-//        // 생성된 지도 정보를 MapInfoDTO 객체에 담아 반환
-//        // 예시로 더미 데이터를 사용한 경우:
-//        return ProductResponseDTO.MapInfoDTO.builder()
-//                .mapImageUrl("https://example.com/map_image")
-//                // ... (다른 지도 정보 필드들)
-//                .build();
-//    }
+    // 제품 검색 시 응답
+    public static ProductResponseDTO.SearchListDTO searchResultDTO(Product product){
+        return ProductResponseDTO.SearchListDTO.builder()
+                .product_id(product.getId())
+                .name(product.getName())
+                .score(product.getScore())
+                .review_count(product.getReviewCount())
+                .day_price(product.getDayPrice())
+                .hour_price(product.getHourPrice())
+                .deposit(product.getDeposit())
+                // 위치정보
+                .build();
+    }
 
-//    public Location getLocationInfo(User user) {
-//        return user.getLocation();
-//    }
 }

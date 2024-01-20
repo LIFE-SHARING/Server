@@ -1,6 +1,8 @@
 package com.umc.lifesharing.product.entity;
 
+import com.umc.lifesharing.heart.entity.Heart;
 import com.umc.lifesharing.product.entity.common.BaseEntity;
+import com.umc.lifesharing.reservation.entity.Reservation;
 import com.umc.lifesharing.review.entity.Review;
 import com.umc.lifesharing.user.entity.User;
 import jakarta.persistence.*;
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 
 @Entity
 @Getter
+@Setter
 @DynamicUpdate
 @DynamicInsert
 @Builder
@@ -48,10 +51,6 @@ public class Product extends BaseEntity {
     @Column(nullable = false, length = 200)
     private String content;
 
-    private Boolean isPick;
-
-    private String imageUrl;
-
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'EXIST'")
     private ProductStatus product_status;
@@ -68,8 +67,17 @@ public class Product extends BaseEntity {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<Review> reviewList = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<ProductImage> images = new ArrayList<>();   //이미지를 리스트 형태로 받아와야함
+    @Builder.Default
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductImage> images = new ArrayList<>();   //이미지를 리스트 형태로 받아와야함
+
+    @Builder.Default
+    @OneToMany(mappedBy = "product", orphanRemoval = true)
+    private List<Reservation> reservationList = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "product", orphanRemoval = true)
+    private List<Heart> heartListList = new ArrayList<>();   
 
     //임시대책
 //    @ElementCollection

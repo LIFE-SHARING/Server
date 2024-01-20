@@ -22,6 +22,4 @@ public class UserAdapter extends CustomUserDetails {
         this.user = user;
         this.socialLogin = socialLogin;
     }
-
-
 }

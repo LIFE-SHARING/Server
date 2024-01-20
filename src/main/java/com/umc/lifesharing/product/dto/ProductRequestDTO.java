@@ -7,30 +7,30 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
 
 public class ProductRequestDTO {
     @Getter
+    @Setter
     public static class RegisterProductDTO{
-        @NotNull
-        Long memberId;
         @ExistCategories
         Long categoryId;
         @NotNull @Size(max = 200)
         String name;
         @NotNull @Size(max = 200)
         String content;
-        @NotNull
+        @NotNull(message = "일일 대여비를 입력하세요.")
         Integer dayPrice;
-        @NotNull
+        @NotNull(message = "시간 당 대여비를 입력하세요.")
         Integer hourPrice;
-        @NotNull
+        @NotNull(message = "보증금을 입력하세요.")
         Integer deposit;
         @NotNull
         String lendingPeriod;
-        @NotNull
+//        @NotNull
         List<String> imageUrl;
 
     }
