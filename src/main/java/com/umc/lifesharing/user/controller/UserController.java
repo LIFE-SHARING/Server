@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @AllArgsConstructor
@@ -27,8 +28,9 @@ public class UserController {
 
 
     @PostMapping("/user/join")
-    public ApiResponse<UserResponseDTO.ResponseDTO> join(@Valid @RequestBody UserRequestDTO.JoinDTO joinDTO) {
-        return ApiResponse.onSuccess(userService.join(joinDTO));
+    public ApiResponse<UserResponseDTO.ResponseDTO> join(@Valid @RequestBody UserRequestDTO.JoinDTO joinDTO,
+                                                         @RequestParam(value = "multipartFile") MultipartFile multipartFile) {
+        return ApiResponse.onSuccess(userService.join(joinDTO/*, multipartFile*/));
     }
 
     // 마이 페이지에 진입했을 때
