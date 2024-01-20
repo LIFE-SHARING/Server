@@ -4,6 +4,7 @@ import com.umc.lifesharing.location.entity.Location;
 import com.umc.lifesharing.product.entity.Product;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -34,7 +35,9 @@ public class User {
     @Column(nullable = true)
     private String profileUrl;
 
-    private Long point;
+    @ColumnDefault("0")
+    @Builder.Default
+    private Long point = 0L;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Product> productList = new ArrayList<>();
