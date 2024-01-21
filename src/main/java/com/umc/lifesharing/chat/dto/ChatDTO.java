@@ -14,41 +14,21 @@ public class ChatDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ChatMessageDTO {
-        private String type;
-        private String sender;
-        private String roomId;
+    public static class ChatMessageDTO{
+        private Long sender;
+        private Long roomId;
         private String message;
+    }
 
-        public void setSender(String sender) {
-            this.sender = sender;
-        }
-
-        public void newConnect() {
-            this.type = "new";
-        }
-
-        public void closeConnect() {
-            this.type = "close";
-        }
-
-        @Builder
-        @Getter
-        @NoArgsConstructor
-        @AllArgsConstructor
-        public static class ChatRoomDTO {
-
-            private String roomId;
-            private String name;
-            private Set<WebSocketSession> sessions = new HashSet<>();
-
-            public ChatRoomDTO create(String name) {
-                ChatRoomDTO room = new ChatRoomDTO();
-
-                room.roomId = UUID.randomUUID().toString();
-                room.name = name;
-                return room;
-            }
-        }
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ChatStartDTO {
+        private Long sender;
+        private Long roomId;
+        private String message;
+        private Long productId;
     }
 }

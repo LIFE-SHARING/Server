@@ -33,4 +33,13 @@ public class ChatResponseDTO {
         Long receiverId;
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ChatMessageDTO {
+        Long roomId;
+        Long senderId;
+        String message;
+    }
 }

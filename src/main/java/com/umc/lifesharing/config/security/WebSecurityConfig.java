@@ -36,7 +36,7 @@ public class WebSecurityConfig {
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
                         .requestMatchers("/user/login", "/user/join", "/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**"
 
-                                ).permitAll() // */** 임시
+                                ,"/**").permitAll() // */** 임시
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement ->
