@@ -1,6 +1,6 @@
-package com.umc.lifesharing.reservation.model.common;
+package com.umc.lifesharing.reservation.entity.common;
 
-import com.umc.lifesharing.reservation.model.Status;
+import com.umc.lifesharing.reservation.entity.enum_class.Status;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -16,8 +16,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
-@DynamicUpdate
-@DynamicInsert
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 public abstract class BaseEntity {

@@ -5,10 +5,29 @@ import lombok.*;
 public class ChatResponseDTO {
     @Builder
     @Getter
-    @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class MakeRoomResponseDTO {
+        Long roomId;
+        Long senderId;
+        Long receiverId;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TempMakeRoomResponseDTO {
+        Long roomId;
+        Long senderId;
+        Long productId;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RoomDetailResponseDTO {
         Long roomId;
         Long senderId;
         Long receiverId;
