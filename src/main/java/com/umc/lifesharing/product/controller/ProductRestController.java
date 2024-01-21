@@ -101,9 +101,9 @@ public class ProductRestController {
     }
 
     // 제품 상세 조회 API
-    @GetMapping("/detail/{productId}")
+    @GetMapping("/detail")
     @Operation(summary = "제품 상세 조회 API", description = "제품 상세 조회 API입니다. PathVariable에 제품id를 입력하세요.")
-    public ApiResponse<ProductResponseDTO.ProductDetailDTO> getProductDetail(@PathVariable(name = "productId") Long productId, @AuthenticationPrincipal UserAdapter userAdapter){
+    public ApiResponse<ProductResponseDTO.ProductDetailDTO> getProductDetail(@RequestParam(name = "productId") Long productId, @AuthenticationPrincipal UserAdapter userAdapter){
         ProductResponseDTO.ProductDetailDTO productDetail = productCommandService.productDetail(productId, userAdapter);
 
         return ApiResponse.onSuccess(productDetail);

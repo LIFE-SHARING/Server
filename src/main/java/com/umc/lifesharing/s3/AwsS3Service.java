@@ -24,14 +24,27 @@ public class AwsS3Service {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
+    @Value("${cloud.aws.s3.path.review}")
+    private String reviewPath;
+
+    @Value("${cloud.aws.s3.path.product}")
+    private String productPath;
+
     private final AmazonS3 amazonS3;
 
-    public List<String> uploadFile(List<MultipartFile> multipartFiles){
+    public List<String> uploadReviewFiles(List<MultipartFile> multipartFiles){
+        return uploadFiles(multipartFiles, reviewPath);
+    }
+
+    public List<String> uploadProductFiles(List<MultipartFile> multipartFiles){
+        return uploadFiles(multipartFiles, productPath);
+    }
+
+    public List<String> uploadFiles(List<MultipartFile> multipartFiles, String path){
         List<String> fileNameList = new ArrayList<>();
 
-        // forEach 구문을 통해 multipartFiles 리스트로 넘어온 파일들을 순차적으로 fileNameList 에 추가
         multipartFiles.forEach(file -> {
-            String fileName = createFileName(file.getOriginalFilename());
+            String fileName = path + "/" + createFileName(file.getOriginalFilename());
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentLength(file.getSize());
             objectMetadata.setContentType(file.getContentType());
@@ -43,7 +56,6 @@ public class AwsS3Service {
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
             }
             fileNameList.add(fileName);
-
         });
 
         return fileNameList;
