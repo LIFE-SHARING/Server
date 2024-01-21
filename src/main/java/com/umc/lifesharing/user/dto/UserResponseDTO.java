@@ -1,6 +1,6 @@
 package com.umc.lifesharing.user.dto;
 
-
+import com.umc.lifesharing.config.security.TokenDTO;
 import com.umc.lifesharing.location.dto.LocationDTO;
 import com.umc.lifesharing.location.entity.Location;
 import lombok.AllArgsConstructor;
@@ -41,8 +41,8 @@ public class UserResponseDTO {
     @Getter
     public static class ResponseDTO {   // 로그인 회원가입 용 응답 dto
         private Long userId;
-        private String token;
         private LocalDateTime createdAt;
+        private TokenDTO tokenDTO;
     }
 
     @Builder

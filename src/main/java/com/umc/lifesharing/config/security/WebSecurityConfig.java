@@ -22,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
     private UserQueryService userQueryService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final ExceptionHandlerFilter exceptionHandlerFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -34,9 +35,9 @@ public class WebSecurityConfig {
                 )
                 .authorizeHttpRequests(authorize -> authorize
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-                        .requestMatchers("/user/login", "/user/join", "/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**"
-
-                                ).permitAll() // */** 임시
+                        .requestMatchers( "/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**",
+                                "/social/kakao/**", "/user/**"
+                                ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement ->
@@ -44,9 +45,9 @@ public class WebSecurityConfig {
                 )
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout((logoutConfig) -> logoutConfig.logoutSuccessUrl("/"))
-                .addFilterBefore(new ExceptionHandlerFilter(), UsernamePasswordAuthenticationFilter.class)
                 // Jwt 을 통한 인증 방식을 사용하는 JwtAuthenticationFilter를 사용
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(exceptionHandlerFilter, JwtAuthenticationFilter.class)
                 .userDetailsService(userQueryService);
 
         return http.build();
