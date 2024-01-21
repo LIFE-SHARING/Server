@@ -1,10 +1,12 @@
-package com.umc.lifesharing.reservation.model;
+package com.umc.lifesharing.reservation.entity;
 
 import com.umc.lifesharing.product.entity.Product;
-import com.umc.lifesharing.reservation.model.common.BaseEntity;
+import com.umc.lifesharing.reservation.entity.enum_class.PaymentType;
+import com.umc.lifesharing.reservation.entity.common.BaseEntity;
 import com.umc.lifesharing.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
+
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
@@ -29,14 +31,13 @@ public class Reservation extends BaseEntity {
     private Product product;
 
     @Column(nullable = false, name = "start_date")
-    private LocalDateTime startDate;
+    private LocalDateTime start_date;
 
     @Column(nullable = false, name = "end_date")
     private LocalDateTime end_date;
 
-    @Column(nullable = false, name = "payment_type")
-    @Enumerated(EnumType.STRING)
-    private PaymentType payment_type;
+    @Column(nullable = false, name = "total_time")
+    private String total_time;       // 총 대여 시간
 
     @Column(nullable = false, name = "amount")
     private Long amount;

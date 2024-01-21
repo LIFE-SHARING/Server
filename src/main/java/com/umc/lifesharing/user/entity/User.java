@@ -4,6 +4,11 @@ import com.umc.lifesharing.location.entity.Location;
 import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.user.entity.enum_class.SocialType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
@@ -14,6 +19,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -50,6 +56,10 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Location> locationList = new ArrayList<>();
+
+    public void updateAddPoint(Long addPoint){
+        this.point = this.point + addPoint;
+    }
 
     public void setPassword(String password) {
         this.password = password;

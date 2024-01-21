@@ -7,10 +7,33 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+import java.util.List;
 import java.time.LocalDateTime;
 
+
 public class UserResponseDTO {
+
+    // 회원이 등록한 제품을 조회할 것임
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ProductPreviewDTO{
+        String name;
+        String location;
+        Integer score;
+        Integer score_count;
+        Integer deposit;
+        Integer day_price;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ProductPreviewListDTO{
+        List<ProductPreviewDTO> productList;
+    }
 
     @Builder
     @NoArgsConstructor
