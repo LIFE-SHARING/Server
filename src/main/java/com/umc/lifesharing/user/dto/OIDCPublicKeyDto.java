@@ -1,4 +1,4 @@
-package com.umc.lifesharing.login.dto;
+package com.umc.lifesharing.user.dto;
 
 
 import lombok.Getter;

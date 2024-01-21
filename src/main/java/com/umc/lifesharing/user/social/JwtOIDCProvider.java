@@ -1,16 +1,13 @@
-package com.umc.lifesharing.login;
+package com.umc.lifesharing.user.social;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.umc.lifesharing.apiPayload.code.status.ErrorStatus;
 import com.umc.lifesharing.apiPayload.exception.GeneralException;
-import com.umc.lifesharing.login.dto.OIDCPublicKeyDto;
-import com.umc.lifesharing.login.dto.OIDCPublicKeysResponse;
+import com.umc.lifesharing.user.dto.OIDCPublicKeyDto;
 import io.jsonwebtoken.*;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
@@ -24,12 +21,15 @@ import java.util.Base64;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class JwtOIDCUtil {
+public class JwtOIDCProvider {
 
     @Autowired
     private final KakaoOauthClient kakaoOauthClient;
 
-    public Jws<Claims> getKidFromUnsignedTokenClaims(String token, String iss, String aud) throws JsonProcessingException, NoSuchAlgorithmException, InvalidKeySpecException {
+    public Jws<Claims> getKidFromSignedTokenClaims(String token, String iss, String aud) throws JsonProcessingException, NoSuchAlgorithmException, InvalidKeySpecException {
+        if(iss == null || aud == null)
+            throw new NullPointerException();
+
         Jwt jwt = getUnsignedTokenClaims(token, iss, aud);
         String kid = jwt.getHeader().get("kid").toString();
 
@@ -75,6 +75,4 @@ public class JwtOIDCUtil {
         if (splitToken.length != 3) throw new GeneralException(ErrorStatus.TOKEN_INVALID);
         return splitToken[0] + "." + splitToken[1] + ".";
     }
-
-
 }

@@ -2,6 +2,7 @@ package com.umc.lifesharing.user.entity;
 
 import com.umc.lifesharing.location.entity.Location;
 import com.umc.lifesharing.product.entity.Product;
+import com.umc.lifesharing.user.entity.enum_class.SocialType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -24,6 +25,7 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
+    @Column(unique = true)
     private String email;
 
     private String password;
@@ -38,6 +40,10 @@ public class User {
     @ColumnDefault("0")
     @Builder.Default
     private Long point = 0L;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private SocialType socialType = SocialType.LIFESHARING;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Product> productList = new ArrayList<>();

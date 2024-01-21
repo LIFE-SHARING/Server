@@ -1,11 +1,12 @@
-package com.umc.lifesharing.login;
+package com.umc.lifesharing.user.social;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
-@Component
-@ConfigurationProperties(prefix = "auth.oidc.kakao")
+@Configuration
+@ConfigurationProperties(prefix = "kakao")
 @Data
 public class KakaoProperties {
     String restApiKey;

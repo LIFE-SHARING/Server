@@ -1,7 +1,5 @@
-package com.umc.lifesharing.login.dto;
+package com.umc.lifesharing.user.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

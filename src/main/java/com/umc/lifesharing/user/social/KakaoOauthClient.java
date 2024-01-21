@@ -1,6 +1,6 @@
-package com.umc.lifesharing.login;
+package com.umc.lifesharing.user.social;
 
-import com.umc.lifesharing.login.dto.OIDCPublicKeysResponse;
+import com.umc.lifesharing.user.dto.OIDCPublicKeysResponse;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
