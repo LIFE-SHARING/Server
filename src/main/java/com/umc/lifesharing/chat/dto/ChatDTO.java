@@ -10,7 +10,6 @@ import java.util.UUID;
 public class ChatDTO {
 
     @Getter
-    @Setter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
@@ -21,7 +20,6 @@ public class ChatDTO {
     }
 
     @Getter
-    @Setter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
