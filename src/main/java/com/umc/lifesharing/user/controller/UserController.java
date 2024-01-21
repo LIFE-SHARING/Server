@@ -6,6 +6,7 @@ import com.umc.lifesharing.user.dto.UserRequestDTO;
 import com.umc.lifesharing.user.dto.UserResponseDTO;
 import com.umc.lifesharing.user.service.UserQueryService;
 import com.umc.lifesharing.user.service.UserService;
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,7 @@ public class UserController {
     private final UserService userService;
     private final UserQueryService userQueryService;
 
-    @GetMapping("/user/login")
+    @PostMapping("/user/login")
     public ApiResponse<UserResponseDTO.ResponseDTO> login(@Valid @RequestBody UserRequestDTO.LoginDTO loginDTO) {
         return ApiResponse.onSuccess(userService.login(loginDTO));
     }
@@ -29,7 +30,7 @@ public class UserController {
 
     @PostMapping("/user/join")
     public ApiResponse<UserResponseDTO.ResponseDTO> join(@Valid @RequestBody UserRequestDTO.JoinDTO joinDTO,
-                                                         @RequestParam(value = "multipartFile") MultipartFile multipartFile) {
+                                                         @Nullable @RequestParam(value = "multipartFile") MultipartFile multipartFile) {
         return ApiResponse.onSuccess(userService.join(joinDTO/*, multipartFile*/));
     }
 
