@@ -34,7 +34,7 @@ public class ProductResponseDTO {
     public static class ProductPreViewDTO{
         Long productId;
         String name;
-//        String location;  //사용자로부터 위치 정보를 가져와야함
+        String location;  //사용자로부터 위치 정보를 가져와야함
         Integer deposit;
         Integer dayPrice;
         Integer score;
@@ -61,6 +61,7 @@ public class ProductResponseDTO {
         Integer reviewCount;
         Integer deposit;
         Integer dayPrice;
+        Integer hourPrice;
         Boolean isLiked; //찜여부
         String content;
         List<ReviewListDTO> reviewList;   //리뷰 리스트를 출력해야함

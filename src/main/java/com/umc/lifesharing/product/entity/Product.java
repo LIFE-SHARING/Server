@@ -67,9 +67,9 @@ public class Product extends BaseEntity {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<Review> reviewList = new ArrayList<>();
 
-    @Builder.Default
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductImage> images = new ArrayList<>();   //이미지를 리스트 형태로 받아와야함
+//    @Builder.Default
+//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<ProductImage> images = new ArrayList<>();   //이미지를 리스트 형태로 받아와야함
 
     @Builder.Default
     @OneToMany(mappedBy = "product", orphanRemoval = true)
@@ -80,8 +80,8 @@ public class Product extends BaseEntity {
     private List<Heart> heartListList = new ArrayList<>();   
 
     //임시대책
-//    @ElementCollection
-//    private List<String> image_url;
+    @ElementCollection
+    private List<String> image_url;
 
     public void setUser(User user){
         this.user = user;

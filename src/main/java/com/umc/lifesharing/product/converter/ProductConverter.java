@@ -58,6 +58,7 @@ public class ProductConverter {
                 .reviewCount(product.getReviewCount())
                 .deposit(product.getDeposit())
                 .dayPrice(product.getDayPrice())
+                .hourPrice(product.getHourPrice())
                 .content(product.getContent())
                 .reviewList(reviewList)
 //                찜여부
@@ -72,6 +73,7 @@ public class ProductConverter {
                 .productId(product.getId())
                 .name(product.getName())
                 .score(product.getScore())
+                .location("사용자로부터 받아오기")
                 .reviewCount(product.getReviewCount())
                 .dayPrice(product.getDayPrice())
                 .deposit(product.getDeposit())

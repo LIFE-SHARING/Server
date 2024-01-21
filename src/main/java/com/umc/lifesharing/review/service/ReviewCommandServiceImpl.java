@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -26,7 +28,7 @@ public class ReviewCommandServiceImpl implements ReviewCommandService{
     private final ProductCommandServiceImpl productCommandService;
 
     @Override
-    public Review reviewWrite(Long userId, Long productId, ReviewRequestDTO.ReviewCreateDTO request) {
+    public Review reviewWrite(Long userId, Long productId, ReviewRequestDTO.ReviewCreateDTO request, List<String> uploadedFileNames) {
         Review newReview = ReviewConverter.toReview(request);
 
         Product product = productRepository.findById(productId).get();
@@ -34,6 +36,7 @@ public class ReviewCommandServiceImpl implements ReviewCommandService{
 
         newReview.setProduct(product);
         newReview.setUser(user);
+        newReview.setImageUrl(uploadedFileNames);
 
         // 해당 제품의 score 업데이트
         productCommandService.updateProductScore(productId, request.getScore());

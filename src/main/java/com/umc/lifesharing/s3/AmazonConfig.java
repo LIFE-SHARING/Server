@@ -1,4 +1,4 @@
-package com.umc.lifesharing.config;
+package com.umc.lifesharing.s3;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -24,12 +24,6 @@ public class AmazonConfig {
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
-
-    @Value("${cloud.aws.s3.path.review}")
-    private String review;
-
-    @Value("${cloud.aws.s3.path.product}")
-    private String product;
 
     @Bean
     public AmazonS3Client amazonS3Client() {

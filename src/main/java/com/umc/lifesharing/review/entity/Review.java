@@ -13,6 +13,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @DynamicUpdate
 @DynamicInsert
 @Builder
@@ -33,6 +34,8 @@ public class Review extends BaseEntity {
     private Integer lentDay;
 
     @ElementCollection
+    @CollectionTable(name = "review_image_url", joinColumns = @JoinColumn(name = "review_id"))
+    @Column(name = "image_url")
     private List<String> imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -50,5 +53,6 @@ public class Review extends BaseEntity {
     public void setProduct(Product product){
         this.product = product;
     }
+
 
 }
