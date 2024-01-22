@@ -1,6 +1,7 @@
 package com.umc.lifesharing.chat.entity;
 
 
+import com.umc.lifesharing.chat.entity.common.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,15 +17,18 @@ import org.hibernate.annotations.DynamicUpdate;
 @AllArgsConstructor
 @DynamicInsert
 @DynamicUpdate
-public class Chat {
+public class Chat extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    // 나중에 채팅방과 연동 에정
-    private String roomId;
+    // sql 호출을 줄이기 위해 id만 저장.
+    private Long roomId;
 
-    // 나중에 유저랑 연동 예정
-    private String sender;
+    // sql 호출을 줄이기 위해 id만 저장.
+    private Long sender;
+
     private String message;
+
+
 }

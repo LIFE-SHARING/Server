@@ -12,15 +12,15 @@ import org.hibernate.annotations.DynamicUpdate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class ChatRoom {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    // 유저로 수정 예정
-    //@ManyToOne(fetch = FetchType.LAZY)
-    private Long sender;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User sender;
 
-    //@ManyToOne(fetch = FetchType.LAZY)
-    private Long receiver;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User receiver;
+
+
 }
