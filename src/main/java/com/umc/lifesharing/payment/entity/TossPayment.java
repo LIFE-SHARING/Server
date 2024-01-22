@@ -2,6 +2,7 @@ package com.umc.lifesharing.payment.entity;
 
 import com.umc.lifesharing.payment.dto.TossPaymentReqDto;
 import com.umc.lifesharing.payment.entity.enum_class.Method;
+import com.umc.lifesharing.payment.entity.enum_class.PaymentType;
 import com.umc.lifesharing.reservation.entity.common.BaseEntity;
 import com.umc.lifesharing.user.entity.User;
 import jakarta.persistence.*;
@@ -26,6 +27,9 @@ public class TossPayment extends BaseEntity {
     @Column(nullable = false, name = "method")
     @Enumerated(EnumType.STRING)
     private Method method;              // 결제 방법
+    @Column(nullable = false, name = "payment_type")
+    @Enumerated(EnumType.STRING)
+    private PaymentType paymentType;    // 결제 유형
     @Column(nullable = false, name = "pay_amount")
     private Long amount;                // 총 결제 금액
     @Column(nullable = false, name = "pay_name")
@@ -45,18 +49,6 @@ public class TossPayment extends BaseEntity {
     @Column(name = "cancel_reason")
     private String cancelReason;        // 취소 사유
 
-    public TossPaymentReqDto toPaymentResDto() {
-        return TossPaymentReqDto.builder()
-                .payType(String.valueOf(method))
-                .amount(amount)
-                .orderName(orderName)
-                .orderId(orderId)
-                .userEmail(user.getEmail())
-                .userName(user.getName())
-                .createdAt(String.valueOf(getCreatedAt()))
-                .cancelYN(false)
-                .failReason(failReason)
-                .build();
-    }
+
 
 }
