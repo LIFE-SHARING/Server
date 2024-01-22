@@ -20,6 +20,7 @@ public class ChatDTO {
     }
 
     @Getter
+    @Setter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
