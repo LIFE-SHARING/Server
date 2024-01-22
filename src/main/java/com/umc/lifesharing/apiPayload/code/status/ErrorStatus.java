@@ -32,9 +32,6 @@ public enum ErrorStatus implements BaseErrorCode {
 
     CHARGE_POINT(HttpStatus.BAD_REQUEST, "PAYMENT4101", "캐쉬가 부족합니다."),
 
-    // 제품 관련 에러
-    INVALID_PRODUCT_ID(HttpStatus.BAD_REQUEST, "PRODUCT4001", "존재하지 않은 제품번호입니다."),
-
     // 예시,,,
     ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "ARTICLE4001", "게시글이 없습니다."),
 
@@ -48,8 +45,11 @@ public enum ErrorStatus implements BaseErrorCode {
 
     STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "STORE_4001","가게가 없습니다."),
     // User
-    DUPLICATED_EMAIL(HttpStatus.BAD_REQUEST, "USER_400_1", "사용자 이메일이 중복입니다."),
+    DUPLICATED_EMAIL(HttpStatus.BAD_REQUEST, "USER_400_1", "이미 존재하는 아이디입니다."),
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "USER_400_2", "사용자의 비밀번호가 잘못되었습니다."),
+    INVALID_LOGIN_TYPE(HttpStatus.BAD_REQUEST, "USER_400_3", "사용자의 로그인 타입이 잘못되었습니다. 소셜 로그인을 이용해주세요"),
+    USER_ALREADY_SUBSCRIBED(HttpStatus.BAD_REQUEST, "USER_400_4", "이미 가입된 사용자입니다."),
+
 
     USER_NOT_FOUNDED(HttpStatus.NOT_FOUND, "USER_404_1", "사용자를 찾을 수 없습니다."),
 
