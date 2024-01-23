@@ -102,10 +102,12 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
         payment.setPaymentKey(paymentKey);//추후 결제 취소 / 결제 조회
         payment.setIsSucceed(true);
         if(orderId.contains("RESERVATION-")){
+            System.out.println("RESERVATION-");
             Reservation reservation = reservationRepository.findByOrderId(payment.getOrderId())
                     .orElseThrow(() -> new ReservationHandler(ErrorStatus.ORDER_ID_NOT_FOUND));
             reservation.setStatus(Status.ACTIVE);
             reservationRepository.save(reservation);
+            System.out.println("SAVE");
         }else if(orderId.contains("POINT-")){
             payment.getUser().setPoint(payment.getUser().getPoint() + amount);
         }
@@ -120,7 +122,7 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
         if (!payment.getAmount().equals(amount)) {
             System.out.println("amount : " + amount);
             System.out.println("payment.getAmount() : " + payment.getAmount());
-            throw new PaymentHandler(ErrorStatus.PAYMENT_NOT_FOUND);
+            throw new PaymentHandler(ErrorStatus.PAYMENT_AMOUNT_EXP);
         }
         return payment;
     }
