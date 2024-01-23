@@ -15,11 +15,13 @@ import com.umc.lifesharing.validation.annotation.ExistMembers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -32,15 +34,16 @@ public class UserController {
     private final UserQueryService userQueryService;
     private final ReviewRepository reviewRepository;
 
-    @GetMapping("/user/login")
+    @PostMapping("/user/login")
     public ApiResponse<UserResponseDTO.ResponseDTO> login(@Valid @RequestBody UserRequestDTO.LoginDTO loginDTO) {
         return ApiResponse.onSuccess(userService.login(loginDTO));
     }
 
 
     @PostMapping("/user/join")
-    public ApiResponse<UserResponseDTO.ResponseDTO> join(@Valid @RequestBody UserRequestDTO.JoinDTO joinDTO) {
-        return ApiResponse.onSuccess(userService.join(joinDTO));
+    public ApiResponse<UserResponseDTO.ResponseDTO> join(@Valid @RequestBody UserRequestDTO.JoinDTO joinDTO,
+                                                         @Nullable @RequestParam(value = "multipartFile") MultipartFile multipartFile) {
+        return ApiResponse.onSuccess(userService.join(joinDTO/*, multipartFile*/));
     }
 
     // 마이 페이지에 진입했을 때

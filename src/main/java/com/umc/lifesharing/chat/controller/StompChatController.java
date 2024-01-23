@@ -13,9 +13,9 @@ public class StompChatController {
 
     private final SimpMessagingTemplate template; //특정 Broker로 메세지를 전달
     private final ChatService chatService;
-    @MessageMapping(value = "/chat/enter")
-    public void enter(ChatDTO.ChatMessageDTO message){
-        message.setMessage(message.getSender() + "님이 채팅방에 참여하였습니다.");
+    @MessageMapping(value = "/chat/start")
+    public void enter(ChatDTO.ChatStartDTO message){
+        message.setMessage(message.getSender() + "님이 " + message.getProductId() + "에 대한 상품 문의를 하였습니다.");
         template.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
     }
 

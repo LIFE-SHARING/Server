@@ -2,7 +2,7 @@ package com.umc.lifesharing.user.entity;
 
 import com.umc.lifesharing.location.entity.Location;
 import com.umc.lifesharing.product.entity.Product;
-import com.umc.lifesharing.review.entity.Review;
+import com.umc.lifesharing.user.entity.enum_class.SocialType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -30,6 +31,7 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
+    @Column(unique = true)
     private String email;
 
     private String password;
@@ -41,13 +43,20 @@ public class User {
     @Column(nullable = true)
     private String profileUrl;
 
-    private Long point;
+    @ColumnDefault("0")
+    @Builder.Default
+    private Long point = 0L;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private SocialType socialType = SocialType.LIFESHARING;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Product> productList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Location> locationList = new ArrayList<>();
+
     public void updateAddPoint(Long addPoint){
         this.point = this.point + addPoint;
     }
