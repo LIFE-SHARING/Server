@@ -2,6 +2,7 @@ package com.umc.lifesharing.product.repository;
 
 import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.product.entity.ProductCategory;
+import com.umc.lifesharing.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -41,5 +42,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     // 제품이름 + 리뷰순 필터
     List<Product> findByNameContainingOrderByReviewCountDesc(String keyword);
+
+    List<Product> findAllByUser(User user);
 
 }

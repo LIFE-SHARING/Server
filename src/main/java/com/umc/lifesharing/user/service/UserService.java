@@ -15,3 +15,4 @@ public interface UserService {
 
     List<Product> getProductList(Long memberId);
 }
+

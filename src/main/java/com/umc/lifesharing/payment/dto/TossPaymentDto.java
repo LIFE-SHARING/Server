@@ -2,6 +2,7 @@ package com.umc.lifesharing.payment.dto;
 
 import com.umc.lifesharing.payment.entity.TossPayment;
 import com.umc.lifesharing.payment.entity.enum_class.Method;
+import com.umc.lifesharing.payment.entity.enum_class.PaymentType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -20,6 +21,9 @@ public class TossPaymentDto { // 프론트에서 입력받을 때 사용
             "ACCOUNT_TRANSFER, CULTURAL_GIFT_CERTIFICATE, BOOK_GIFT_CERTIFICATE, GAME_GIFT_CERTIFICATE")
     private Method method; // 결제 방법
     @NonNull
+    @Schema(description = "결제 유형을 선택하는 칼럼입니다. enum타입으로 RESERVATION, POINT 를 입력할 수 있습니다." , nullable = false, example = "RESERVATION, POINT")
+    private PaymentType paymentType; // 결제 방법
+    @NonNull
     @Schema(description = "결제 금액" ,nullable = false, example = "10000")
     private Long amount; // 결제 금액
     @NonNull
@@ -34,7 +38,7 @@ public class TossPaymentDto { // 프론트에서 입력받을 때 사용
     @Schema(description = "실패시 반환 URL" ,nullable = true, example = "서버에서 자동으로 입력되는 값입니다.(입력X)")
     private String yourFailUrl; // 실패시 반환 URL
     @Schema(description = "성공여부" ,nullable = true, example = "서버에서 자동으로 입력되는 값입니다.(입력X)")
-    private boolean isSucceed; // 성공여부
+    private boolean isSucceed; // 성공 여부
 
     // 예약 내역을 위한 데이터
     @NonNull
@@ -51,6 +55,7 @@ public class TossPaymentDto { // 프론트에서 입력받을 때 사용
     public TossPayment toEntity() {
         return TossPayment.builder()
                 .method(method)
+                .paymentType(paymentType)
                 .amount(amount)
                 .orderName(orderName)
                 .orderId(UUID.randomUUID().toString())

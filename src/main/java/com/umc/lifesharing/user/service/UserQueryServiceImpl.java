@@ -8,9 +8,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import com.umc.lifesharing.apiPayload.code.status.ErrorStatus;
-import com.umc.lifesharing.apiPayload.exception.GeneralException;
-import com.umc.lifesharing.apiPayload.exception.handler.UserHandler;
-import com.umc.lifesharing.config.security.CustomUserDetails;
 import com.umc.lifesharing.config.security.UserAdapter;
 import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.product.repository.ProductRepository;
@@ -31,11 +28,13 @@ import org.springframework.transaction.annotation.Transactional;
 @AllArgsConstructor
 @Transactional(readOnly = true)
 @Slf4j
-public class UserQueryServiceImpl implements UserQueryService  {
+public class UserQueryServiceImpl implements UserQueryService {
     private final UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        log.info("loadUserByUsername");
+
         User user = validUserByEmail(email);
 
         return new UserAdapter(user);
@@ -43,6 +42,7 @@ public class UserQueryServiceImpl implements UserQueryService  {
 
     @Override
     public UserResponseDTO.MyPageResponseDTO getMyPage(UserAdapter userAdapter) {
+        log.info("getMyPage");
         User user = userRepository.findByEmail(userAdapter.getUser().getEmail()).get();
 
         return UserConverter.toMyPageResponseDTO(user);
@@ -50,6 +50,7 @@ public class UserQueryServiceImpl implements UserQueryService  {
 
     @Override
     public UserResponseDTO.UserInfoResponseDTO getUserInfo(UserAdapter userAdapter) {
+        log.info("getUserInfo");
         User user = userRepository.findByEmail(userAdapter.getUser().getEmail()).get();
 
         return UserConverter.toUserInfoResponseDTO(user);
@@ -57,6 +58,7 @@ public class UserQueryServiceImpl implements UserQueryService  {
   
     // email(username)로 user를 찾는 메서드
     public User validUserByEmail(String email) throws UsernameNotFoundException {
+        log.info("validUserByEmail");
         User user = userRepository.findByEmail(email).get();
         if(user == null)
             throw new UsernameNotFoundException(ErrorStatus.MEMBER_NOT_FOUND.getMessage());
