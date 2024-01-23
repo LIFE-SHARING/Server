@@ -34,6 +34,23 @@ public class UserController {
         return ApiResponse.onSuccess(userService.join(joinDTO/*, multipartFile*/));
     }
 
+//    @PostMapping("/user/check-email")
+//    public ApiResponse<Boolean> checkEamil(@RequestBody String email) {
+//        return ApiResponse.onSuccess(userQueryService.checkEmail(email));
+//    }
+
+    @PostMapping("/user/check-nickname")
+    public ApiResponse<UserResponseDTO.CheckNicknameResponseDTO> existNickname(@RequestBody UserRequestDTO.CheckNickname checkNickname) {
+        return ApiResponse.onSuccess(userQueryService.existNickname(checkNickname));
+    }
+
+    // TODO: 전화번호 받는 거
+//    @PostMapping("/user/phone")
+//    public ApiResponse<UserResponseDTO.ResponseDTO> login(@AuthenticationPrincipal UserAdapter userAdapter,
+//                                                          @RequestBody String phone) {
+//        return ApiResponse.onSuccess(userService.(phone));
+//    }
+
     // 마이 페이지에 진입했을 때
     @GetMapping("/user/my-page")
     public ApiResponse<UserResponseDTO.MyPageResponseDTO> getMyPage(@AuthenticationPrincipal UserAdapter userAdapter) {

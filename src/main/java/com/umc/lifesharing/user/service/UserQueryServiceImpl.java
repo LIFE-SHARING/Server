@@ -2,6 +2,7 @@ package com.umc.lifesharing.user.service;
 
 import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.product.entity.ProductStatus;
+import com.umc.lifesharing.user.dto.UserRequestDTO;
 import lombok.RequiredArgsConstructor;
 import java.util.Collections;
 import java.util.List;
@@ -62,6 +63,18 @@ public class UserQueryServiceImpl implements UserQueryService {
         return userRepository.findById(id);
     }
 
+//    @Override
+//    public Boolean checkEmail(String email) {
+//        log.info("checkEmail " + email);
+//        return isDuplication(email);
+//    }
+
+    @Override
+    public UserResponseDTO.CheckNicknameResponseDTO existNickname(UserRequestDTO.CheckNickname checkNickname) {
+        return UserConverter.toCheckNicknameResponseDTO(existNickname(checkNickname.getNickname()));
+    }
+
+
     @Override
     public List<Product> getProductList(Long memberId) {
         Optional<User> mem = userRepository.findById(memberId);
@@ -75,11 +88,16 @@ public class UserQueryServiceImpl implements UserQueryService {
     }
   
     // email(username)로 user를 찾는 메서드
-    public User validUserByEmail(String email) throws UsernameNotFoundException {
+    private User validUserByEmail(String email) throws UsernameNotFoundException {
         log.info("validUserByEmail");
         User user = userRepository.findByEmail(email).get();
         if(user == null)
             throw new UsernameNotFoundException(ErrorStatus.MEMBER_NOT_FOUND.getMessage());
         return user;
     }
+
+    private boolean existNickname(String nickname) {
+        return userRepository.existsByName(nickname);
+    }
+
 }

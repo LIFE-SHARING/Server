@@ -78,4 +78,12 @@ public class UserResponseDTO {
         private LocalDateTime updatedAt;
     }
 
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class CheckNicknameResponseDTO {
+        private String message;
+        private Boolean existNickname;
+    }
 }

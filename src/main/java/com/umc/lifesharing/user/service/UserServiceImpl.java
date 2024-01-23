@@ -32,17 +32,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDTO.ResponseDTO join(UserRequestDTO.JoinDTO joinDTO) {
-//        if(isDuplicated(joinDTO.getEmail())) {
-//            throw new UserHandler(ErrorStatus.DUPLICATED_EMAIL);
-//        }
-//
-//        User user = UserConverter.toUser(joinDTO, passwordEncoder);
-//        user = userRepository.save(user);
-//
-//        String token = createToken(user);
-//
-//        return UserConverter.toResponseDTO(user, token);
-        return null;
+        if(isDuplicated(joinDTO.getEmail())) {
+            throw new UserHandler(ErrorStatus.DUPLICATED_EMAIL);
+        }
+
+        User user = UserConverter.toUser(joinDTO, passwordEncoder);
+        user = userRepository.save(user);
+
+        TokenDTO tokenDTO = jwtProvider.generateTokenByUser(user);
+
+        return UserConverter.toResponseDTO(user, tokenDTO);
     }
 
     @Override
@@ -81,9 +80,6 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-//    private String createToken(User user) {
-//        return jwt.generateToken(new CustomUserDetails(user));
-//    }
 
     private User validUserByEmail(String email)  {
         return userRepository.findByEmail(email).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));

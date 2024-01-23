@@ -68,6 +68,13 @@ public class UserRequestDTO {
 //        private String newPasswordConfirm;
     }
 
-
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class CheckNickname {
+        @NotEmpty(message = "닉네임은 필수 입력 값입니다.")
+        private String nickname;
+    }
 
 }
