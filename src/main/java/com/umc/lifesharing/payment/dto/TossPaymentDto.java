@@ -58,7 +58,7 @@ public class TossPaymentDto { // 프론트에서 입력받을 때 사용
                 .paymentType(paymentType)
                 .amount(amount)
                 .orderName(orderName)
-                .orderId(UUID.randomUUID().toString())
+                .orderId("RESERVATION-"+UUID.randomUUID().toString())
                 .isSucceed(isSucceed)
                 .build();
     }

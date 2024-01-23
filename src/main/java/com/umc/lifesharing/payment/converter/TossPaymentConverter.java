@@ -19,7 +19,7 @@ public class TossPaymentConverter {
                 .paymentType(paymentType)
                 .amount(tossPaymentDto.getAmount())
                 .orderName(tossPaymentDto.getOrderName())
-                .orderId(UUID.randomUUID().toString())
+                .orderId("POINT-"+UUID.randomUUID().toString())
                 .isSucceed(tossPaymentDto.isSucceed())
                 .build();
     }

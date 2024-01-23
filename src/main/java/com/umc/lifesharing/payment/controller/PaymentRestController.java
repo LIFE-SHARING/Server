@@ -70,10 +70,12 @@ public class PaymentRestController {
 
     @PostMapping("/toss/success")
     public ApiResponse<TossPaymentSuccessDto> tossPaymentSuccess(
-            @AuthenticationPrincipal UserAdapter userAdapter,
-            @RequestBody @Valid TossPaymentReqDto.VerifyReqDto verifyReqDto) throws IOException, ParseException {
+            @RequestParam String paymentKey,
+            @RequestParam String orderId,
+            @RequestParam Long amount
+    ) throws IOException, ParseException {
 
-        return ApiResponse.onSuccess(paymentCommandService.tossPaymentSuccess(verifyReqDto));
+        return ApiResponse.onSuccess(paymentCommandService.tossPaymentSuccess(paymentKey, orderId, amount));
     }
 
     @PostMapping("/toss/fail")
