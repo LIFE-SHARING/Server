@@ -73,18 +73,10 @@ public class HeartRestController {
     // 찜한 제품 조회
     @GetMapping("/list")
     @Operation(summary = "찜한 제품 조회 API")
-    public ApiResponse<List<ProductResponseDTO.ProductPreViewDTO>> getLikedList(@AuthenticationPrincipal UserAdapter userAdapter){
-        User loggedInUser = userAdapter.getUser();
-
+    public ApiResponse<HeartResponseDTO.HeartPreviewListDTO> getLikedList(@AuthenticationPrincipal UserAdapter userAdapter){
         // 로그인한 사용자가 찜한 제품 리스트를 가져오도록 함
-        List<Product> productList = heartCommandService.getFavoriteProducts(loggedInUser.getId());
-
-        // Product 엔티티를 응답 형태로 바꾸어줌
-        List<ProductResponseDTO.ProductPreViewDTO> likedProductsDTO = productList.stream()
-                .map(ProductConverter::convertToResponseDTO)
-                .collect(Collectors.toList());
-
-        return ApiResponse.onSuccess(likedProductsDTO);
+        List<Product> productList = heartCommandService.getFavoriteProducts(userAdapter);
+        return ApiResponse.onSuccess(HeartConverter.heartPreviewListDTO(productList));
     }
 
 }

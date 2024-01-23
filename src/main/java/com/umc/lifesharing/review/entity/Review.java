@@ -9,6 +9,7 @@ import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -33,10 +34,14 @@ public class Review extends BaseEntity {
 
     private Integer lentDay;
 
-    @ElementCollection
-    @CollectionTable(name = "review_image_url", joinColumns = @JoinColumn(name = "review_id"))
-    @Column(name = "image_url")
-    private List<String> imageUrl;
+//    @ElementCollection
+//    @CollectionTable(name = "review_image_url", joinColumns = @JoinColumn(name = "review_id"))
+//    @Column(name = "image_url")
+//    private List<String> imageUrl;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReviewImage> images = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

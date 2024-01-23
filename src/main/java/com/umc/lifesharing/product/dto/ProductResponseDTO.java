@@ -17,21 +17,12 @@ public class ProductResponseDTO {
         LocalDateTime createdAt;
     }
 
-    // 회원이 등록한 제품 조회
+    // 홈 제품 조회, 카테고리별 제품 조회
     @Builder
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ProductPreViewListDTO{
-        List<ProductResponseDTO.ProductPreViewDTO> productList;
-    }
-
-    // 회원 등록 제품 조회 API, 카테고리 제품 조회 API 에 사용
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ProductPreViewDTO{
+    public static class HomeResultDTO{
         Long productId;
         String name;
         String location;  //사용자로부터 위치 정보를 가져와야함
@@ -39,9 +30,16 @@ public class ProductResponseDTO {
         Integer dayPrice;
         Integer score;
         Integer reviewCount;
-//        String image_url;  이미지 처리 방법 알아내기
+        String image_url;  //이미지 처리 방법 알아내기
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class HomePreviewListDTO{
+        List<ProductResponseDTO.HomeResultDTO> productResultDTOList;
+    }
 
     // 제품 상세 조회
     @Builder
@@ -98,7 +96,18 @@ public class ProductResponseDTO {
         Integer score;
         Integer review_count;
         Boolean isLiked;
-//        String image_url;  이미지 처리 방법 알아내기
+        String image_url;  //이미지 처리 방법 알아내기
+    }
+
+    // 제품 정보 수정
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UpdateResDTO{
+        Long productId;
+        LocalDateTime updatedAt;
     }
 
 }

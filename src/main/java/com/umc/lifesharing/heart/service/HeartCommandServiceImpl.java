@@ -1,5 +1,8 @@
 package com.umc.lifesharing.heart.service;
 
+import com.umc.lifesharing.apiPayload.code.status.ErrorStatus;
+import com.umc.lifesharing.apiPayload.exception.handler.ProductHandler;
+import com.umc.lifesharing.config.security.UserAdapter;
 import com.umc.lifesharing.heart.entity.Heart;
 import com.umc.lifesharing.heart.repository.HeartRepository;
 import com.umc.lifesharing.product.entity.Product;
@@ -53,9 +56,11 @@ public class HeartCommandServiceImpl implements HeartCommandService{
 
 
     @Override
-    public List<Product> getFavoriteProducts(Long userId) {
+    public List<Product> getFavoriteProducts(UserAdapter userAdapter) {
 
-        List<Heart> heartList = heartRepository.findByUserId(userId);
+        Long userId = userAdapter.getUser().getId();
+
+        List<Heart> heartList = heartRepository.findByUserIdOrderByCreatedAtDesc(userId);
 
         return heartList.stream()
                 .map(Heart::getProduct)

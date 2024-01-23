@@ -34,23 +34,21 @@ public class ReviewRestController {
     // 리뷰 등록 API
     @PostMapping("/write/{productId}")
     @Operation(summary = "리뷰 작성 API")
-    public ApiResponse<ReviewResponseDTO.ReviewCreateResultDTO> createReview(
-            @ExistProducts @PathVariable(name = "productId") Long productId,
-            @AuthenticationPrincipal UserAdapter userAdapter,
-            @Valid @RequestPart(name = "request") ReviewRequestDTO.ReviewCreateDTO request,
-            @RequestPart(name = "files") List<MultipartFile> files) {
-
-        User loggedInUser = userAdapter.getUser();
-
+    public ApiResponse<ReviewResponseDTO.ReviewCreateResultDTO> createReview(@ExistProducts @PathVariable(name = "productId") Long productId, @AuthenticationPrincipal UserAdapter userAdapter,
+                                                                             @Valid @RequestPart(name = "request") ReviewRequestDTO.ReviewCreateDTO request, @RequestPart(name = "files") List<MultipartFile> files) {
         // 파일 업로드 처리
         List<String> uploadedFileNames = awsS3Service.uploadReviewFiles(files);
-
         // 리뷰 작성 및 파일명 등록
-        //request.setImageUrl(uploadedFileNames); // 파일명을 DTO에 추가
-        Review review = reviewCommandService.reviewWrite(loggedInUser.getId(), productId, request, uploadedFileNames);
+        Review review = reviewCommandService.reviewWrite(userAdapter, productId, request, uploadedFileNames);
 
         return ApiResponse.onSuccess(ReviewConverter.toReviewResultDTO(review));
     }
 
-
+    // 리뷰 리스트
+    @GetMapping("/user-list")
+    @Operation(summary = "사용자 리뷰 목록 조회 API")
+    public ApiResponse<ReviewResponseDTO.UserReviewListDTO> getReviewList(@AuthenticationPrincipal UserAdapter userAdapter){
+        List<Review> reviewList = reviewCommandService.getUserReview(userAdapter);
+        return ApiResponse.onSuccess(ReviewConverter.toUserReviewList(reviewList));
+    }
 }

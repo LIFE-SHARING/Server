@@ -1,5 +1,6 @@
 package com.umc.lifesharing.heart.service;
 
+import com.umc.lifesharing.config.security.UserAdapter;
 import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.user.entity.User;
 
@@ -10,5 +11,5 @@ public interface HeartCommandService {
     boolean addHeart(User user, Product product);
     boolean removeHeart(User user, Product product);
 
-    List<Product> getFavoriteProducts(Long userId);
+    List<Product> getFavoriteProducts(UserAdapter userAdapter);
 }

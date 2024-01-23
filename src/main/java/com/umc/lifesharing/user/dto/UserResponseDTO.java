@@ -7,13 +7,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.time.LocalDateTime;
 
 
 public class UserResponseDTO {
 
-    // 회원이 등록한 제품을 조회할 것임
+    // 회원이 등록한 제품 조회
     @Builder
     @Getter
     @NoArgsConstructor
@@ -26,6 +28,7 @@ public class UserResponseDTO {
         Integer reviewCount;
         Integer deposit;
         Integer dayPrice;
+        String imageUrl;
     }
 
     @Builder
@@ -78,5 +81,4 @@ public class UserResponseDTO {
         private Boolean isChanged;
         private LocalDateTime updatedAt;
     }
-
 }
