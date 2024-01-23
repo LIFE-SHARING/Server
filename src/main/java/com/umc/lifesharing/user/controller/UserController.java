@@ -2,10 +2,19 @@ package com.umc.lifesharing.user.controller;
 
 import com.umc.lifesharing.apiPayload.ApiResponse;
 import com.umc.lifesharing.config.security.UserAdapter;
+import com.umc.lifesharing.product.entity.Product;
+import com.umc.lifesharing.review.entity.Review;
+import com.umc.lifesharing.review.rerpository.ReviewRepository;
+import com.umc.lifesharing.user.converter.UserConverter;
 import com.umc.lifesharing.user.dto.UserRequestDTO;
 import com.umc.lifesharing.user.dto.UserResponseDTO;
+import com.umc.lifesharing.user.entity.User;
 import com.umc.lifesharing.user.service.UserQueryService;
 import com.umc.lifesharing.user.service.UserService;
+import com.umc.lifesharing.validation.annotation.ExistMembers;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -14,6 +23,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping
@@ -21,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
     private final UserService userService;
     private final UserQueryService userQueryService;
+    private final ReviewRepository reviewRepository;
 
     @PostMapping("/user/login")
     public ApiResponse<UserResponseDTO.ResponseDTO> login(@Valid @RequestBody UserRequestDTO.LoginDTO loginDTO) {
@@ -60,4 +72,15 @@ public class UserController {
 //        log.info(userAdapter.getPassword());
 //        return ApiResponse.onSuccess(userAdapter.getUsername());
 //    }
+
+    // 회원이 등록한 제품 목록
+    @GetMapping("/user/products")
+    @Operation(summary = "회원이 등록한 제품 조회 API")
+    public ApiResponse<UserResponseDTO.ProductPreviewListDTO> getUserProductList(@AuthenticationPrincipal UserAdapter userAdapter){
+        // 현재 로그인한 사용자의 정보
+        User loggedInUser = userAdapter.getUser();
+        List<Product> productList = userService.getProductList(loggedInUser.getId());
+
+        return ApiResponse.onSuccess(UserConverter.productPreviewListDTO(productList));
+    }
 }
