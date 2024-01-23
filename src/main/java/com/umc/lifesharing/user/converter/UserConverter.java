@@ -45,7 +45,6 @@ public class UserConverter {
                 .password(passwordEncoder.encode(joinDTO.getPassword()))
                 .phone(joinDTO.getPhone())
                 .name(joinDTO.getName())
-                .socialType(SocialType.LIFESHARING)
                 .build();
     }
 
