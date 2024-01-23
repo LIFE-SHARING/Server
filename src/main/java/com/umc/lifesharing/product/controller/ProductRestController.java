@@ -2,7 +2,6 @@ package com.umc.lifesharing.product.controller;
 
 import com.umc.lifesharing.apiPayload.ApiResponse;
 import com.umc.lifesharing.apiPayload.code.status.ErrorStatus;
-import com.umc.lifesharing.config.security.JwtUtil;
 import com.umc.lifesharing.config.security.UserAdapter;
 import com.umc.lifesharing.heart.repository.HeartRepository;
 import com.umc.lifesharing.product.converter.ProductConverter;

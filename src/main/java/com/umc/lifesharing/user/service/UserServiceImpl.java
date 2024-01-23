@@ -3,7 +3,6 @@ package com.umc.lifesharing.user.service;
 import com.umc.lifesharing.apiPayload.code.status.ErrorStatus;
 import com.umc.lifesharing.apiPayload.exception.handler.UserHandler;
 import com.umc.lifesharing.config.security.CustomUserDetails;
-import com.umc.lifesharing.config.security.JwtUtil;
 import com.umc.lifesharing.config.security.PasswordEncoderConfig;
 import com.umc.lifesharing.config.security.UserAdapter;
 import com.umc.lifesharing.product.entity.Product;
