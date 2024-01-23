@@ -44,7 +44,7 @@ public class AwsS3Service {
         List<String> fileNameList = new ArrayList<>();
 
         multipartFiles.forEach(file -> {
-            String fileName = path + "/" + createFileName(file.getOriginalFilename());
+            String fileName = "https://lifesharing.s3.ap-northeast-2.amazonaws.com/" + path + "/" + createFileName(file.getOriginalFilename());
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentLength(file.getSize());
             objectMetadata.setContentType(file.getContentType());

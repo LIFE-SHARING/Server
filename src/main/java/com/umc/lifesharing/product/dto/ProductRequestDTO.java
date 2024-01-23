@@ -30,8 +30,18 @@ public class ProductRequestDTO {
         Integer deposit;
         @NotNull
         String lendingPeriod;
-//        @NotNull
-        List<String> imageUrl;
+    }
 
+    @Getter
+    @Setter
+    public static class UpdateProductDTO{
+        @ExistCategories
+        Long categoryId;
+        String name;
+        String content;
+        Integer dayPrice;
+        Integer hourPrice;
+        Integer deposit;
+        String lendingPeriod;
     }
 }

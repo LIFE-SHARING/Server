@@ -3,6 +3,8 @@ package com.umc.lifesharing.user.controller;
 import com.umc.lifesharing.apiPayload.ApiResponse;
 import com.umc.lifesharing.config.security.UserAdapter;
 import com.umc.lifesharing.product.entity.Product;
+import com.umc.lifesharing.review.entity.Review;
+import com.umc.lifesharing.review.rerpository.ReviewRepository;
 import com.umc.lifesharing.user.converter.UserConverter;
 import com.umc.lifesharing.user.dto.UserRequestDTO;
 import com.umc.lifesharing.user.dto.UserResponseDTO;
@@ -28,6 +30,7 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final UserQueryService userQueryService;
+    private final ReviewRepository reviewRepository;
 
     @GetMapping("/user/login")
     public ApiResponse<UserResponseDTO.ResponseDTO> login(@Valid @RequestBody UserRequestDTO.LoginDTO loginDTO) {
@@ -70,15 +73,11 @@ public class UserController {
     // 회원이 등록한 제품 목록
     @GetMapping("/user/products")
     @Operation(summary = "회원이 등록한 제품 조회 API")
-    public ApiResponse<UserResponseDTO.ProductPreviewListDTO> getUserProductList(
-            @AuthenticationPrincipal UserAdapter userAdapter){
-
+    public ApiResponse<UserResponseDTO.ProductPreviewListDTO> getUserProductList(@AuthenticationPrincipal UserAdapter userAdapter){
         // 현재 로그인한 사용자의 정보
         User loggedInUser = userAdapter.getUser();
+        List<Product> productList = userService.getProductList(loggedInUser.getId());
 
-        List<Product> productList = userQueryService.getProductList(loggedInUser.getId());
-
-        UserResponseDTO.ProductPreviewListDTO productPreviewListDTO = UserConverter.productPreviewListDTO(productList);
-        return ApiResponse.onSuccess(productPreviewListDTO);
+        return ApiResponse.onSuccess(UserConverter.productPreviewListDTO(productList));
     }
 }

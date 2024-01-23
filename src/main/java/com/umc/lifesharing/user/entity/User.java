@@ -47,8 +47,7 @@ public class User {
     private List<Product> productList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Location> locationList = new ArrayList<>()
-            ;
+    private List<Location> locationList = new ArrayList<>();
     public void updateAddPoint(Long addPoint){
         this.point = this.point + addPoint;
     }

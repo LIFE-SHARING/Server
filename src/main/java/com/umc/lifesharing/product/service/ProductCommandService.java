@@ -11,7 +11,7 @@ import java.util.List;
 public interface ProductCommandService {
 
     // 제품 등록
-    Product ProductRegister(ProductRequestDTO.RegisterProductDTO request, User loggedInUser);
+    Product ProductRegister(ProductRequestDTO.RegisterProductDTO request, UserAdapter userAdapter, List<String> uploadedFileNames);
 
     // 제품 삭제
     void deleteProduct(Long productId, Long userId);
@@ -27,4 +27,13 @@ public interface ProductCommandService {
 
     // 별점 평균 업데이트
     void updateProductScore(Long productId, Integer newScore);
+
+    // 제품 정보 수정
+    Product updateProduct(Long productId, ProductRequestDTO.UpdateProductDTO request, UserAdapter userAdapter);
+
+    // 홈에서 필터별 제품 조회
+    List<Product> getHomeProduct(String filter);
+
+    // 제품 검색 필터별 조회
+    List<Product> getSearchProduct(String filter, String keyword);
 }

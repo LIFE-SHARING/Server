@@ -1,10 +1,14 @@
-package com.umc.lifesharing.product.entity;
+package com.umc.lifesharing.review.entity;
 
+import com.umc.lifesharing.product.entity.Product;
+import com.umc.lifesharing.product.entity.ProductImage;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -14,7 +18,8 @@ import org.hibernate.annotations.DynamicUpdate;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class ProductImage {
+public class ReviewImage {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,11 +28,12 @@ public class ProductImage {
     private String imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    @JoinColumn(name = "review_id", nullable = false)
+    private Review review;
 
-    public static ProductImage create(String imageUrl) {
-        return ProductImage.builder()
+
+    public static ReviewImage create(String imageUrl) {
+        return ReviewImage.builder()
                 .imageUrl(imageUrl)
                 .build();
     }

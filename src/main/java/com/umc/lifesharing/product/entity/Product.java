@@ -67,9 +67,9 @@ public class Product extends BaseEntity {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<Review> reviewList = new ArrayList<>();
 
-//    @Builder.Default
-//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<ProductImage> images = new ArrayList<>();   //이미지를 리스트 형태로 받아와야함
+    @Builder.Default
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductImage> images = new ArrayList<>();   //이미지를 리스트 형태로 받아와야함
 
     @Builder.Default
     @OneToMany(mappedBy = "product", orphanRemoval = true)
@@ -79,9 +79,11 @@ public class Product extends BaseEntity {
     @OneToMany(mappedBy = "product", orphanRemoval = true)
     private List<Heart> heartListList = new ArrayList<>();   
 
-    //임시대책
-    @ElementCollection
-    private List<String> image_url;
+//    // 아마존 S3
+//    @ElementCollection
+//    @CollectionTable(name = "product_image_url", joinColumns = @JoinColumn(name = "product_id"))
+//    @Column(name = "image_url")
+//    private List<String> image_url;
 
     public void setUser(User user){
         this.user = user;
@@ -90,5 +92,4 @@ public class Product extends BaseEntity {
     public void setCategory(ProductCategory category){
         this.category = category;
     }
-
 }
