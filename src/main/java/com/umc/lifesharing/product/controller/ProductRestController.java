@@ -2,7 +2,6 @@ package com.umc.lifesharing.product.controller;
 
 import com.umc.lifesharing.apiPayload.ApiResponse;
 import com.umc.lifesharing.apiPayload.code.status.ErrorStatus;
-import com.umc.lifesharing.config.security.JwtUtil;
 import com.umc.lifesharing.config.security.UserAdapter;
 import com.umc.lifesharing.heart.repository.HeartRepository;
 import com.umc.lifesharing.product.converter.ProductConverter;
@@ -80,10 +79,18 @@ public class ProductRestController {
     @Operation(summary = "제품 정보 수정 API")
     @Parameter(name = "productId", description = "제품 번호를 넣어주세요.")
     public ApiResponse<ProductResponseDTO.UpdateResDTO> toUpdateProduct(@PathVariable(name = "productId") Long productId, @RequestBody ProductRequestDTO.UpdateProductDTO request,
-                                                                        @AuthenticationPrincipal UserAdapter userAdapter){
+                                                                         @AuthenticationPrincipal UserAdapter userAdapter){
         Product updateProduct = productCommandService.updateProduct(productId, request, userAdapter);
         return ApiResponse.onSuccess(ProductConverter.updateResDTO(updateProduct));
     }
+
+    // 제품 이미지 수정 API 
+//    @PatchMapping("/update/{productId}/image")
+//    @Operation(summary = "제품 이미지 수정 API")
+//    @Parameter(name = "productId", description = "제품 번호를 넣어주세요.")
+//    public ApiResponse<ProductResponseDTO.UpdateResDTO> updateProductImage(@RequestParam(name = "productId") Long productId, @RequestParam List<MultipartFile> image){
+//
+//    }
 
     // 카테고리별 제품 조회 API
     @GetMapping("/category")

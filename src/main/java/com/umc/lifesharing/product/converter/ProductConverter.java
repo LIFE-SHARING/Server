@@ -8,6 +8,8 @@ import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.product.entity.ProductImage;
 import com.umc.lifesharing.review.entity.Review;
 import com.umc.lifesharing.review.entity.ReviewImage;
+import org.springframework.security.core.parameters.P;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -70,7 +72,7 @@ public class ProductConverter {
 //                .mapInfo(generateMapInfo(product.getUser())
                 .build();
     }
-
+    
     // 제품 검색 시 응답
     public static ProductResponseDTO.SearchListDTO searchResultDTO(Product product){
 
