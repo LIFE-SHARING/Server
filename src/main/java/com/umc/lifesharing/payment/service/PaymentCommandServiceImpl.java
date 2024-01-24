@@ -96,18 +96,20 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
 
     @Transactional // 결제 요청 성공시
     @Override
-    public TossPaymentSuccessDto tossPaymentSuccess(TossPaymentReqDto.VerifyReqDto verifyReqDto) throws IOException, ParseException {
-        TossPayment payment = verifyPayment(verifyReqDto.getOrderId(), verifyReqDto.getAmount());
-        TossPaymentSuccessDto result = requestPaymentAccept(verifyReqDto);
-        payment.setPaymentKey(verifyReqDto.getPaymentKey());//추후 결제 취소 / 결제 조회
+    public TossPaymentSuccessDto tossPaymentSuccess(String paymentKey, String orderId, Long amount) throws IOException, ParseException {
+        TossPayment payment = verifyPayment(orderId, amount);
+        TossPaymentSuccessDto result = requestPaymentAccept(paymentKey, orderId, amount);
+        payment.setPaymentKey(paymentKey);//추후 결제 취소 / 결제 조회
         payment.setIsSucceed(true);
-        if(verifyReqDto.getPaymentType() == PaymentType.RESERVATION){
+        if(orderId.contains("RESERVATION-")){
+            System.out.println("RESERVATION-");
             Reservation reservation = reservationRepository.findByOrderId(payment.getOrderId())
                     .orElseThrow(() -> new ReservationHandler(ErrorStatus.ORDER_ID_NOT_FOUND));
             reservation.setStatus(Status.ACTIVE);
             reservationRepository.save(reservation);
-        }else if(verifyReqDto.getPaymentType() == PaymentType.POINT){
-            payment.getUser().setPoint(payment.getUser().getPoint() + verifyReqDto.getAmount());
+            System.out.println("SAVE");
+        }else if(orderId.contains("POINT-")){
+            payment.getUser().setPoint(payment.getUser().getPoint() + amount);
         }
         //payment.getUser().setPoint(payment.getUser().getPoint() + amount);
         //payment.getUser().updateAddPoint(amount); // 포인트 추가
@@ -120,13 +122,13 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
         if (!payment.getAmount().equals(amount)) {
             System.out.println("amount : " + amount);
             System.out.println("payment.getAmount() : " + payment.getAmount());
-            throw new PaymentHandler(ErrorStatus.PAYMENT_NOT_FOUND);
+            throw new PaymentHandler(ErrorStatus.PAYMENT_AMOUNT_EXP);
         }
         return payment;
     }
     @Transactional
     @Override
-    public TossPaymentSuccessDto requestPaymentAccept(TossPaymentReqDto.VerifyReqDto verifyReqDto) throws IOException, ParseException {
+    public TossPaymentSuccessDto requestPaymentAccept(String key, String orderId, Long amount) throws IOException, ParseException {
 
         String secretKey = tossPaymentConfig.getTestSecretKey() + ":";
 
@@ -134,7 +136,7 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
         byte[] encodedBytes = encoder.encode(secretKey.getBytes(StandardCharsets.UTF_8));
         String authorizations = "Basic " + new String(encodedBytes, 0, encodedBytes.length);
 
-        String paymentKey = URLEncoder.encode(verifyReqDto.getPaymentKey(), StandardCharsets.UTF_8);
+        String paymentKey = URLEncoder.encode(key, StandardCharsets.UTF_8);
 
         URL url = new URL("https://api.tosspayments.com/v1/payments/confirm");
 
@@ -146,8 +148,8 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
 
         JSONObject obj = new JSONObject();
         obj.put("paymentKey", paymentKey);
-        obj.put("orderId", verifyReqDto.getOrderId());
-        obj.put("amount", verifyReqDto.getAmount().toString());
+        obj.put("orderId", orderId);
+        obj.put("amount", amount.toString());
 
         try (OutputStream outputStream = connection.getOutputStream()) {
             outputStream.write(obj.toString().getBytes(StandardCharsets.UTF_8));

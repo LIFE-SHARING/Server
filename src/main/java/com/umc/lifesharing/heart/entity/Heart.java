@@ -1,6 +1,7 @@
 package com.umc.lifesharing.heart.entity;
 
-import com.umc.lifesharing.chat.entity.BaseEntity;
+
+import com.umc.lifesharing.chat.entity.common.BaseEntity;
 import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.user.entity.User;
 import jakarta.persistence.*;

@@ -23,7 +23,7 @@ public class ReservationConverter {
                 .reservationId(reservation.getId())
                 .productId(reservation.getProduct().getId())
                 .productName(reservation.getProduct().getName())
-                .productImage(reservation.getProduct().getImageUrl())
+                .productImage(reservation.getProduct().getImages().get(0).getImageUrl())
                 .filter(filter)
                 .startDate(reservation.getStart_date())
                 .endDate(reservation.getEnd_date())
