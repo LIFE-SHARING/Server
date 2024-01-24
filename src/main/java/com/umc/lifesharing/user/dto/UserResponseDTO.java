@@ -29,6 +29,7 @@ public class UserResponseDTO {
         Integer deposit;
         Integer dayPrice;
         String imageUrl;
+        String rentStatus;   // 대여 여부(대여중 false / 대여가능 true)
     }
 
     @Builder

@@ -13,6 +13,6 @@ public interface UserService {
 
     UserResponseDTO.ChangePasswordResponseDTO changePassword(UserAdapter userAdapter, UserRequestDTO.ChangePasswordDTO changePasswordDTO);
 
-    List<Product> getProductList(Long memberId);
+    List<Product> getProductList(UserAdapter userAdapter, String filter);
 }
 

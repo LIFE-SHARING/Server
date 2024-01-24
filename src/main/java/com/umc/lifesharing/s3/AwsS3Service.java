@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +33,9 @@ public class AwsS3Service {
 
     private final AmazonS3 amazonS3;
 
+    @Value("${s3.url}")
+    private String url;
+
     public List<String> uploadReviewFiles(List<MultipartFile> multipartFiles){
         return uploadFiles(multipartFiles, reviewPath);
     }
@@ -44,7 +48,7 @@ public class AwsS3Service {
         List<String> fileNameList = new ArrayList<>();
 
         multipartFiles.forEach(file -> {
-            String fileName = "https://lifesharing.s3.ap-northeast-2.amazonaws.com/" + path + "/" + createFileName(file.getOriginalFilename());
+            String fileName = url + path + "/" + createFileName(file.getOriginalFilename());
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentLength(file.getSize());
             objectMetadata.setContentType(file.getContentType());
@@ -79,5 +83,44 @@ public class AwsS3Service {
     public void deleteFile(String fileName){
         amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
         System.out.println(bucket);
+    }
+
+    public void deleteProductImages(List<String> imageUrls) {
+        for (String imageUrl : imageUrls) {
+            // 각 이미지 URL에서 파일명을 추출
+            String fileName = extractFileNameFromUrl(imageUrl);
+
+            // S3에서 해당 파일을 삭제
+            amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
+        }
+    }
+
+    // 이미지 URL에서 파일명을 추출하는 메서드
+    private String extractFileNameFromUrl(String imageUrl) {
+        // URL에서 파일명을 추출하는 로직을 구현
+        // 예시: https://lifesharing.s3.ap-northeast-2.amazonaws.com/product/12345.jpg -> 12345.jpg
+
+        return imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+    }
+
+    // 이미지 리스트를 받아서, 새로 추가된 이미지는 추가하고 삭제된 이미지는 삭제함
+    public List<String> autoImagesUploadAndDelete(List<String> beforeImages, List<MultipartFile> multipartFiles, String path) {
+        // 이미지 파일 이름만 추출
+        List<String> beforeFileNames = beforeImages.stream()
+                .map(imageUrl -> extractFileNameFromUrl(imageUrl))
+                .collect(Collectors.toList());
+
+        // 새로 추가된 이미지 업로드
+        List<String> newFileNames = uploadFiles(multipartFiles, path);
+
+        // 삭제된 이미지 삭제
+        List<String> deletedFileNames = new ArrayList<>(beforeFileNames);
+        deletedFileNames.removeAll(newFileNames);
+        deleteProductImages(deletedFileNames);
+
+        // 새로운 이미지 URL 설정
+        return newFileNames.stream()
+                .map(fileName -> url + path + "/" + fileName)
+                .collect(Collectors.toList());
     }
 }

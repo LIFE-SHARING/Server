@@ -9,5 +9,5 @@ server:
 
 spring:
   profiles:
-    include: dev
+    include: secret
 

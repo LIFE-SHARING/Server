@@ -12,7 +12,6 @@ import org.hibernate.annotations.DynamicUpdate;
 @DynamicUpdate
 @DynamicInsert
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class ProductImage {
     @Id
@@ -30,5 +29,14 @@ public class ProductImage {
         return ProductImage.builder()
                 .imageUrl(imageUrl)
                 .build();
+    }
+
+    // 기본 생성자
+    public ProductImage() {
+    }
+
+    // 이미지를 받는 생성자
+    public ProductImage(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

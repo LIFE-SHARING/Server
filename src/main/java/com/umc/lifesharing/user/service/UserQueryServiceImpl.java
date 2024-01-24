@@ -1,18 +1,7 @@
 package com.umc.lifesharing.user.service;
 
-import com.umc.lifesharing.product.entity.Product;
-import com.umc.lifesharing.product.entity.ProductStatus;
-import lombok.RequiredArgsConstructor;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import com.umc.lifesharing.apiPayload.code.status.ErrorStatus;
 import com.umc.lifesharing.config.security.UserAdapter;
-import com.umc.lifesharing.product.entity.Product;
-import com.umc.lifesharing.product.repository.ProductRepository;
-import com.umc.lifesharing.product.service.ProductQueryService;
-import com.umc.lifesharing.product.service.ProductQueryServiceImpl;
 import com.umc.lifesharing.user.converter.UserConverter;
 import com.umc.lifesharing.user.dto.UserResponseDTO;
 import com.umc.lifesharing.user.entity.User;

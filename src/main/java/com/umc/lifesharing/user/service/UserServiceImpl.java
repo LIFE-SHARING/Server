@@ -2,13 +2,11 @@ package com.umc.lifesharing.user.service;
 
 import com.umc.lifesharing.apiPayload.code.status.ErrorStatus;
 import com.umc.lifesharing.apiPayload.exception.handler.UserHandler;
-import com.umc.lifesharing.config.security.CustomUserDetails;
-import com.umc.lifesharing.config.security.JwtUtil;
-import com.umc.lifesharing.config.security.PasswordEncoderConfig;
 import com.umc.lifesharing.config.security.UserAdapter;
 import com.umc.lifesharing.product.entity.Product;
-import com.umc.lifesharing.product.entity.ProductStatus;
+import com.umc.lifesharing.product.entity.enums.ProductStatus;
 import com.umc.lifesharing.config.security.*;
+import com.umc.lifesharing.product.repository.ProductRepository;
 import com.umc.lifesharing.user.converter.UserConverter;
 import com.umc.lifesharing.user.dto.UserRequestDTO;
 import com.umc.lifesharing.user.dto.UserResponseDTO;
@@ -20,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +34,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final ProductRepository productRepository;
 //    private final JwtUtil jwtUtil;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
@@ -104,14 +104,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Product> getProductList(Long memberId) {
-        Optional<User> mem = userRepository.findById(memberId);
+    public List<Product> getProductList(UserAdapter userAdapter, String filter) {
+        Long userId = userAdapter.getUser().getId();
+//        Optional<User> mem = userRepository.findById(userId.getId());
 
-        return mem.map(member -> {
-            // 회원이 가진 Product 중 상태가 "EXIST"인 것만 필터링하여 반환
-            return member.getProductList().stream()
-                    .filter(product -> ProductStatus.EXIST.equals(product.getProduct_status()))
-                    .collect(Collectors.toList());
-        }).orElse(Collections.emptyList());
+        List<Product> productList = null;
+
+        if (filter.equals("recent")){
+            productList = productRepository.findByUserIdOrderByCreatedAtDesc(userId);
+        }
+        else if (filter.equals("popular")){
+            productList = productRepository.findByUserIdOrderByScoreDesc(userId);
+        }
+        else if (filter.equals("review")){
+            productList = productRepository.findByUserIdOrderByReviewCountDesc(userId);
+        }
+
+        return productList;
+
+//        return mem.map(member -> {
+//            // 회원이 가진 Product 중 상태가 "EXIST"인 것만 필터링하여 반환
+//            return member.getProductList().stream()
+//                    .filter(product -> ProductStatus.EXIST.equals(product.getProductStatus()))
+//                    .collect(Collectors.toList());
+//        }).orElse(Collections.emptyList());
     }
 }

@@ -5,6 +5,7 @@ import com.umc.lifesharing.product.dto.ProductRequestDTO;
 import com.umc.lifesharing.product.dto.ProductResponseDTO;
 import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.user.entity.User;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -36,4 +37,6 @@ public interface ProductCommandService {
 
     // 제품 검색 필터별 조회
     List<Product> getSearchProduct(String filter, String keyword);
+
+    //void addImagesToProduct(Long productId, List<MultipartFile> images);
 }

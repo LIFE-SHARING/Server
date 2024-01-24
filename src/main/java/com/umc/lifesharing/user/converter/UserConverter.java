@@ -40,6 +40,7 @@ public class UserConverter {
                 .score(product.getScore()) //별점(평균으로 가져오도록 해야함 - 구현완료)
                 .reviewCount(product.getReviewCount()) //리뷰 개수(해당 제품에 대한 리뷰 개수를 카운트해야함 - 구현완료)
                 .location("사용자로부터 받아오기")   //위치(구현전-1월 23일)
+                .rentStatus(product.getRentStatus().name())
                 .build();
     }
 
