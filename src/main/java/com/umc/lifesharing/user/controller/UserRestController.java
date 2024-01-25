@@ -24,27 +24,27 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Validated
-@RequestMapping("/users")
+//@RequestMapping("/users")
 public class UserRestController {
 
     private final UserQueryService userQueryService;
 
     // 회원이 등록한 제품 목록
-    @GetMapping("/{userId}/products")
-    @Operation(summary = "회원이 등록한 제품 조회 API")
-    @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH003", description = " "),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "acess 토큰 만료",content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "acess 토큰 모양이 이상함",content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-    })
-    @Parameters({
-            @Parameter(name = "memberId", description = "회원의 아이디, path variable 입니다!")
-    })
-    public ApiResponse<UserResponseDTO.ProductPreviewListDTO> getProductList(
-            @ExistMembers @PathVariable(name = "memberId") Long memberId){
-        List<Product> productList = userQueryService.getProductList(memberId);
-        UserResponseDTO.ProductPreviewListDTO productPreviewListDTO = UserConverter.productPreviewListDTO(productList);
-        return ApiResponse.onSuccess(productPreviewListDTO);
-    }
+//    @GetMapping("/{userId}/products")
+//    @Operation(summary = "회원이 등록한 제품 조회 API")
+//    @ApiResponses({
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH003", description = " "),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "acess 토큰 만료",content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "acess 토큰 모양이 이상함",content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+//    })
+//    @Parameters({
+//            @Parameter(name = "memberId", description = "회원의 아이디, path variable 입니다!")
+//    })
+//    public ApiResponse<UserResponseDTO.ProductPreviewListDTO> getProductList(
+//            @ExistMembers @PathVariable(name = "memberId") Long memberId){
+//        List<Product> productList = userQueryService.getProductList(memberId);
+//        UserResponseDTO.ProductPreviewListDTO productPreviewListDTO = UserConverter.productPreviewListDTO(productList);
+//        return ApiResponse.onSuccess(productPreviewListDTO);
+//    }
 }

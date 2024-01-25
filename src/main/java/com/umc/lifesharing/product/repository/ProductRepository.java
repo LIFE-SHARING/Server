@@ -2,10 +2,12 @@ package com.umc.lifesharing.product.repository;
 
 import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.product.entity.ProductCategory;
+import com.umc.lifesharing.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -23,6 +25,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     void updateScore(@Param("productId") Long productId, @Param("newScore") Integer newScore);
 
     // 최신순 필터
+    @Transactional(readOnly = true)
     List<Product> findAllByOrderByCreatedAtDesc();
 
     // 인기순 필터
@@ -30,4 +33,16 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     // 리뷰순 필터
     List<Product> findAllByOrderByReviewCountDesc();
+
+    // 제품이름 + 최신순 필터
+    List<Product> findByNameContainingOrderByCreatedAtDesc(String keyword);
+
+    // 제품이름 + 인기순 필터
+    List<Product> findByNameContainingOrderByScoreDesc(String keyword);
+
+    // 제품이름 + 리뷰순 필터
+    List<Product> findByNameContainingOrderByReviewCountDesc(String keyword);
+
+    List<Product> findAllByUser(User user);
+
 }

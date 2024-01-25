@@ -8,6 +8,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Getter
+@Setter
 @DynamicUpdate
 @DynamicInsert
 @Builder
@@ -25,4 +26,9 @@ public class ProductImage {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    public static ProductImage create(String imageUrl) {
+        return ProductImage.builder()
+                .imageUrl(imageUrl)
+                .build();
+    }
 }

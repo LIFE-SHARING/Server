@@ -1,4 +1,4 @@
-package com.umc.lifesharing.chat.entity;
+package com.umc.lifesharing.chat.entity.common;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 public abstract class BaseEntity {
-
     @CreatedDate
     private LocalDateTime createdAt;
 

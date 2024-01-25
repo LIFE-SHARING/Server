@@ -1,8 +1,13 @@
 package com.umc.lifesharing.product.converter;
 
+import com.umc.lifesharing.apiPayload.code.status.ErrorStatus;
+import com.umc.lifesharing.apiPayload.exception.handler.ProductHandler;
 import com.umc.lifesharing.product.dto.ProductRequestDTO;
 import com.umc.lifesharing.product.dto.ProductResponseDTO;
 import com.umc.lifesharing.product.entity.Product;
+import com.umc.lifesharing.product.entity.ProductImage;
+import com.umc.lifesharing.review.entity.Review;
+import com.umc.lifesharing.review.entity.ReviewImage;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,8 +15,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ProductConverter {
-    public static Product toProduct(ProductRequestDTO.RegisterProductDTO request){
 
+    public static Product toProduct(ProductRequestDTO.RegisterProductDTO request){
         return Product.builder()
                 .name(request.getName())
                 .content(request.getContent())
@@ -19,11 +24,9 @@ public class ProductConverter {
                 .hourPrice(request.getHourPrice())
                 .deposit(request.getDeposit())
                 .lendingPeriod(request.getLendingPeriod())
-//                .image_url(new ArrayList<>())  // 1/10일 - 이미지도 리스트 형태로 받아와야함(구현전)
                 .build();
     }
-
-
+    
     // 제품 등록 응답
     public static ProductResponseDTO.RegisterResultDTO toRegisterResultDTO(Product product){
         return ProductResponseDTO.RegisterResultDTO.builder()
@@ -41,11 +44,13 @@ public class ProductConverter {
                         review.getUser().getId(),
                         review.getCreatedAt(),
                         review.getLentDay(),
-                        review.getImageUrl(),
+                        getReviewImageUrls(review),
                         review.getScore(),
                         review.getContent()
                 ))
                 .collect(Collectors.toList());
+
+        List<String> imageUrls = ProductConverter.getProductImagUrls(product);
 
         return ProductResponseDTO.ProductDetailDTO.builder()
                 .productId(product.getId())
@@ -53,44 +58,84 @@ public class ProductConverter {
                 .name(product.getName())
                 .categoryId(product.getCategory().getId())
                 .categoryName(product.getCategory().getName())
-                .imageUrl(new ArrayList<>())
+                .imageUrl(imageUrls)  // 등록된 이미지 리스트
                 .score(product.getScore())
                 .reviewCount(product.getReviewCount())
                 .deposit(product.getDeposit())
                 .dayPrice(product.getDayPrice())
+                .hourPrice(product.getHourPrice())
                 .content(product.getContent())
                 .reviewList(reviewList)
-//                찜여부
-//                .location(getLocationInfo(product.getUser()))
+                .location("사용자로부터 받아오기")
 //                .mapInfo(generateMapInfo(product.getUser())
                 .build();
     }
 
-    // Product 엔티티를 ProductResponseDTO로 변환하는 로직을 작성
-    public static ProductResponseDTO.ProductPreViewDTO convertToResponseDTO(Product product) {
-        return new ProductResponseDTO.ProductPreViewDTO(
-                product.getId(),
-                product.getName(),
-                product.getDayPrice(),
-                product.getDeposit(),
-                product.getScore(),
-                product.getReviewCount()
-                // 위치 product.get_location
-                // 나머지 필드들에 대한 매핑
-        );
+    // 제품 검색 시 응답
+    public static ProductResponseDTO.SearchListDTO searchResultDTO(Product product){
+
+        List<String> imageUrls = ProductConverter.getProductImagUrls(product);
+        // 이미지 리스트에서 첫 번째 이미지 가져오기
+        String firstImageUrl = imageUrls.isEmpty() ? null : imageUrls.get(0);
+
+        return ProductResponseDTO.SearchListDTO.builder()
+                .product_id(product.getId())
+                .name(product.getName())
+                .image_url(firstImageUrl)
+                .score(product.getScore())
+                .review_count(product.getReviewCount())
+                .day_price(product.getDayPrice())
+                .hour_price(product.getHourPrice())
+                .deposit(product.getDeposit())
+                .location("사용자로부터 받아오기")
+                .build();
     }
 
-//    public static ProductResponseDTO.MapInfoDTO generateMapInfo(Location locationInfo) {
-//        // 여기에서 위치 정보를 이용하여 지도 정보를 생성하는 로직을 구현
-//        // 생성된 지도 정보를 MapInfoDTO 객체에 담아 반환
-//        // 예시로 더미 데이터를 사용한 경우:
-//        return ProductResponseDTO.MapInfoDTO.builder()
-//                .mapImageUrl("https://example.com/map_image")
-//                // ... (다른 지도 정보 필드들)
-//                .build();
-//    }
+    // 홈 제품 조회 응답, 카테고리별 제품 조회 응답
+    public static ProductResponseDTO.HomeResultDTO getHomeAndCateProduct(Product product){
 
-//    public Location getLocationInfo(User user) {
-//        return user.getLocation();
-//    }
+        List<String> imageUrls = ProductConverter.getProductImagUrls(product);
+        // 이미지 리스트에서 첫 번째 이미지 가져오기
+        String firstImageUrl = imageUrls.isEmpty() ? null : imageUrls.get(0);
+
+        return ProductResponseDTO.HomeResultDTO.builder()
+                .productId(product.getId())
+                .name(product.getName())
+                .image_url(firstImageUrl)
+                .score(product.getScore())
+                .reviewCount(product.getReviewCount())
+                .deposit(product.getDeposit())
+                .dayPrice(product.getDayPrice())
+                .location("사용자로부터 받아오기")
+                .build();
+    }
+
+    public static ProductResponseDTO.HomePreviewListDTO homeAndCateList(List<Product> productList){
+        List<ProductResponseDTO.HomeResultDTO> homeResultDTOS = productList.stream()
+                .map(ProductConverter::getHomeAndCateProduct)
+                .collect(Collectors.toList());
+
+        return ProductResponseDTO.HomePreviewListDTO.builder()
+                .productResultDTOList(homeResultDTOS)
+                .build();
+    }
+
+    // 리뷰 이미지 가져오도록
+    private static List<String> getReviewImageUrls(Review review) {
+        return review.getImages().stream().map(ReviewImage::getImageUrl).collect(Collectors.toList());
+    }
+
+    // 제품 이미지 가져오도록
+    private static List<String> getProductImagUrls(Product product){
+        return product.getImages().stream().map(ProductImage::getImageUrl).collect(Collectors.toList());
+    }
+
+    // 제품 정보 수정 응답
+    public static ProductResponseDTO.UpdateResDTO updateResDTO(Product product){
+        return ProductResponseDTO.UpdateResDTO.builder()
+                .productId(product.getId())
+                .updatedAt(LocalDateTime.now())
+                .build();
+    }
+
 }
