@@ -2,6 +2,8 @@ package com.umc.lifesharing.user.controller;
 
 import com.umc.lifesharing.apiPayload.ApiResponse;
 import com.umc.lifesharing.config.security.UserAdapter;
+import com.umc.lifesharing.notice.dto.NoticeRequest;
+import com.umc.lifesharing.notice.dto.NoticeResponse;
 import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.review.rerpository.ReviewRepository;
 import com.umc.lifesharing.user.converter.UserConverter;
@@ -139,4 +141,17 @@ public class UserController {
 
         return ApiResponse.onSuccess(UserConverter.productPreviewListDTO(productList));
     }
+
+
+//    @GetMapping("/user/inquiry")
+//    public ApiResponse<UserResponseDTO.InquiryPreviewDTO> getUserInquiry(@AuthenticationPrincipal UserAdapter userAdapter) {
+//        return ApiResponse.onSuccess();
+//    }
+
+//    @PostMapping("/user/inquiry")
+//    public ApiResponse<UserResponseDTO.CreateInquiryDTO> createUserInquiry(@AuthenticationPrincipal UserAdapter userAdapter,
+//                                                                              @RequestPart UserRequestDTO.InquiryDTO inquiryDTO,
+//                                                                              @Nullable @RequestPart(value = "multipartFile") List<MultipartFile> multipartFile) {
+//        return ApiResponse.onSuccess();
+//    }
 }

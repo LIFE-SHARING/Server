@@ -1,6 +1,8 @@
 package com.umc.lifesharing.user.service;
 
 import com.umc.lifesharing.config.security.UserAdapter;
+import com.umc.lifesharing.notice.dto.NoticeRequest;
+import com.umc.lifesharing.notice.dto.NoticeResponse;
 import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.user.dto.UserRequestDTO;
 import com.umc.lifesharing.user.dto.UserResponseDTO;
@@ -18,5 +20,7 @@ public interface UserService {
 
     List<Product> getProductList(Long memberId);
     String getAdminAuth(UserAdapter userAdapter);
+
+//    NoticeResponse.CreateSuccessDTO createNotice(UserAdapter userAdapter, NoticeRequest.CreateDTO createDTO);
 }
 
