@@ -6,6 +6,7 @@ import com.umc.lifesharing.config.security.UserAdapter;
 import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.product.entity.ProductStatus;
 import com.umc.lifesharing.config.security.*;
+import com.umc.lifesharing.s3.AwsS3Service;
 import com.umc.lifesharing.user.converter.UserConverter;
 import com.umc.lifesharing.user.dto.UserRequestDTO;
 import com.umc.lifesharing.user.dto.UserResponseDTO;
@@ -21,9 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,6 +34,7 @@ public class UserServiceImpl implements UserService {
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
     private final RolesRepository rolesRepository;
+    private final AwsS3Service awsS3Service;
 
     @Override
     public UserResponseDTO.ResponseDTO join(UserRequestDTO.JoinDTO joinDTO, MultipartFile multipartFile) {
@@ -42,7 +42,8 @@ public class UserServiceImpl implements UserService {
             throw new UserHandler(ErrorStatus.DUPLICATED_EMAIL_OR_NICKNAME);
         }
 
-        User user = UserConverter.toUser(joinDTO, passwordEncoder);
+        String imageUrl = awsS3Service.uploadUserFiles(Arrays.asList(multipartFile));
+        User user = UserConverter.toUser(joinDTO, passwordEncoder, imageUrl);
         Roles roles = new Roles().addUser(user);
 
         rolesRepository.save(roles);

@@ -52,12 +52,13 @@ public class UserConverter {
                 .build();
     }
   
-    public static User toUser(UserRequestDTO.JoinDTO joinDTO, PasswordEncoder passwordEncoder) {
+    public static User toUser(UserRequestDTO.JoinDTO joinDTO, PasswordEncoder passwordEncoder, String imageUrl) {
         return User.builder()
                 .email(joinDTO.getEmail())
                 .password(passwordEncoder.encode(joinDTO.getPassword()))
                 .phone(joinDTO.getPhone())
                 .name(joinDTO.getName())
+                .profileUrl(imageUrl)
                 .build();
     }
 
@@ -69,6 +70,7 @@ public class UserConverter {
                 .nickname(user.getName())
 //                .locationDTO(new LocationDTO(user.getLocationList().get(0)))
                 .locationDTO(new LocationDTO("위치 관련 기능 미구현", "위치 관련 기능 미구현", "위치 관련 기능 미구현", "위치 관련 기능 미구현","위치 관련 기능 미구현","위치 관련 기능 미구현"))
+                .profileUrl(user.getProfileUrl())
                 .build();
     }
 
@@ -92,7 +94,7 @@ public class UserConverter {
                         .orElse(0)
                 ))
                 .nickname(user.getName())
-                .imageUrl("이미지 미구현")
+                .profileUrl("이미지 미구현")
                 .build();
     }
 

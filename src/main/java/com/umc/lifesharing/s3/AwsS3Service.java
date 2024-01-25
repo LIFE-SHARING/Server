@@ -30,6 +30,9 @@ public class AwsS3Service {
     @Value("${cloud.aws.s3.path.product}")
     private String productPath;
 
+    @Value("${cloud.aws.s3.path.user}")
+    private String userPath;
+
     private final AmazonS3 amazonS3;
 
     public List<String> uploadReviewFiles(List<MultipartFile> multipartFiles){
@@ -40,11 +43,15 @@ public class AwsS3Service {
         return uploadFiles(multipartFiles, productPath);
     }
 
+    public String uploadUserFiles(List<MultipartFile> multipartFiles){
+        return uploadFiles(multipartFiles, userPath).get(0);
+    }
+
     public List<String> uploadFiles(List<MultipartFile> multipartFiles, String path){
         List<String> fileNameList = new ArrayList<>();
 
         multipartFiles.forEach(file -> {
-            String fileName = "https://lifesharing.s3.ap-northeast-2.amazonaws.com/" + path + "/" + createFileName(file.getOriginalFilename());
+            String fileName = /*"https://lifesharing.s3.ap-northeast-2.amazonaws.com/" + */path + "/" + createFileName(file.getOriginalFilename());
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentLength(file.getSize());
             objectMetadata.setContentType(file.getContentType());
@@ -55,7 +62,8 @@ public class AwsS3Service {
             } catch (IOException e){
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
             }
-            fileNameList.add(fileName);
+//            fileNameList.add(fileName);
+            fileNameList.add(amazonS3.getUrl(bucket, fileName).toString().split(".com/")[1]);
         });
 
         return fileNameList;

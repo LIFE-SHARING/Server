@@ -14,6 +14,8 @@ public interface UserService {
 
     UserResponseDTO.ChangePasswordResponseDTO changePassword(UserAdapter userAdapter, UserRequestDTO.ChangePasswordDTO changePasswordDTO);
 
+//    UserResponseDTO.ChangePasswordResponseDTO changeUserInfo(UserAdapter userAdapter, UserRequestDTO.ChangePasswordDTO changePasswordDTO);
+
     List<Product> getProductList(Long memberId);
     String getAdminAuth(UserAdapter userAdapter);
 }
