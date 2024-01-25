@@ -36,4 +36,7 @@ public interface ProductCommandService {
 
     // 제품 검색 필터별 조회
     List<Product> getSearchProduct(String filter, String keyword);
+
+    // 내가 등록한 제품 조회
+    List<ProductResponseDTO.MyListDTO> getMyProduct(User user);
 }
