@@ -3,6 +3,10 @@ package com.umc.lifesharing.user.service;
 import com.umc.lifesharing.apiPayload.code.status.ErrorStatus;
 import com.umc.lifesharing.apiPayload.exception.handler.UserHandler;
 import com.umc.lifesharing.config.security.UserAdapter;
+import com.umc.lifesharing.notice.dto.NoticeRequest;
+import com.umc.lifesharing.notice.dto.NoticeResponse;
+import com.umc.lifesharing.notice.repository.NoticeRepository;
+import com.umc.lifesharing.notice.service.NoticeService;
 import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.product.entity.ProductStatus;
 import com.umc.lifesharing.config.security.*;
@@ -35,6 +39,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final RolesRepository rolesRepository;
     private final AwsS3Service awsS3Service;
+    private final NoticeService noticeService;
 
     @Override
     public UserResponseDTO.ResponseDTO join(UserRequestDTO.JoinDTO joinDTO, MultipartFile multipartFile) {
@@ -120,4 +125,8 @@ public class UserServiceImpl implements UserService {
                     .collect(Collectors.toList());
         }).orElse(Collections.emptyList());
     }
+
+//    @Override
+//    public NoticeResponse.CreateSuccessDTO createNotice(NoticeRequest.CreateDTO createDTO) {
+//    }
 }

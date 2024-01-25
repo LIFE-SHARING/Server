@@ -61,7 +61,11 @@ public enum ErrorStatus implements BaseErrorCode {
     // token
     TOKEN_NOT_EXIST(HttpStatus.BAD_REQUEST, "TOKEN_400_1", "헤더에 토큰이 존재하지 않음"),
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "TOKEN_401_1", "토큰이 만료됨"),
-    TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "TOKEN_401_2", "토큰이 유효하지 않음");
+    TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "TOKEN_401_2", "토큰이 유효하지 않음"),
+
+    PAGE_INVALID(HttpStatus.BAD_REQUEST, "PAGE_400_1", "페이지는 1이상입니다!"),
+
+    NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTICEE_400_1","공지를 찾을 수 없습니다.");
 
 
     private final HttpStatus httpStatus;
