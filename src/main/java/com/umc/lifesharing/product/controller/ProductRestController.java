@@ -134,4 +134,12 @@ public class ProductRestController {
             return ApiResponse.onSuccess(searchList);
         }
     }
+    @GetMapping("/my")
+    @Operation(summary = "제품 검색 조회 API")
+    public ApiResponse<List<ProductResponseDTO.MyListDTO>> getMyProduct(@AuthenticationPrincipal UserAdapter userAdapter){
+        List<ProductResponseDTO.MyListDTO> myProductList = productCommandService.getMyProduct(userAdapter.getUser());
+
+        return ApiResponse.onSuccess(myProductList);
+
+    }
 }
