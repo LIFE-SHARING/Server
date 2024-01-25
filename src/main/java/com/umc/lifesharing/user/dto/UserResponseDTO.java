@@ -49,7 +49,7 @@ public class UserResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Getter
-    public static class UserInfoResponseDTO {   // 로그인 회원가입 용 응답 dto
+    public static class UserInfoResponseDTO {
         private Long userId;
         private String email;
         private String nickname;
@@ -66,6 +66,7 @@ public class UserResponseDTO {
         private String nickname;    // 닉네임
         private String area;    // 읍/면/동    ex. 무거동
         private Integer score;  // 후기 평균
+        private String imageUrl;
         private Long point;
     }
 

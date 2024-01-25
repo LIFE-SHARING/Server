@@ -79,6 +79,7 @@ public class UserConverter {
                         .orElse(0)
                 ))
                 .nickname(user.getName())
+                .imageUrl("이미지 미구현")
                 .build();
     }
 
