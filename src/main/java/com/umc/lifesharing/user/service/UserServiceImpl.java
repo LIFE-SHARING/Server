@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
@@ -29,7 +30,7 @@ public class UserServiceImpl implements UserService {
     private final RolesRepository rolesRepository;
 
     @Override
-    public UserResponseDTO.ResponseDTO join(UserRequestDTO.JoinDTO joinDTO) {
+    public UserResponseDTO.ResponseDTO join(UserRequestDTO.JoinDTO joinDTO, MultipartFile multipartFile) {
         if(emailDuplicated(joinDTO.getEmail()) || nicknameDuplicated(joinDTO.getName())) {
             throw new UserHandler(ErrorStatus.DUPLICATED_EMAIL_OR_NICKNAME);
         }

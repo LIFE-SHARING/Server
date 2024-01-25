@@ -59,7 +59,7 @@ public class UserController {
     })
     public ApiResponse<UserResponseDTO.ResponseDTO> join(@Valid @RequestBody UserRequestDTO.JoinDTO joinDTO,
                                                          @Nullable @RequestParam(value = "multipartFile") MultipartFile multipartFile) {
-        return ApiResponse.onSuccess(userService.join(joinDTO/*, multipartFile*/));
+        return ApiResponse.onSuccess(userService.join(joinDTO, multipartFile));
     }
 
 
@@ -105,7 +105,7 @@ public class UserController {
     }
 
     // 사용자 정보 변경
-    @PatchMapping("/user/info")
+    @PatchMapping("/user/password")
     public ApiResponse<UserResponseDTO.ChangePasswordResponseDTO> changeUserInfo(@AuthenticationPrincipal UserAdapter userAdapter,
                                                    @Valid @RequestBody UserRequestDTO.ChangePasswordDTO changePasswordDTO) {
         return ApiResponse.onSuccess(userService.changePassword(userAdapter, changePasswordDTO));
@@ -117,7 +117,7 @@ public class UserController {
         return ApiResponse.onSuccess(userQueryService.getUserInfo(userAdapter));
     }
 
-    @PostMapping("/user/admin-role")
+    @PatchMapping("/user/admin-role")
     public ApiResponse<String> getAdminRole(@AuthenticationPrincipal UserAdapter userAdapter) {
         log.info("getAdminAuth " + userAdapter.getUser().getName());
         return ApiResponse.onSuccess(userService.getAdminAuth(userAdapter));

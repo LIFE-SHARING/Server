@@ -1,14 +1,11 @@
 package com.umc.lifesharing.reservation.entity;
 
 import com.umc.lifesharing.product.entity.Product;
-import com.umc.lifesharing.reservation.entity.enum_class.PaymentType;
-import com.umc.lifesharing.reservation.entity.common.BaseEntity;
+import com.umc.lifesharing.product.entity.common.BaseEntity;
 import com.umc.lifesharing.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
-
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 @Entity
