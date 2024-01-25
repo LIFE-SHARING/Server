@@ -1,10 +1,11 @@
 package com.umc.lifesharing.reservation.entity;
 
 import com.umc.lifesharing.product.entity.Product;
-import com.umc.lifesharing.product.entity.common.BaseEntity;
+import com.umc.lifesharing.reservation.entity.common.BaseEntity;
 import com.umc.lifesharing.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
+
 
 import java.time.LocalDateTime;
 
@@ -23,7 +24,7 @@ public class Reservation extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
 
@@ -42,5 +43,7 @@ public class Reservation extends BaseEntity {
     @Column(nullable = false, name = "deposit")
     private Long deposit;
 
+    @Column(nullable = false, name = "order_id")
+    private String orderId;
 
 }

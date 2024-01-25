@@ -1,6 +1,5 @@
 package com.umc.lifesharing.chat.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umc.lifesharing.apiPayload.code.status.ErrorStatus;
 import com.umc.lifesharing.chat.converter.ChatConverter;
 import com.umc.lifesharing.chat.dto.ChatDTO;
@@ -11,18 +10,15 @@ import com.umc.lifesharing.chat.repository.ChatRepository;
 import com.umc.lifesharing.chat.repository.ChatRoomRepository;
 import com.umc.lifesharing.product.repository.ProductRepository;
 import com.umc.lifesharing.user.entity.User;
+import com.umc.lifesharing.user.repository.UserRepository;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
 import org.webjars.NotFoundException;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -33,22 +29,15 @@ public class ChatServiceImpl implements ChatService {
     private final ChatRoomRepository chatRoomRepository;
     private final ProductRepository productRepository;
     private final ChatRepository chatRepository;
-    private final ObjectMapper mapper;
+    private final UserRepository userRepository;
 
-    // 추후 상품 번호로 유저를 찾는 것을 구현할 예정
+    // 상품 번호로 유저를 찾고, 해당 채팅방 생성
     @Override
-    public ChatResponseDTO.MakeRoomResponseDTO makeRoom(Long sender, Long receiver){
-        ChatRoom chatRoom = ChatConverter.toChatRoom(sender,receiver);
-        chatRoomRepository.save(chatRoom);
-        ChatConverter.toMakeRoomResponseDTO(chatRoom);
-        return ChatConverter.toMakeRoomResponseDTO(chatRoom);
-    }
-
-    // 추후 상품 번호로 유저를 찾는 것을 구현할 예정
-    @Override
-    public ChatResponseDTO.MakeRoomResponseDTO tempMakeRoom(Long productId, Long sender){
-        Long receiver = productRepository.findById(productId)
-                .orElseThrow(() -> new NotFoundException(ErrorStatus.PRODUCT_NOT_FOUND.getMessage())).getUser().getId();
+    public ChatResponseDTO.MakeRoomResponseDTO makeRoom(Long productId, Long senderId){
+        User receiver = productRepository.findById(productId)
+                .orElseThrow(() -> new NotFoundException(ErrorStatus.PRODUCT_NOT_FOUND.getMessage())).getUser();
+        User sender = userRepository.findById(senderId)
+                .orElseThrow(() -> new NotFoundException(ErrorStatus.USER_NOT_FOUNDED.getMessage()));
         ChatRoom chatRoom = ChatConverter.toChatRoom(sender,receiver);
         chatRoomRepository.save(chatRoom);
         return ChatConverter.toMakeRoomResponseDTO(chatRoom);
@@ -62,12 +51,19 @@ public class ChatServiceImpl implements ChatService {
         return true;
     }
 
+
     // 보내는 사람의 채팅방 리스트
     @Override
     public List<ChatResponseDTO.RoomDetailResponseDTO> roomList(Long sender){
-        List<ChatRoom> chatRooms = chatRoomRepository.findAllBySender(sender);
+        User user = userRepository.findById(sender)
+                .orElseThrow(() -> new NotFoundException(ErrorStatus.USER_NOT_FOUNDED.getMessage()));
+        List<ChatRoom> chatRooms = chatRoomRepository.findAllBySender(user);
         return ChatConverter.toRoomList(chatRooms);
     }
 
-
+    @Override
+    public List<ChatResponseDTO.ChatMessageDTO> chatList(Long roomId){
+        List<Chat> chats = chatRepository.findAllByRoomIdOrderByCreatedAtDesc(roomId);
+        return ChatConverter.toChatList(chats);
+    }
 }

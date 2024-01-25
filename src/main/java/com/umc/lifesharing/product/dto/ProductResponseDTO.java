@@ -1,10 +1,7 @@
 package com.umc.lifesharing.product.dto;
 
 import com.umc.lifesharing.review.entity.Review;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,35 +17,34 @@ public class ProductResponseDTO {
         LocalDateTime createdAt;
     }
 
-    // 회원이 등록한 제품 조회
+    // 홈 제품 조회, 카테고리별 제품 조회
     @Builder
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ProductPreViewListDTO{
-        List<ProductResponseDTO.ProductPreViewDTO> productList;
-    }
-
-    // 회원 등록 제품 조회 API, 카테고리 제품 조회 API 에 사용
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ProductPreViewDTO{
+    public static class HomeResultDTO{
         Long productId;
         String name;
-        //        String location;  사용자로부터 위치 정보를 가져와야함
+        String location;  //사용자로부터 위치 정보를 가져와야함
         Integer deposit;
         Integer dayPrice;
         Integer score;
         Integer reviewCount;
-//        String image_url;  이미지 처리 방법 알아내기
+        String image_url;  //이미지 처리 방법 알아내기
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class HomePreviewListDTO{
+        List<ProductResponseDTO.HomeResultDTO> productResultDTOList;
+    }
 
     // 제품 상세 조회
     @Builder
     @Getter
+    @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ProductDetailDTO{
@@ -56,14 +52,15 @@ public class ProductResponseDTO {
         Long categoryId;
         Long userId;
         String categoryName;
-//        String location;  // 위치정보
+        String location;  // 위치정보
         List<String> imageUrl;
         String name;
         Integer score;
         Integer reviewCount;
         Integer deposit;
         Integer dayPrice;
-        //찜
+        Integer hourPrice;
+        Boolean isLiked; //찜여부
         String content;
         List<ReviewListDTO> reviewList;   //리뷰 리스트를 출력해야함
     }
@@ -81,6 +78,36 @@ public class ProductResponseDTO {
         List<String> imageList;
         Integer score;
         String content;
+    }
+
+    // 제품 검색 시 필요 정보
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SearchListDTO{
+        Long product_id;
+        String name;
+        String location;  //사용자로부터 위치 정보를 가져와야함
+        Integer deposit;
+        Integer day_price;
+        Integer hour_price;
+        Integer score;
+        Integer review_count;
+        Boolean isLiked;
+        String image_url;  //이미지 처리 방법 알아내기
+    }
+
+    // 제품 정보 수정
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UpdateResDTO{
+        Long productId;
+        LocalDateTime updatedAt;
     }
 
 }

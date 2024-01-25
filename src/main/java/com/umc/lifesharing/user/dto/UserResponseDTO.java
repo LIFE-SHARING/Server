@@ -2,29 +2,31 @@ package com.umc.lifesharing.user.dto;
 
 import com.umc.lifesharing.config.security.TokenDTO;
 import com.umc.lifesharing.location.dto.LocationDTO;
-import com.umc.lifesharing.location.entity.Location;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import java.util.List;
 import java.time.LocalDateTime;
 
 
 public class UserResponseDTO {
 
-    // 회원이 등록한 제품을 조회할 것임
+    // 회원이 등록한 제품 조회
     @Builder
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ProductPreviewDTO{
+        Long productId;
         String name;
         String location;
         Integer score;
-        Integer score_count;
+        Integer reviewCount;
         Integer deposit;
-        Integer day_price;
+        Integer dayPrice;
+        String imageUrl;
     }
 
     @Builder

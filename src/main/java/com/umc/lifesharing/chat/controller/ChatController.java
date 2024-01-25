@@ -16,21 +16,19 @@ import java.util.List;
 public class ChatController {
     private final ChatService chatService;
 
-
-    // 미완성
-    @PostMapping("/make")
-    public ApiResponse<ChatResponseDTO.MakeRoomResponseDTO> makeRoom(){
-        log.info("방 만들기 실행");
-        return ApiResponse.onSuccess(chatService.makeRoom(0L,1L));
+    // 채팅방 만들기
+    @PostMapping("/make/{sender}/{productId}")
+    public ApiResponse<ChatResponseDTO.MakeRoomResponseDTO> makeRoom(@PathVariable(name = "productId") Long productId,@PathVariable(name = "sender") Long sender){
+        return ApiResponse.onSuccess(chatService.makeRoom(productId,sender));
     }
 
-    // 미완성
-    @PostMapping("/temp-make/{productId}/{sender}")
-    public ApiResponse<ChatResponseDTO.MakeRoomResponseDTO> tempMakeRoom(@PathVariable(name = "productId") Long productId,@PathVariable(name = "sender") Long sender){
-        return ApiResponse.onSuccess(chatService.tempMakeRoom(productId,sender));
-    }
-    @GetMapping("/list/{sender}")
+    @GetMapping("/room-list/{sender}")
     public ApiResponse<List<ChatResponseDTO.RoomDetailResponseDTO>> roomList(@PathVariable(name = "sender") Long sender){
         return ApiResponse.onSuccess(chatService.roomList(sender));
+    }
+
+    @GetMapping("/chat-list/{chatroom}")
+    public ApiResponse<List<ChatResponseDTO.ChatMessageDTO>> chatList(@PathVariable(name = "chatroom") Long chatroom){
+        return ApiResponse.onSuccess(chatService.chatList(chatroom));
     }
 }

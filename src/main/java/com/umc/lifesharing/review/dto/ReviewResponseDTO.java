@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class ReviewResponseDTO {
 
@@ -17,5 +18,29 @@ public class ReviewResponseDTO {
     public static class ReviewCreateResultDTO{
         Long reviewId;
         LocalDate createdAt;
+    }
+
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ReviewListDTO{
+        Long reviewId;
+        Long userId;
+        String nickName;
+        LocalDate createdAt;
+        Integer lentDay;  // 이후에 Reservation lent_day로 가져와야 함
+        List<String> imageList;
+        Integer score;
+        String content;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserReviewListDTO{
+        List<ReviewListDTO> reviewListDTOList;
     }
 }
