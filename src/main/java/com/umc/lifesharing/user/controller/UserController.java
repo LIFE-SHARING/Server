@@ -61,11 +61,11 @@ public class UserController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON500", description = "access 토큰을 주세요!",content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     @Parameters({
-            @Parameter(name = "joinDTO", description = "회원가입에 필요한 정보들 입니다.")
-//            @Parameter(name = "multipartFile", description = "사용자의 프로필 이미지입니다. multipartFile입니다.)
+            @Parameter(name = "joinDTO", description = "회원가입에 필요한 정보들 입니다."),
+            @Parameter(name = "multipartFile", description = "사용자의 프로필 이미지입니다. multipartFile입니다.")
     })
-    public ApiResponse<UserResponseDTO.ResponseDTO> join(@Valid @RequestBody UserRequestDTO.JoinDTO joinDTO,
-                                                         @Nullable @RequestParam(value = "multipartFile") MultipartFile multipartFile) {
+    public ApiResponse<UserResponseDTO.ResponseDTO> join(@Valid @RequestPart UserRequestDTO.JoinDTO joinDTO,
+                                                         @Nullable @RequestPart(value = "multipartFile") MultipartFile multipartFile) {
         return ApiResponse.onSuccess(userService.join(joinDTO, multipartFile));
     }
 
@@ -88,17 +88,9 @@ public class UserController {
         return ApiResponse.onSuccess(userQueryService.existNickname(checkNickname));
     }
 
-    // TODO: 전화번호 받는 거
-//    @PostMapping("/user/phone")
-//    public ApiResponse<UserResponseDTO.ResponseDTO> login(@AuthenticationPrincipal UserAdapter userAdapter,
-//                                                          @RequestBody String phone) {
-//        return ApiResponse.onSuccess(userService.(phone));
-//    }
-
-    // 마이 페이지에 진입했을 때
     @GetMapping("/user/my-page")
     @Operation(
-            summary = "마이페지이 API",
+            summary = "마이페이지 API",
             description = "마이페이지 진입 시 내 정보를 불러오는 API 입니다. 헤더에 access token 을 넣어주세요!"
     )
     @ApiResponses({
@@ -111,14 +103,21 @@ public class UserController {
         return ApiResponse.onSuccess(userQueryService.getMyPage(userAdapter));
     }
 
-    // 사용자 정보 변경
+    // 사용자 비밀번호 정보 변경
     @PatchMapping("/user/password")
-    public ApiResponse<UserResponseDTO.ChangePasswordResponseDTO> changeUserInfo(@AuthenticationPrincipal UserAdapter userAdapter,
+    public ApiResponse<UserResponseDTO.ChangePasswordResponseDTO> changeUserPassword(@AuthenticationPrincipal UserAdapter userAdapter,
                                                    @Valid @RequestBody UserRequestDTO.ChangePasswordDTO changePasswordDTO) {
         return ApiResponse.onSuccess(userService.changePassword(userAdapter, changePasswordDTO));
     }
 
-    // 개인 정보 가져오기
+    // 사용자 정보 변경
+//    @PatchMapping("/user/info")
+//    public ApiResponse<UserResponseDTO.ChangePasswordResponseDTO> changeUserInfo(@AuthenticationPrincipal UserAdapter userAdapter,
+//                                                                                 @Valid @RequestBody UserRequestDTO.ChangePasswordDTO changePasswordDTO) {
+//        return ApiResponse.onSuccess(userService.changePassword(userAdapter, changePasswordDTO));
+//    }
+
+    // 개인 정보 수정페이지 진입 시 개인정보를 가져오는 API
     @GetMapping("/user/info")
     public ApiResponse<UserResponseDTO.UserInfoResponseDTO> getUserInfo(@AuthenticationPrincipal UserAdapter userAdapter) {
         return ApiResponse.onSuccess(userQueryService.getUserInfo(userAdapter));
@@ -129,15 +128,6 @@ public class UserController {
         log.info("getAdminAuth " + userAdapter.getUser().getName());
         return ApiResponse.onSuccess(userService.getAdminAuth(userAdapter));
     }
-
-
-//    @GetMapping("/qtest")
-//    public ApiResponse<?> test(@Valid @AuthenticationPrincipal UserAdapter userAdapter) {
-//        log.info("test@@@@@@@@@@@@@@@");
-//        log.info(userAdapter.getUsername());
-//        log.info(userAdapter.getPassword());
-//        return ApiResponse.onSuccess(userAdapter.getUsername());
-//    }
 
     // 회원이 등록한 제품 목록
     @GetMapping("/user/products")

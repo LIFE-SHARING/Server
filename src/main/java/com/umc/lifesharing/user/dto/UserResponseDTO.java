@@ -56,6 +56,7 @@ public class UserResponseDTO {
         private String email;
         private String nickname;
         private String phone;
+        private String profileUrl;
         private LocationDTO locationDTO;
     }
 
@@ -67,8 +68,8 @@ public class UserResponseDTO {
         private Long userId;    // pk
         private String nickname;    // 닉네임
         private String area;    // 읍/면/동    ex. 무거동
-        private Integer score;  // 후기 평균
-        private String imageUrl;
+        private Integer score;
+        private String profileUrl;
         private Long point;
     }
 
