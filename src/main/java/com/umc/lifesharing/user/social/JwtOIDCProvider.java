@@ -39,16 +39,18 @@ public class JwtOIDCProvider {
                 .findFirst()
                 .orElseThrow(() -> new GeneralException(ErrorStatus.TOKEN_INVALID));
 
-        return Jwts.parser()
+        return Jwts.parserBuilder()
                 .setSigningKey(getRSAPublicKey(key.getN(), key.getE()))
+                .build()
                 .parseClaimsJws(token);
     }
 
     private Jwt<Header, Claims> getUnsignedTokenClaims(String token, String iss, String aud) throws JsonProcessingException {
         try {
-            return Jwts.parser()
+            return Jwts.parserBuilder()
                     .requireAudience(aud)       //  aud 확인
                     .requireIssuer(iss)         //  issuer 확인
+                    .build()
                     .parseClaimsJwt(getUnsignedToken(token));
         } catch (ExpiredJwtException e) {
             throw new GeneralException(ErrorStatus.TOKEN_EXPIRED);

@@ -51,18 +51,21 @@ public enum ErrorStatus implements BaseErrorCode {
 
     STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "STORE_4001","가게가 없습니다."),
     // User
-    DUPLICATED_EMAIL(HttpStatus.BAD_REQUEST, "USER_400_1", "이미 존재하는 아이디입니다."),
+    DUPLICATED_EMAIL_OR_NICKNAME(HttpStatus.BAD_REQUEST, "USER_400_1", "이메일 혹은 닉네임이 중복입니다."),
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "USER_400_2", "사용자의 비밀번호가 잘못되었습니다."),
     INVALID_LOGIN_TYPE(HttpStatus.BAD_REQUEST, "USER_400_3", "사용자의 로그인 타입이 잘못되었습니다. 소셜 로그인을 이용해주세요"),
     USER_ALREADY_SUBSCRIBED(HttpStatus.BAD_REQUEST, "USER_400_4", "이미 가입된 사용자입니다."),
-
 
     USER_NOT_FOUNDED(HttpStatus.NOT_FOUND, "USER_404_1", "사용자를 찾을 수 없습니다."),
 
     // token
     TOKEN_NOT_EXIST(HttpStatus.BAD_REQUEST, "TOKEN_400_1", "헤더에 토큰이 존재하지 않음"),
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "TOKEN_401_1", "토큰이 만료됨"),
-    TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "TOKEN_401_2", "토큰이 유효하지 않음");
+    TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "TOKEN_401_2", "토큰이 유효하지 않음"),
+
+    PAGE_INVALID(HttpStatus.BAD_REQUEST, "PAGE_400_1", "페이지는 1이상입니다!"),
+
+    NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTICEE_400_1","공지를 찾을 수 없습니다.");
 
 
     private final HttpStatus httpStatus;
