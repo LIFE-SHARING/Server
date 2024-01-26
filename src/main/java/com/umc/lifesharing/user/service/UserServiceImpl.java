@@ -3,10 +3,6 @@ package com.umc.lifesharing.user.service;
 import com.umc.lifesharing.apiPayload.code.status.ErrorStatus;
 import com.umc.lifesharing.apiPayload.exception.handler.UserHandler;
 import com.umc.lifesharing.config.security.UserAdapter;
-import com.umc.lifesharing.notice.dto.NoticeRequest;
-import com.umc.lifesharing.notice.dto.NoticeResponse;
-import com.umc.lifesharing.notice.repository.NoticeRepository;
-import com.umc.lifesharing.notice.service.NoticeService;
 import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.product.entity.ProductStatus;
 import com.umc.lifesharing.config.security.*;
@@ -39,7 +35,6 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final RolesRepository rolesRepository;
     private final AwsS3Service awsS3Service;
-    private final NoticeService noticeService;
 
     @Override
     public UserResponseDTO.ResponseDTO join(UserRequestDTO.JoinDTO joinDTO, MultipartFile multipartFile) {
@@ -47,7 +42,7 @@ public class UserServiceImpl implements UserService {
             throw new UserHandler(ErrorStatus.DUPLICATED_EMAIL_OR_NICKNAME);
         }
 
-        String imageUrl = awsS3Service.uploadUserFiles(Arrays.asList(multipartFile));
+        String imageUrl = getImageUrl(multipartFile);
         User user = UserConverter.toUser(joinDTO, passwordEncoder, imageUrl);
         Roles roles = new Roles().addUser(user);
 
@@ -124,6 +119,15 @@ public class UserServiceImpl implements UserService {
                     .filter(product -> ProductStatus.EXIST.equals(product.getProduct_status()))
                     .collect(Collectors.toList());
         }).orElse(Collections.emptyList());
+    }
+
+    private String getImageUrl(MultipartFile multipartFile) {
+        String url;
+        if(!multipartFile.isEmpty())
+            url = awsS3Service.uploadUserFiles(Arrays.asList(multipartFile));
+        else
+            url = "";   // TODO: 기본 image url로 변경
+        return url;
     }
 
 //    @Override
