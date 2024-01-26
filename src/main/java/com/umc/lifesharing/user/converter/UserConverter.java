@@ -52,13 +52,13 @@ public class UserConverter {
                 .build();
     }
   
-    public static User toUser(UserRequestDTO.JoinDTO joinDTO, PasswordEncoder passwordEncoder) {
+    public static User toUser(UserRequestDTO.JoinDTO joinDTO, PasswordEncoder passwordEncoder, String imageUrl) {
         return User.builder()
                 .email(joinDTO.getEmail())
                 .password(passwordEncoder.encode(joinDTO.getPassword()))
                 .phone(joinDTO.getPhone())
                 .name(joinDTO.getName())
-                .socialType(SocialType.LIFESHARING)
+                .profileUrl(imageUrl)
                 .build();
     }
 
@@ -70,6 +70,7 @@ public class UserConverter {
                 .nickname(user.getName())
 //                .locationDTO(new LocationDTO(user.getLocationList().get(0)))
                 .locationDTO(new LocationDTO("위치 관련 기능 미구현", "위치 관련 기능 미구현", "위치 관련 기능 미구현", "위치 관련 기능 미구현","위치 관련 기능 미구현","위치 관련 기능 미구현"))
+                .profileUrl(user.getProfileUrl())
                 .build();
     }
 
@@ -87,8 +88,20 @@ public class UserConverter {
                 .point(user.getPoint())
 //                .area(user.getLocationList().get(0).getArea())
                 .area("위치 관련 기능 미구현")
-                .score(4)      // TODO: 내 product에 대한 score의 평균을 구해서 넣어야함
+                .score((int) Math.round(user.getProductList().stream()
+                        .mapToInt(Product::getScore)
+                        .average()
+                        .orElse(0)
+                ))
                 .nickname(user.getName())
+                .profileUrl("이미지 미구현")
+                .build();
+    }
+
+    public static UserResponseDTO.CheckNicknameResponseDTO toCheckNicknameResponseDTO(boolean existNickname) {
+        return UserResponseDTO.CheckNicknameResponseDTO.builder()
+                .message(existNickname ? "이미 존재하는 닉네임입니다." : "사용할 수 있는 닉네임입니다.")
+                .existNickname(existNickname)
                 .build();
     }
 }

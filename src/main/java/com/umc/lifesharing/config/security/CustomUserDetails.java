@@ -2,38 +2,26 @@ package com.umc.lifesharing.config.security;
 
 import com.umc.lifesharing.user.entity.User;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Getter
+@Slf4j
 public class CustomUserDetails implements UserDetails {
-    private final Long id;    // DB에서 PK 값
-    private final String email;        // 로그인용 ID 값
-    private final String password;    // 비밀번호
-    private final String name;    //닉네임
-
-    public CustomUserDetails(Long id, String email, String password, String name) {
-        this.id = id;
-        this.email = email;
-        this.password = password;
-        this.name = name;
-    }
+    private final User user;
 
     public CustomUserDetails(User user) {
-        this.id = user.getId();
-        this.email = user.getEmail();
-        this.password = user.getPassword();
-        this.name = user.getName();
+        this.user = user;
     }
 
-    /**
-     * 비밀번호
-     */
     @Override
     public String getPassword() {
-        return password;
+        return user.getPassword();
     }
 
 
@@ -42,12 +30,14 @@ public class CustomUserDetails implements UserDetails {
      */
     @Override
     public String getUsername() {
-        return email;
+        return user.getEmail();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return user.getRoles().stream().map(o -> new SimpleGrantedAuthority(
+                o.getUserAuth().toString()
+        )).collect(Collectors.toList());
     }
 
     @Override
