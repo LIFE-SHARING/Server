@@ -2,6 +2,7 @@ package com.umc.lifesharing.product.repository;
 
 import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.product.entity.ProductCategory;
+import com.umc.lifesharing.product.entity.ProductImage;
 import com.umc.lifesharing.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

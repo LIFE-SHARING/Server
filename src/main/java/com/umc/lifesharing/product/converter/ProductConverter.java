@@ -8,6 +8,7 @@ import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.product.entity.ProductImage;
 import com.umc.lifesharing.review.entity.Review;
 import com.umc.lifesharing.review.entity.ReviewImage;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ProductConverter {
+
+    @Value("${s3.url}")
+    private static String s3BaseUrl;
 
     public static Product toProduct(ProductRequestDTO.RegisterProductDTO request){
         return Product.builder()
@@ -129,13 +133,24 @@ public class ProductConverter {
 
     // 제품 이미지 가져오도록
     private static List<String> getProductImagUrls(Product product){
-        return product.getImages().stream().map(ProductImage::getImageUrl).collect(Collectors.toList());
+        return product.getImages().stream()
+                .map(ProductImage::getFullImageUrl)
+                .collect(Collectors.toList());
     }
+
 
     // 제품 정보 수정 응답
     public static ProductResponseDTO.UpdateResDTO updateResDTO(Product product){
         return ProductResponseDTO.UpdateResDTO.builder()
                 .productId(product.getId())
+                .updatedAt(LocalDateTime.now())
+                .build();
+    }
+
+    // 제품 이미지 수정 응답
+    public static ProductResponseDTO.UpdateResDTO updateImageDTO(ProductImage productImage){
+        return ProductResponseDTO.UpdateResDTO.builder()
+                .productId(productImage.getProduct().getId())
                 .updatedAt(LocalDateTime.now())
                 .build();
     }
