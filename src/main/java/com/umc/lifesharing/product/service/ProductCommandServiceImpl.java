@@ -20,7 +20,10 @@ import com.umc.lifesharing.s3.AwsS3Service;
 import com.umc.lifesharing.user.entity.User;
 import com.umc.lifesharing.user.repository.UserRepository;
 import com.umc.lifesharing.user.service.UserQueryService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
@@ -34,6 +37,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
 @Service
 @Repository
 @RequiredArgsConstructor
@@ -46,7 +50,12 @@ public class ProductCommandServiceImpl implements ProductCommandService{
     private final HeartRepository heartRepository;
     private final AwsS3Service awsS3Service;
     private final ProductCategoryRepository productCategoryRepository;
-    private final ReviewRepository reviewRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Value("${s3.url}")
+    private String url;
 
     // 제품 등록
     @Override
@@ -64,11 +73,39 @@ public class ProductCommandServiceImpl implements ProductCommandService{
 
         // 이미지 URL을 ProductImage 엔티티로 매핑하여 리스트에 추가
         for (String imageUrl : uploadedFileNames) {
+            String fullUrl = url + imageUrl;
             ProductImage productImage = ProductImage.create(imageUrl);
+            productImage.setFullImageUrl(fullUrl);
             productImage.setProduct(newProduct);
             newProduct.getImages().add(productImage);
         }
+
         return productRepository.save(newProduct);
+    }
+
+    // 제품 이미지 수정
+    @Override
+    @Transactional
+    public void updateProductImage(Long productId, UserAdapter userAdapter, List<MultipartFile> imageList) {
+        Product product = productRepository.findById(productId).orElseThrow(() -> new ProductHandler(ErrorStatus.PRODUCT_NOT_FOUND));
+        User user = userRepository.findById(userAdapter.getUser().getId()).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
+
+
+        // 기존의 이미지 리스트를 삭제
+        product.getImages().forEach(productImage -> {
+            awsS3Service.deleteProductFile(productImage.getImageUrl());
+            productImageRepository.delete(productImage);
+        });
+        product.getImages().clear();
+
+        // 파일 업로드 처리
+        List<String> uploadedFileNames = awsS3Service.uploadProductFiles(imageList);
+
+        // 새로운 이미지 리스트 추가
+        for (String imageUrl : uploadedFileNames) {
+            ProductImage newProductImage = ProductImage.create(product, imageUrl, url + imageUrl);
+            product.getImages().add(newProductImage);
+        }
     }
 
     // 제품 삭제
@@ -86,11 +123,13 @@ public class ProductCommandServiceImpl implements ProductCommandService{
             List<ProductImage> productImages = product.getImages();
             for (ProductImage productImage : productImages) {
                 // S3에서 이미지 파일 삭제
-                awsS3Service.deleteFile(productImage.getImageUrl());
+                awsS3Service.deleteProductFile(productImage.getImageUrl());
+                //awsS3Service.deleteFileByUrl(productImage.getImageUrl());
 
                 // 이미지 엔티티 삭제
                 productImageRepository.delete(productImage);
             }
+
             // 제품 삭제
             productRepository.delete(product);
         }
@@ -145,56 +184,27 @@ public class ProductCommandServiceImpl implements ProductCommandService{
     // 제품 정보 수정
     public Product updateProduct(Long productId, ProductRequestDTO.UpdateProductDTO request, UserAdapter userAdapter) {
         // productId를 사용하여 데이터베이스에서 제품을 가져온다.
-        Product newUpdateProduct = productRepository.findById(productId).orElseThrow(() -> new ProductHandler(ErrorStatus.PRODUCT_NOT_FOUND));
+        Product existProduct = productRepository.findById(productId).orElseThrow(() -> new ProductHandler(ErrorStatus.PRODUCT_NOT_FOUND));
 
         User loggedInUser = userAdapter.getUser();
 
-        if(!newUpdateProduct.getUser().getId().equals(loggedInUser.getId())){   // 등록자와 수정하고자 하는 사용자가 일치하지 않으면
+        if(!existProduct.getUser().getId().equals(loggedInUser.getId())){   // 등록자와 수정하고자 하는 사용자가 일치하지 않으면
             throw new UserHandler(ErrorStatus.USER_NOT_FOUNDED);
         }
 
-//        // 새로운 이미지 업로드
-//        List<String> newImageUrl = awsS3Service.uploadProductFiles(newImage);
-////        List<String> existImageUrl = newUpdateProduct.getImages().stream()
-////                .map(ProductImage::getImageUrl)
-////                .collect(Collectors.toList());
-//
-//        // 이미지 추가 : 새로운 이미지 중 기존 이미지 목록에 없는 이미지는 추가
-//        List<String> imageToAdd = newImageUrl.stream()
-//                .filter(imageUrl -> !newUpdateProduct.getImages().stream()
-//                        .map(ProductImage::getImageUrl)
-//                        .collect(Collectors.toList())
-//                        .contains(imageUrl))
-//                .collect(Collectors.toList());
-//
-//        // 새로운 이미지 추가
-//        newUpdateProduct.getImages().addAll(imageToAdd.stream().map(ProductImage::new).collect(Collectors.toList()));
-//
-//        // 이미지 삭제
-//        List<String> imageToDelete = newUpdateProduct.getImages().stream()
-//                .map(ProductImage::getImageUrl)
-//                .filter(imageUrl -> !newImageUrl.contains(imageUrl))
-//                .collect(Collectors.toList());
-//
-//       // 삭제된 이미지를 식별하고 삭제
-//        awsS3Service.deleteProductImages(imageToDelete);
-//
-//        // 이미지가 업데이트 되면 기존의 이미지 리스트를 새 리스트로 바꾸기
-//        newUpdateProduct.getImages().clear();
-//        newUpdateProduct.getImages().addAll(newImageUrl.stream().map(ProductImage::new).collect(Collectors.toList()));
-//
-//
+        if (request.getName() != null){ existProduct.setName(request.getName()); }
+        if (request.getContent() != null){ existProduct.setContent(request.getContent()); }
+        if (request.getDayPrice() != null){ existProduct.setDayPrice(request.getDayPrice()); }
+        if (request.getHourPrice() != null){ existProduct.setHourPrice(request.getHourPrice()); }
+        if (request.getDeposit() != null){ existProduct.setDeposit(request.getDeposit()); }
+        if (request.getLendingPeriod() != null){ existProduct.setLendingPeriod(request.getLendingPeriod()); }
 
-        // request에서 받은 정보로 제품 정보를 업데이트한다.
-        newUpdateProduct.setName(request.getName());
-        newUpdateProduct.setContent(request.getContent());
-        newUpdateProduct.setDayPrice(request.getDayPrice());
-        newUpdateProduct.setHourPrice(request.getHourPrice());
-        newUpdateProduct.setDeposit(request.getDeposit());
-        newUpdateProduct.setLendingPeriod(request.getLendingPeriod());
-        //product.setFiles(request.getFiles());
+        return productRepository.save(existProduct);
+    }
 
-        return productRepository.save(newUpdateProduct);
+    private String getOriginalFileName(String fileName) {
+        // 파일의 원본 이름을 얻기 위한 로직 추가
+        return fileName.substring(fileName.indexOf("_") + 1);
     }
 
     // 홈에서 필터별 제품 조회
@@ -236,46 +246,15 @@ public class ProductCommandServiceImpl implements ProductCommandService{
         return productList;
     }
 
+    @Override
+    public void updateProductImages(Long productId, List<MultipartFile> newImages) {
+        Product product = productRepository.findById(productId).orElseThrow(() -> new ProductHandler(ErrorStatus.PRODUCT_NOT_FOUND));
+        List<String> newImageFile = awsS3Service.uploadProductFiles(newImages);
+    }
+
     // 키워드 검사
     private boolean isValidKeyword(String keyword){
         return keyword.length() >= 2;
     }
-
-//    @Override
-//    public void addImagesToProduct(Long productId, List<MultipartFile> images) {
-//        Product product = productRepository.findById(productId).orElseThrow(() -> new ProductHandler(ErrorStatus.PRODUCT_NOT_FOUND));
-//
-//        // 기존의 상품 리스트
-//        List<String> productImg = product.getImages().stream().map(ProductImage::getImageUrl).collect(Collectors.toList());
-//
-//        // 새로운 이미지 리스트
-//        List<String> newImg = awsS3Service.uploadProductFiles(images);
-//
-//        // 4. 이미지 추가, 업데이트, 및 삭제 로직 수행
-//        List<String> updatedImages = awsS3Service.autoImagesUploadAndDelete(productImg, convertToMultipartFiles(newImg), "product");
-//
-//        // 5. 상품의 이미지 리스트를 갱신
-//        List<ProductImage> updatedProductImages = new ArrayList<>();
-//        for (String imageUrl : updatedImages) {
-//            ProductImage productImage = new ProductImage();
-//            productImage.setImageUrl(imageUrl);
-//            productImage.setProduct(product);
-//            updatedProductImages.add(productImage);
-//        }
-//        product.setImages(updatedProductImages);
-//
-//        // 6. 상품 업데이트
-//        productRepository.save(product);
-//    }
-
-//    private List<MultipartFile> convertToMultipartFiles(List<String> imageUrls) {
-//        return imageUrls.stream()
-//                .map(imageUrl -> {
-//                    // 이미지 URL로부터 MultipartFile을 생성하는 로직을 추가해야 합니다.
-//                    // 예시로 더미 MultipartFile을 생성하도록 하겠습니다.
-//                    return new MockMultipartFile("file", imageUrl.getBytes());
-//                })
-//                .collect(Collectors.toList());
-//    }
 
 }

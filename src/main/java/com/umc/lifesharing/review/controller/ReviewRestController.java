@@ -19,6 +19,7 @@ import com.umc.lifesharing.user.entity.User;
 import com.umc.lifesharing.validation.annotation.ExistMembers;
 import com.umc.lifesharing.validation.annotation.ExistProducts;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -55,9 +57,16 @@ public class ReviewRestController {
     @PostMapping("/write/{reservationId}")
     @Operation(summary = "리뷰 작성 API")
     public ApiResponse<ReviewResponseDTO.ReviewCreateResultDTO> createReview(@PathVariable(name = "reservationId") Long reservationId, @AuthenticationPrincipal UserAdapter userAdapter,
-                                                                             @Valid @RequestPart(name = "request") ReviewRequestDTO.ReviewCreateDTO request, @RequestPart(name = "files") List<MultipartFile> files) {
-        // 파일 업로드 처리
-        List<String> uploadedFileNames = awsS3Service.uploadReviewFiles(files);
+                                                                             @Valid @RequestPart(name = "request") ReviewRequestDTO.ReviewCreateDTO request, @RequestPart(name = "files", required = false) List<MultipartFile> files) {
+//        // 파일 업로드 처리
+//        List<String> uploadedFileNames = awsS3Service.uploadReviewFiles(files);
+
+        List<String> uploadedFileNames = Collections.emptyList();
+
+        // 이미지 파일이 전송되었을 경우에만 업로드 처리 및 파일명 등록
+        if (files != null && !files.isEmpty()) {
+            uploadedFileNames = awsS3Service.uploadReviewFiles(files);
+        }
         // 리뷰 작성 및 파일명 등록
         Review review = reviewCommandService.reviewWrite(userAdapter, reservationId, request, uploadedFileNames);
 
@@ -82,10 +91,18 @@ public class ReviewRestController {
             reviewCommandService.deleteReview(reviewId, loggedInUser);
             return ApiResponse.onSuccess("성공적으로 삭제되었습니다.");
         } catch (NotFoundException e) {
-            return ApiResponse.onFailure(ErrorStatus.ALREADY_DELETE_REVIEW.getCode(), ErrorStatus.ALREADY_DELETE_REVIEW.getMessage(), null);
+            return ApiResponse.onFailure(ErrorStatus.REVIEW_NOT_FOUND.getCode(), ErrorStatus.REVIEW_NOT_FOUND.getMessage(), null);
         } catch (Exception e) {
             return ApiResponse.onFailure(ErrorStatus._INTERNAL_SERVER_ERROR.getCode(), ErrorStatus._INTERNAL_SERVER_ERROR.getMessage(), null);
         }
+    }
+
+    @PatchMapping("/update/{reviewId}")
+    @Operation(summary = "리뷰 수정 API")
+    public ApiResponse<ReviewResponseDTO.updateReview> updateReview(@PathVariable(name = "reviewId") Long reviewId, @RequestPart ReviewRequestDTO.reviewUpdateDTO request,
+                                                                    @RequestPart(required = false) List<MultipartFile> newImages, @AuthenticationPrincipal UserAdapter userAdapter){
+        Review review = reviewCommandService.updateReview(reviewId, request, newImages);
+        return ApiResponse.onSuccess(ReviewConverter.toUpdateReview(review));
     }
 }
 

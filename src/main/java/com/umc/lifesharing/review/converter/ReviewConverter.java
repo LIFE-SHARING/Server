@@ -34,7 +34,9 @@ public class ReviewConverter {
 
     // 사용자가 등록한 리뷰 목록 조회
     public static ReviewResponseDTO.ReviewListDTO toReviewList(Review review){
-        List<String> imageList = review.getImages().stream().map(ReviewImage::getImageUrl).collect(Collectors.toList());
+        List<String> imageList = review.getImages().stream()
+                .map(ReviewImage::getImageUrl)
+                .collect(Collectors.toList());
 
 //        // 예약 정보가 없을 경우를 고려하여 미리 초기화
 //        String reservationTotalTime = "";
@@ -64,17 +66,6 @@ public class ReviewConverter {
                 .lentDay(totalTime)  // 변경된 부분
                 .createdAt(review.getCreatedAt())
                 .build();
-
-//        return ReviewResponseDTO.ReviewListDTO.builder()
-//                .reviewId(review.getId())
-//                .userId(review.getUser().getId())
-//                .nickName(review.getUser().getName())
-//                .imageList(imageList)
-//                .score(review.getScore())
-//                .content(review.getContent())
-//                .lentDay()
-//                .createdAt(review.getCreatedAt())
-//                .build();
     }
 
     public static ReviewResponseDTO.UserReviewListDTO toUserReviewList(List<Review> reviewList){
@@ -84,6 +75,7 @@ public class ReviewConverter {
 
         return ReviewResponseDTO.UserReviewListDTO.builder()
                 .reviewListDTOList(userReviewList)
+                .reviewCount(reviewList.size())
                 .build();
     }
 

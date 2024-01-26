@@ -20,7 +20,6 @@ public class ReviewResponseDTO {
         LocalDate createdAt;
     }
 
-
     @Builder
     @Getter
     @NoArgsConstructor
@@ -41,6 +40,7 @@ public class ReviewResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class UserReviewListDTO{
+        Integer reviewCount;
         List<ReviewListDTO> reviewListDTOList;
     }
 

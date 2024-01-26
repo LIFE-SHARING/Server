@@ -27,6 +27,9 @@ public class ReviewImage {
     @Column(nullable = false)
     private String imageUrl;
 
+    @Column
+    private String fullImageUrl;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id", nullable = false)
     private Review review;

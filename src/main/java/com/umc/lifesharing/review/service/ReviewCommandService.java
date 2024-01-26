@@ -5,6 +5,7 @@ import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.review.dto.ReviewRequestDTO;
 import com.umc.lifesharing.review.entity.Review;
 import com.umc.lifesharing.user.entity.User;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -14,5 +15,7 @@ public interface ReviewCommandService {
     List<Review> getUserReview(UserAdapter userAdapter);
 
     void deleteReview(Long reviewId, Long userId);
+
+    Review updateReview(Long reviewId, ReviewRequestDTO.reviewUpdateDTO request, List<MultipartFile> newImageFiles);
 
 }
