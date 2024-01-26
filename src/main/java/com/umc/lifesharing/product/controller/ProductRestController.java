@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -98,7 +99,7 @@ public class ProductRestController {
     }
 
     // 제품 이미지 수정 API
-    @PutMapping("/update/image/{productId}")
+    @PutMapping("/update-image/{productId}")
     @Operation(summary = "제품 이미지 수정 API")
     @Parameter(name = "productId", description = "제품 번호를 넣어주세요.")
     public ApiResponse<String> toUpdateImage(@PathVariable(name = "productId") Long productId, @RequestPart List<MultipartFile> imageList,
@@ -107,17 +108,8 @@ public class ProductRestController {
         // 현재 로그인한 사용자의 아이디를 사용하여 제품 이미지 수정
         productCommandService.updateProductImage(productId, userAdapter, imageList);
 
-        return ApiResponse.onSuccess("수정되었습니다.");
+        return ApiResponse.onSuccess("수정되었습니다." + LocalDateTime.now());
     }
-
-
-    // 제품 이미지 수정 API 
-//    @PatchMapping("/update/{productId}/image")
-//    @Operation(summary = "제품 이미지 수정 API")
-//    @Parameter(name = "productId", description = "제품 번호를 넣어주세요.")
-//    public ApiResponse<ProductResponseDTO.UpdateResDTO> updateProductImage(@RequestParam(name = "productId") Long productId, @RequestParam List<MultipartFile> image){
-//
-//    }
 
     // 카테고리별 제품 조회 API
     @GetMapping("/category")

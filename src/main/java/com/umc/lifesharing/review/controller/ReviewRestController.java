@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,23 +44,10 @@ public class ReviewRestController {
     private final AwsS3Service awsS3Service;
 
     // 리뷰 등록 API
-//    @PostMapping("/write/{productId}")
-//    @Operation(summary = "리뷰 작성 API")
-//    public ApiResponse<ReviewResponseDTO.ReviewCreateResultDTO> createReview(@ExistProducts @PathVariable(name = "productId") Long productId, @AuthenticationPrincipal UserAdapter userAdapter,
-//                                                                             @Valid @RequestPart(name = "request") ReviewRequestDTO.ReviewCreateDTO request, @RequestPart(name = "files") List<MultipartFile> files) {
-//        // 파일 업로드 처리
-//        List<String> uploadedFileNames = awsS3Service.uploadReviewFiles(files);
-//        // 리뷰 작성 및 파일명 등록
-//        Review review = reviewCommandService.reviewWrite(userAdapter, productId, request, uploadedFileNames);
-//
-//        return ApiResponse.onSuccess(ReviewConverter.toReviewResultDTO(review));
-//    }
     @PostMapping("/write/{reservationId}")
     @Operation(summary = "리뷰 작성 API")
     public ApiResponse<ReviewResponseDTO.ReviewCreateResultDTO> createReview(@PathVariable(name = "reservationId") Long reservationId, @AuthenticationPrincipal UserAdapter userAdapter,
                                                                              @Valid @RequestPart(name = "request") ReviewRequestDTO.ReviewCreateDTO request, @RequestPart(name = "files", required = false) List<MultipartFile> files) {
-//        // 파일 업로드 처리
-//        List<String> uploadedFileNames = awsS3Service.uploadReviewFiles(files);
 
         List<String> uploadedFileNames = Collections.emptyList();
 
@@ -98,11 +86,18 @@ public class ReviewRestController {
     }
 
     @PatchMapping("/update/{reviewId}")
-    @Operation(summary = "리뷰 수정 API")
-    public ApiResponse<ReviewResponseDTO.updateReview> updateReview(@PathVariable(name = "reviewId") Long reviewId, @RequestPart ReviewRequestDTO.reviewUpdateDTO request,
-                                                                    @RequestPart(required = false) List<MultipartFile> newImages, @AuthenticationPrincipal UserAdapter userAdapter){
-        Review review = reviewCommandService.updateReview(reviewId, request, newImages);
+    @Operation(summary = "리뷰 정보 수정 API")
+    public ApiResponse<ReviewResponseDTO.updateReview> updateReview(@PathVariable(name = "reviewId") Long reviewId, @RequestPart ReviewRequestDTO.reviewUpdateDTO request, @AuthenticationPrincipal UserAdapter userAdapter){
+        Review review = reviewCommandService.updateReview(reviewId, userAdapter, request);
         return ApiResponse.onSuccess(ReviewConverter.toUpdateReview(review));
+    }
+
+    @PutMapping("/update/review-image/{reviewId}")
+    @Operation(summary = "리뷰 이미지 수정 API")
+    public ApiResponse<String> updateReviewImage(@PathVariable(name = "reviewId") Long reviewId, @RequestPart List<MultipartFile> imageList,
+                                                 @AuthenticationPrincipal UserAdapter userAdapter){
+        reviewCommandService.updateReviewImage(reviewId, userAdapter, imageList);
+        return ApiResponse.onSuccess("수정되었습니다." + LocalDateTime.now());
     }
 }
 

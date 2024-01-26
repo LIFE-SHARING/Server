@@ -51,9 +51,6 @@ public class ProductCommandServiceImpl implements ProductCommandService{
     private final AwsS3Service awsS3Service;
     private final ProductCategoryRepository productCategoryRepository;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     @Value("${s3.url}")
     private String url;
 
@@ -106,6 +103,36 @@ public class ProductCommandServiceImpl implements ProductCommandService{
             ProductImage newProductImage = ProductImage.create(product, imageUrl, url + imageUrl);
             product.getImages().add(newProductImage);
         }
+    }
+
+    @Override
+    // 제품 정보 수정
+    public Product updateProduct(Long productId, ProductRequestDTO.UpdateProductDTO request, UserAdapter userAdapter) {
+        // productId를 사용하여 데이터베이스에서 제품을 가져온다.
+        Product existProduct = productRepository.findById(productId).orElseThrow(() -> new ProductHandler(ErrorStatus.PRODUCT_NOT_FOUND));
+
+        User loggedInUser = userAdapter.getUser();
+
+        if(!existProduct.getUser().getId().equals(loggedInUser.getId())){   // 등록자와 수정하고자 하는 사용자가 일치하지 않으면
+            throw new UserHandler(ErrorStatus.USER_NOT_FOUNDED);
+        }
+
+        // 카테고리 정보가 전달되었을 경우에만 업데이트
+        if (request.getCategoryId() != null) {
+            ProductCategory category = productCategoryRepository.findById(request.getCategoryId())
+                    .orElseThrow(() -> new ProductHandler(ErrorStatus.CATEGORY_NOT_FOUND));
+
+            // 제품에 새로운 카테고리 설정
+            existProduct.setCategory(category);
+        }
+        if (request.getName() != null){ existProduct.setName(request.getName()); }
+        if (request.getContent() != null){ existProduct.setContent(request.getContent()); }
+        if (request.getDayPrice() != null){ existProduct.setDayPrice(request.getDayPrice()); }
+        if (request.getHourPrice() != null){ existProduct.setHourPrice(request.getHourPrice()); }
+        if (request.getDeposit() != null){ existProduct.setDeposit(request.getDeposit()); }
+        if (request.getLendingPeriod() != null){ existProduct.setLendingPeriod(request.getLendingPeriod()); }
+
+        return productRepository.save(existProduct);
     }
 
     // 제품 삭제
@@ -181,32 +208,6 @@ public class ProductCommandServiceImpl implements ProductCommandService{
         productRepository.updateScore(productId, newScore);
     }
 
-    // 제품 정보 수정
-    public Product updateProduct(Long productId, ProductRequestDTO.UpdateProductDTO request, UserAdapter userAdapter) {
-        // productId를 사용하여 데이터베이스에서 제품을 가져온다.
-        Product existProduct = productRepository.findById(productId).orElseThrow(() -> new ProductHandler(ErrorStatus.PRODUCT_NOT_FOUND));
-
-        User loggedInUser = userAdapter.getUser();
-
-        if(!existProduct.getUser().getId().equals(loggedInUser.getId())){   // 등록자와 수정하고자 하는 사용자가 일치하지 않으면
-            throw new UserHandler(ErrorStatus.USER_NOT_FOUNDED);
-        }
-
-        if (request.getName() != null){ existProduct.setName(request.getName()); }
-        if (request.getContent() != null){ existProduct.setContent(request.getContent()); }
-        if (request.getDayPrice() != null){ existProduct.setDayPrice(request.getDayPrice()); }
-        if (request.getHourPrice() != null){ existProduct.setHourPrice(request.getHourPrice()); }
-        if (request.getDeposit() != null){ existProduct.setDeposit(request.getDeposit()); }
-        if (request.getLendingPeriod() != null){ existProduct.setLendingPeriod(request.getLendingPeriod()); }
-
-        return productRepository.save(existProduct);
-    }
-
-    private String getOriginalFileName(String fileName) {
-        // 파일의 원본 이름을 얻기 위한 로직 추가
-        return fileName.substring(fileName.indexOf("_") + 1);
-    }
-
     // 홈에서 필터별 제품 조회
     @Override
     public List<Product> getHomeProduct(String filter) {
@@ -244,12 +245,6 @@ public class ProductCommandServiceImpl implements ProductCommandService{
             productList = productRepository.findByNameContainingOrderByReviewCountDesc(keyword);
         }
         return productList;
-    }
-
-    @Override
-    public void updateProductImages(Long productId, List<MultipartFile> newImages) {
-        Product product = productRepository.findById(productId).orElseThrow(() -> new ProductHandler(ErrorStatus.PRODUCT_NOT_FOUND));
-        List<String> newImageFile = awsS3Service.uploadProductFiles(newImages);
     }
 
     // 키워드 검사

@@ -40,4 +40,13 @@ public class ReviewImage {
                 .imageUrl(imageUrl)
                 .build();
     }
+
+    // 정적 팩토리 메서드
+    public static ReviewImage create(Review review, String imageUrl, String fullImageUrl) {
+        ReviewImage reviewImage = new ReviewImage();
+        reviewImage.setReview(review);
+        reviewImage.setImageUrl(imageUrl);
+        reviewImage.setFullImageUrl(fullImageUrl);
+        return reviewImage;
+    }
 }
