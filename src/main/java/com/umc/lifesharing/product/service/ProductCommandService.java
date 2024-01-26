@@ -42,7 +42,4 @@ public interface ProductCommandService {
 
     // 제품 검색 필터별 조회
     List<Product> getSearchProduct(String filter, String keyword);
-
-    // 제품 이미지 수정
-    void updateProductImages(Long productId, List<MultipartFile> newImages);
 }

@@ -26,6 +26,7 @@ import com.umc.lifesharing.user.entity.User;
 import com.umc.lifesharing.user.repository.UserRepository;
 import com.umc.lifesharing.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,6 +48,9 @@ public class ReviewCommandServiceImpl implements ReviewCommandService{
     private final UserRepository userRepository;
     private final AwsS3Service awsS3Service;
     private final ProductCommandServiceImpl productCommandService;
+
+    @Value("${s3.url}")
+    private String url;
 
     @Override
     public Review reviewWrite(UserAdapter userAdapter, Long reservationId, ReviewRequestDTO.ReviewCreateDTO request, List<String> uploadedFileNames) {
@@ -111,63 +115,45 @@ public class ReviewCommandServiceImpl implements ReviewCommandService{
         }
     }
 
+    // 리뷰 내용 수정
     @Override
-    public Review updateReview(Long reviewId, ReviewRequestDTO.reviewUpdateDTO request, List<MultipartFile> newImageFiles) {
+    public Review updateReview(Long reviewId, UserAdapter userAdapter, ReviewRequestDTO.reviewUpdateDTO request) {
         //기존 리뷰 정보 가져오기
         Review existReview = reviewRepository.findById(reviewId).orElseThrow(() -> new ReviewHandler(ErrorStatus.REVIEW_NOT_FOUND));
 
-        // 수정된 정보 업데이트
-        existReview.setContent(request.getContent());
-        existReview.setScore(request.getScore());
-
-//        // 이미지 업데이트 및 추가
-//        List<String> updatedFileNames = awsS3Service.updateReviewFiles(reviewId, newImageFiles);
-//
-//        // 기존 리뷰의 이미지 리스트 갱신
-//        existReview.getImages().clear();
-//        for (String fileName : updatedFileNames) {
-//            ReviewImage reviewImage = ReviewImage.create(fileName);
-//            reviewImage.setReview(existReview);
-//            existReview.getImages().add(reviewImage);
-//        }
-//
-//        // 리뷰 저장
-//        return reviewRepository.save(existReview);
-
-        // 기존 리뷰의 이미지 URL 목록 가져오기
-        List<String> existingImageFileNames = existReview.getImages().stream()
-                .map(ReviewImage::getImageUrl)
-                .map(url -> url.substring(url.lastIndexOf("_") + 1))  // 파일 이름만 추출
-                .collect(Collectors.toList());
-
-        // 새로운 파일 업로드 및 파일 이름 목록 가져오기
-        List<String> newFileNames = awsS3Service.updateReviewFiles(reviewId, newImageFiles);
-
-        // 추가된 파일 찾기
-        List<String> addedFiles = newFileNames.stream()
-                .filter(fileName -> !existingImageFileNames.contains(getOriginalFileName(fileName)))
-                .collect(Collectors.toList());
-
-        // 삭제된 파일 찾기
-        List<String> deletedFiles = existingImageFileNames.stream()
-                .filter(fileName -> !newFileNames.contains(getOriginalFileName(fileName)))
-                .collect(Collectors.toList());
-
-        // 추가된 파일 처리 (예: ReviewImage 엔티티 생성 및 연결)
-        for (String addedFile : addedFiles) {
-            ReviewImage reviewImage = ReviewImage.create(addedFile);
-            reviewImage.setReview(existReview);
-            existReview.getImages().add(reviewImage);
+        User loggendInUser = userAdapter.getUser();
+        if (!existReview.getUser().getId().equals(loggendInUser.getId())){
+            throw new UserHandler(ErrorStatus.USER_NOT_FOUNDED);
         }
-
-        // 삭제된 파일 처리 (예: ReviewImage 엔티티 삭제)
-        List<ReviewImage> deletedReviewImages = existReview.getImages().stream()
-                .filter(reviewImage -> deletedFiles.contains(reviewImage.getImageUrl()))
-                .collect(Collectors.toList());
-        existReview.getImages().removeAll(deletedReviewImages);
+        // 수정된 정보 업데이트
+        if (request.getContent() != null){ existReview.setContent(request.getContent()); }
+        if (request.getScore() != null) {existReview.setScore(request.getScore()); }
 
         // 리뷰 저장
         return reviewRepository.save(existReview);
+    }
+
+    // 리뷰 이미지 수정
+    @Override
+    public void updateReviewImage(Long reviewId, UserAdapter userAdapter, List<MultipartFile> imageList) {
+        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new ReviewHandler(ErrorStatus.REVIEW_NOT_FOUND));
+        User user = userRepository.findById(userAdapter.getUser().getId()).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
+
+        if (review.getUser().getId().equals(user.getId())) {
+            // 기존의 이미지 리스트를 삭제
+            review.getImages().forEach(reviewImage -> {
+                awsS3Service.deleteReviewFile(reviewImage.getImageUrl());
+                reviewImageRepository.delete(reviewImage);
+            });
+            review.getImages().clear();
+
+            // 새로운 이미지 리스트 추가
+            List<String> uploadedFileNames = awsS3Service.uploadReviewFiles(imageList);
+            for (String imageUrl : uploadedFileNames) {
+                ReviewImage newReviewImage = ReviewImage.create(review, imageUrl, url + imageUrl);
+                review.getImages().add(newReviewImage);
+            }
+        }
     }
 
     private String getOriginalFileName(String fileName) {

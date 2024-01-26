@@ -16,6 +16,8 @@ public interface ReviewCommandService {
 
     void deleteReview(Long reviewId, Long userId);
 
-    Review updateReview(Long reviewId, ReviewRequestDTO.reviewUpdateDTO request, List<MultipartFile> newImageFiles);
+    Review updateReview(Long reviewId, UserAdapter userAdapter, ReviewRequestDTO.reviewUpdateDTO request);
+
+    void updateReviewImage(Long reviewId, UserAdapter userAdapter, List<MultipartFile> imageList);
 
 }
