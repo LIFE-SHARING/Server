@@ -31,7 +31,9 @@ public class HeartConverter {
 
     // 제품 이미지 가져오도록
     private static List<String> getProductImagUrls(Product product){
-        return product.getImages().stream().map(ProductImage::getImageUrl).collect(Collectors.toList());
+        return product.getImages().stream()
+                .map(ProductImage::getFullImageUrl)
+                .collect(Collectors.toList());
     }
 
     // 찜한 목록

@@ -134,11 +134,8 @@ public class UserController {
     // 회원이 등록한 제품 목록
     @GetMapping("/user/products")
     @Operation(summary = "회원이 등록한 제품 조회 API")
-    public ApiResponse<UserResponseDTO.ProductPreviewListDTO> getUserProductList(@AuthenticationPrincipal UserAdapter userAdapter){
-        // 현재 로그인한 사용자의 정보
-        User loggedInUser = userAdapter.getUser();
-        List<Product> productList = userService.getProductList(loggedInUser.getId());
-
+    public ApiResponse<UserResponseDTO.ProductPreviewListDTO> getUserProductList(@RequestParam(name = "filter", defaultValue = "recent") String filter, @AuthenticationPrincipal UserAdapter userAdapter){
+        List<Product> productList = userService.getProductList(userAdapter, filter);
         return ApiResponse.onSuccess(UserConverter.productPreviewListDTO(productList));
     }
 

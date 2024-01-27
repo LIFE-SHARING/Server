@@ -20,7 +20,6 @@ public class ReviewResponseDTO {
         LocalDate createdAt;
     }
 
-
     @Builder
     @Getter
     @NoArgsConstructor
@@ -30,7 +29,7 @@ public class ReviewResponseDTO {
         Long userId;
         String nickName;
         LocalDate createdAt;
-        Integer lentDay;  // 이후에 Reservation lent_day로 가져와야 함
+        String lentDay;  // 이후에 Reservation lent_day로 가져와야 함
         List<String> imageList;
         Integer score;
         String content;
@@ -41,6 +40,25 @@ public class ReviewResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class UserReviewListDTO{
+        Integer reviewCount;
         List<ReviewListDTO> reviewListDTOList;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class removeResult{
+        Long reviewId;
+        LocalDateTime updatedAt;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class updateReview{
+        Long reviewId;
+        LocalDateTime updatedAt;
     }
 }

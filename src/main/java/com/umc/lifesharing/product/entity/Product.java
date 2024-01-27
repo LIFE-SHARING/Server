@@ -2,20 +2,18 @@ package com.umc.lifesharing.product.entity;
 
 import com.umc.lifesharing.heart.entity.Heart;
 import com.umc.lifesharing.product.entity.common.BaseEntity;
+import com.umc.lifesharing.product.entity.enums.ProductStatus;
 import com.umc.lifesharing.reservation.entity.Reservation;
 import com.umc.lifesharing.review.entity.Review;
 import com.umc.lifesharing.user.entity.User;
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
 import jakarta.validation.constraints.Max;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.*;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -53,9 +51,10 @@ public class Product extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'EXIST'")
-    private ProductStatus product_status;
+    private ProductStatus productStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    //@Fetch(FetchMode.SELECT)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -64,7 +63,8 @@ public class Product extends BaseEntity {
     private ProductCategory category;
 
     @Builder.Default
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    @Fetch(FetchMode.JOIN)
     private List<Review> reviewList = new ArrayList<>();
 
     @Builder.Default
@@ -77,13 +77,7 @@ public class Product extends BaseEntity {
 
     @Builder.Default
     @OneToMany(mappedBy = "product", orphanRemoval = true)
-    private List<Heart> heartListList = new ArrayList<>();   
-
-//    // 아마존 S3
-//    @ElementCollection
-//    @CollectionTable(name = "product_image_url", joinColumns = @JoinColumn(name = "product_id"))
-//    @Column(name = "image_url")
-//    private List<String> image_url;
+    private List<Heart> heartListList = new ArrayList<>();
 
     public void setUser(User user){
         this.user = user;
