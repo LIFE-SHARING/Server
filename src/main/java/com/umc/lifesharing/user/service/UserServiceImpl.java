@@ -7,6 +7,11 @@ import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.product.entity.enums.ProductStatus;
 import com.umc.lifesharing.config.security.*;
 import com.umc.lifesharing.product.repository.ProductRepository;
+import com.umc.lifesharing.product.service.ProductCommandService;
+import com.umc.lifesharing.review.converter.ReviewConverter;
+import com.umc.lifesharing.review.entity.Review;
+import com.umc.lifesharing.review.rerpository.ReviewRepository;
+import com.umc.lifesharing.review.service.ReviewCommandService;
 import com.umc.lifesharing.s3.AwsS3Service;
 import com.umc.lifesharing.user.converter.UserConverter;
 import com.umc.lifesharing.user.dto.UserRequestDTO;
@@ -42,6 +47,9 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final RolesRepository rolesRepository;
     private final AwsS3Service awsS3Service;
+    private final ProductCommandService productCommandService;
+    private final ReviewCommandService reviewCommandService;
+    private final ReviewRepository reviewRepository;
 
     @Override
     public UserResponseDTO.ResponseDTO join(UserRequestDTO.JoinDTO joinDTO, MultipartFile multipartFile) {
@@ -149,4 +157,60 @@ public class UserServiceImpl implements UserService {
 //    @Override
 //    public NoticeResponse.CreateSuccessDTO createNotice(NoticeRequest.CreateDTO createDTO) {
 //    }
+
+    @Override
+    public UserResponseDTO.ProductPreviewListDTO getOtherProduct(Long userId, UserAdapter userAdapter) {
+        User otherUser = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
+        User loggedInUser = userRepository.findById(userAdapter.getUser().getId()).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
+
+        // 사용자가 등록한 제품 목록을 가져오는 코드 (예시)
+        List<Product> productList = getProductsByUserId(userId);
+
+        Integer averageScore = productCommandService.otherAverageScoreByUserId(otherUser.getId());
+        Integer totalReviewCount = reviewCommandService.otherUserReviewCount(otherUser.getId());
+
+        UserResponseDTO.ProductPreviewListDTO list = UserConverter.productPreviewListDTO(otherUser, productList, productList.size(), averageScore, totalReviewCount);
+
+        return list;
+    }
+
+    @Override
+    public List<Product> getProductsByUserId(Long userId) {
+        // userRepository에서 사용자를 가져온 후 해당 사용자가 등록한 제품들을 반환하는 코드
+        User user = userRepository.findById(userId).orElse(null);
+
+        if (user != null) {
+            return productRepository.findAllByUser(user);
+        } else {
+            // 사용자를 찾을 수 없을 경우 빈 리스트 반환 또는 예외 처리 등
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public List<Review> getReviewByUserId(Long userId) {
+        // userRepository에서 사용자를 가져온 후 해당 사용자가 등록한 제품들을 반환하는 코드
+        User user = userRepository.findById(userId).orElse(null);
+        if (user != null){
+            return reviewRepository.findAllByUserId(userId);
+        }
+        else{
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public UserResponseDTO.UserReviewListDTO getOtherReview(Long userId, UserAdapter userAdapter) {
+        User otherUser = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
+        User loggedInUser = userRepository.findById(userAdapter.getUser().getId()).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
+
+        // 사용자가 등록한 제품 목록을 가져오는 코드 (예시)
+        List<Review> reviewList = getReviewByUserId(userId);
+
+        Integer averageScore = productCommandService.otherAverageScoreByUserId(otherUser.getId());
+        Integer totalReviewCount = reviewCommandService.otherUserReviewCount(otherUser.getId());
+
+        UserResponseDTO.UserReviewListDTO userReviewListDTO = UserConverter.otherUserReviewListDTO(otherUser, reviewList, averageScore, totalReviewCount);
+        return userReviewListDTO;
+    }
 }

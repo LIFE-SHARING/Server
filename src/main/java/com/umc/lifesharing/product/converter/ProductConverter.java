@@ -53,7 +53,7 @@ public class ProductConverter {
                 ))
                 .collect(Collectors.toList());
 
-        List<String> imageUrls = ProductConverter.getProductImagUrls(product, "https://lifesharing.s3.ap-northeast-2.amazonaws.com/");
+        List<String> imageUrls = ProductConverter.getProductImagUrls(product);
 
         return ProductResponseDTO.ProductDetailDTO.builder()
                 .productId(product.getId())
@@ -78,7 +78,7 @@ public class ProductConverter {
     // 제품 검색 시 응답
     public static ProductResponseDTO.SearchListDTO searchResultDTO(Product product){
 
-        List<String> imageUrls = ProductConverter.getProductImagUrls(product, "https://lifesharing.s3.ap-northeast-2.amazonaws.com/");
+        List<String> imageUrls = ProductConverter.getProductImagUrls(product);
         // 이미지 리스트에서 첫 번째 이미지 가져오기
         String firstImageUrl = imageUrls.isEmpty() ? null : imageUrls.get(0);
 
@@ -98,7 +98,7 @@ public class ProductConverter {
     // 홈 제품 조회 응답, 카테고리별 제품 조회 응답
     public static ProductResponseDTO.HomeResultDTO getHomeAndCateProduct(Product product){
 
-        List<String> imageUrls = ProductConverter.getProductImagUrls(product, "https://lifesharing.s3.ap-northeast-2.amazonaws.com/");
+        List<String> imageUrls = ProductConverter.getProductImagUrls(product);
         // 이미지 리스트에서 첫 번째 이미지 가져오기
         String firstImageUrl = imageUrls.isEmpty() ? null : imageUrls.get(0);
 
@@ -136,13 +136,13 @@ public class ProductConverter {
 //                .collect(Collectors.toList());
 //    }
     // 전체 이미지 URL 가져오기
-    private static List<String> getProductImagUrls(Product product, String baseUrl) {
+    private static List<String> getProductImagUrls(Product product/*, String baseUrl*/) {
         return product.getImages().stream()
                 .map(image -> {
                     String imageUrl = image.getImageUrl(); // 이미지의 상대 경로
 
                     // 이미지 URL이 null이 아니고, 상대 경로인 경우에만 baseUrl을 추가
-                    return imageUrl != null && !imageUrl.startsWith("https") ? baseUrl + imageUrl : imageUrl;
+                    return imageUrl != null && !imageUrl.startsWith("https") ? "https://lifesharing.s3.ap-northeast-2.amazonaws.com/" + imageUrl : imageUrl;
                 })
                 .collect(Collectors.toList());
     }
@@ -159,7 +159,7 @@ public class ProductConverter {
 
     // 마이페이지 등록 내역 응답
     public static ProductResponseDTO.myRegProductList toMyRegProduct(Product product/*, String start, String end*/){
-        List<String> imagUrls= ProductConverter.getProductImagUrls(product, "https://lifesharing.s3.ap-northeast-2.amazonaws.com/");
+        List<String> imagUrls= ProductConverter.getProductImagUrls(product);
 
         String firstImageUrl = imagUrls.isEmpty() ? null : imagUrls.get(0);
 
@@ -180,7 +180,7 @@ public class ProductConverter {
     // 내가 등록한 제품 조회시 응답
     public static ProductResponseDTO.MyListDTO toMyResultDTO(Product product, String lent){
 
-        List<String> imageUrls = ProductConverter.getProductImagUrls(product, "https://lifesharing.s3.ap-northeast-2.amazonaws.com/");
+        List<String> imageUrls = ProductConverter.getProductImagUrls(product);
         // 이미지 리스트에서 첫 번째 이미지 가져오기
         String firstImageUrl = imageUrls.isEmpty() ? null : imageUrls.get(0);
 
