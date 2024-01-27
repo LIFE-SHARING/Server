@@ -7,7 +7,7 @@ import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.product.entity.enums.ProductStatus;
 import com.umc.lifesharing.config.security.*;
 import com.umc.lifesharing.product.repository.ProductRepository;
-import com.umc.lifesharing.s3.AwsS3Service
+import com.umc.lifesharing.s3.AwsS3Service;
 import com.umc.lifesharing.user.converter.UserConverter;
 import com.umc.lifesharing.user.dto.UserRequestDTO;
 import com.umc.lifesharing.user.dto.UserResponseDTO;
@@ -135,6 +135,7 @@ public class UserServiceImpl implements UserService {
 
         return productList;
     }
+
 
     private String getImageUrl(MultipartFile multipartFile) {
         String url;

@@ -138,6 +138,11 @@ public class ProductResponseDTO {
         String endDate;
     }
 
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
     // 내가 등록한 제품 조회
     public static class MyListDTO{
         Long product_id;
