@@ -42,4 +42,7 @@ public interface ProductCommandService {
 
     // 제품 검색 필터별 조회
     List<Product> getSearchProduct(String filter, String keyword);
+
+    // 마이페이지 - 등록내역
+    List<ProductResponseDTO.myRegProductList> getMyProduct(UserAdapter userAdapter);
 }
