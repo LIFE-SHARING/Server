@@ -5,6 +5,7 @@ import com.umc.lifesharing.product.dto.ProductRequestDTO;
 import com.umc.lifesharing.product.dto.ProductResponseDTO;
 import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.product.entity.ProductImage;
+import com.umc.lifesharing.user.dto.UserResponseDTO;
 import com.umc.lifesharing.user.entity.User;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,5 +49,8 @@ public interface ProductCommandService {
 
     // 내가 등록한 제품 조회
     List<ProductResponseDTO.MyListDTO> getMyProduct(User user);
+
+    // 특정 사용자가 등록한 제품들의 평균 별점 계산
+    Integer otherAverageScoreByUserId(Long userId);
 
 }

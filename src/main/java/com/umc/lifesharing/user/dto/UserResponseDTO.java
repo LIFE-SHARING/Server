@@ -2,12 +2,14 @@ package com.umc.lifesharing.user.dto;
 
 import com.umc.lifesharing.config.security.TokenDTO;
 import com.umc.lifesharing.location.dto.LocationDTO;
+import com.umc.lifesharing.review.dto.ReviewResponseDTO;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.time.LocalDateTime;
 
@@ -36,6 +38,13 @@ public class UserResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ProductPreviewListDTO{
+        Long userId;
+        String userName;
+        String imageUrl;
+        String location;  // 대여자 위치 정보
+        Integer score;
+        Integer reviewCount;
+        Integer productCount;
         List<ProductPreviewDTO> productList;
     }
 
@@ -120,5 +129,34 @@ public class UserResponseDTO {
     @Getter
     public static class InquiryPreviewDTO {
         private List<InquiryDTO> inquiryList;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ReviewListDTO{
+        Long reviewId;
+        Long userId;
+        String nickName;
+        LocalDate createdAt;
+        String lentDay;  // 이후에 Reservation lent_day로 가져와야 함
+        List<String> imageList;
+        Integer score;
+        String content;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserReviewListDTO{
+        Long userId;
+        String userName;
+        String imageUrl;
+        String location;  // 대여자 위치 정보
+        Integer score;
+        Integer reviewCount;
+        List<ReviewListDTO> reviewList;
     }
 }

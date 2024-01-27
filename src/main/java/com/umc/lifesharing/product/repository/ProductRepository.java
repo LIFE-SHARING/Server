@@ -63,4 +63,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 //    @Query("SELECT p FROM Product p LEFT JOIN FETCH p.reviewList WHERE p.id = :productId")
 //    Optional<Product> findProductWithReviews(@Param("productId") Long productId);
 
+    List<Product> findAllByUserId(Long userId);
+
 }

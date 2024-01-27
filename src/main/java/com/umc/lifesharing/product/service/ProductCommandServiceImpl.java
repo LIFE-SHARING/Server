@@ -351,4 +351,20 @@ public class ProductCommandServiceImpl implements ProductCommandService{
 
         return myListDTO.stream().distinct().collect(Collectors.toList());
     }
+
+    @Override
+    public Integer otherAverageScoreByUserId(Long userId) {
+        List<Product> userProducts = productRepository.findAllByUserId(userId);
+
+        if (userProducts.isEmpty()) {
+            return 0; // 사용자가 등록한 제품이 없으면 0.0 반환 또는 다른 적절한 값을 반환
+        }
+
+        // 제품들의 평균 별점 계산
+        Integer totalScore = userProducts.stream()
+                .mapToInt(Product::getScore)
+                .sum();
+
+        return totalScore / userProducts.size();
+    }
 }

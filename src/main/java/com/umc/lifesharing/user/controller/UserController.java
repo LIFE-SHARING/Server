@@ -131,12 +131,33 @@ public class UserController {
         return ApiResponse.onSuccess(userService.getAdminAuth(userAdapter));
     }
 
-    // 회원이 등록한 제품 목록
-    @GetMapping("/user/products")
-    @Operation(summary = "회원이 등록한 제품 조회 API")
-    public ApiResponse<UserResponseDTO.ProductPreviewListDTO> getUserProductList(@RequestParam(name = "filter", defaultValue = "recent") String filter, @AuthenticationPrincipal UserAdapter userAdapter){
-        List<Product> productList = userService.getProductList(userAdapter, filter);
-        return ApiResponse.onSuccess(UserConverter.productPreviewListDTO(productList));
+    // 회원이 등록한 제품 목록 - 다른 유저가 어떤 등록자의 프로필 클릭시 (대여물품)
+//    @GetMapping("/user/products")
+//    @Operation(summary = "회원이 등록한 제품 조회 API")
+//    public ApiResponse<UserResponseDTO.ProductPreviewListDTO> getUserProductList(@RequestParam(name = "filter", defaultValue = "recent") String filter, @AuthenticationPrincipal UserAdapter userAdapter){
+//        List<Product> productList = userService.getProductList(userAdapter, filter);
+////        return ApiResponse.onSuccess(UserConverter.productPreviewListDTO(productList));
+//        return null;
+//    }
+
+    // 다른 유저가 어떤 등록자의 프로필 클릭시 (대여물품)
+    @GetMapping("/user/{userId}/rentProducts")
+    @Operation(summary = "대여자 프로필 대여 물품 조회 API")
+    public ApiResponse<UserResponseDTO.ProductPreviewListDTO> getOtherProducts(@PathVariable(name = "userId") Long userId, @AuthenticationPrincipal UserAdapter userAdapter){
+        UserResponseDTO.ProductPreviewListDTO itemlist = userService.getOtherProduct(userId, userAdapter);
+        return ApiResponse.onSuccess(itemlist);
+    }
+
+    // 다른 유저가 어떤 등록자의 프로필 클릭시 (대여중 물품)
+//    @GetMapping("/user/{userId}/")
+
+
+    // 다른 유저가 어떤 등록자의 프로필 클릭시 (리뷰리스트)
+    @GetMapping("/user/{userId}/reviews")
+    @Operation(summary = "대여자 프로필 리뷰 목록 조회 API")
+    public ApiResponse<UserResponseDTO.UserReviewListDTO> getOtherReviews(@PathVariable(name = "userId") Long userId, @AuthenticationPrincipal UserAdapter userAdapter){
+        UserResponseDTO.UserReviewListDTO reviewList = userService.getOtherReview(userId, userAdapter);
+        return ApiResponse.onSuccess(reviewList);
     }
 
 
