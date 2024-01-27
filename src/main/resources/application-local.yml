@@ -1,0 +1,70 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/lifesharing
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+        hbm2ddl:
+          auto: update
+        default_batch_fetch_size: 1000
+  sql:
+    init:
+      mode: never
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+springdoc:
+  version: '@project.version@'
+  api-docs:
+    path: /api-docs
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  swagger-ui:
+    operations-sorter: alpha
+    tags-sorter: alpha
+    path: /swagger-ui
+    disable-swagger-default-url: true
+    display-query-params-without-oauth2: true
+    paths-to-match:
+      - /**
+payment:
+  toss:
+    test_client_api_key : test_ck_GePWvyJnrKOzREA6yPJergLzN97E
+    test_secrete_api_key : test_sk_Ba5PzR0Arnn9d7wGD6vxrvmYnNeD
+    success_url : "http://localhost:8080/payments/toss/success"
+    fail_url : "http://localhost:8080/payments/toss/fail"
+cloud:
+  aws:
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: lifesharing
+      path:
+        product: product
+        review: review
+        user: user
+    stack:
+      auto: false
+    credentials:
+      secret-key: QH5ufH4fQG8ArkikDcOzfsJHm0I96MFJdPwT4hpg
+      access-key: AKIARUUREXDXFAI6KIJO
+jwt:
+  secret: c287e338c287e3386d73857348a0504c287e3386d73857348a0504281f4c4f9281f4c4f96d7385734c287e3386d7385c287e3386d73857348a0504281f4c4f97348a0504281f4c4f98a0504281f4c4f9
+
+kakao:
+  rest_api_key: c287e3386d73857348a0504281f4c4f9
+  iss: https://kauth.kakao.com    # ID 토큰을 발급한 인증 기관 정보
+  aud: d94809e9a1ea2e0a8d51647b585bf68d   # ID 토큰이 발급된 앱의 앱 키
+
+
+
+server:
+  port: 8080
