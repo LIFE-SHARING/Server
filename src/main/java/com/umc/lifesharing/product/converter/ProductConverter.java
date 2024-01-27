@@ -19,9 +19,6 @@ import java.util.stream.Collectors;
 
 public class ProductConverter {
 
-    @Value("${s3.url}")
-    private static String url;
-
     public static Product toProduct(ProductRequestDTO.RegisterProductDTO request){
         return Product.builder()
                 .name(request.getName())
