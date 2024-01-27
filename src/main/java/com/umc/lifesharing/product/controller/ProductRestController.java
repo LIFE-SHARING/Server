@@ -162,9 +162,10 @@ public class ProductRestController {
     // 마이페이지 - 제품 등록 내역
     @GetMapping("/my-regist")
     @Operation(summary = "마이페이지 제품 등록 내역")
-    public ApiResponse<ProductResponseDTO.myRegProductDTO> getMyRegProduct(@AuthenticationPrincipal UserAdapter userAdapter){
+    public ApiResponse<ProductResponseDTO.myRegProductDTO> getMyRegProduct(@AuthenticationPrincipal UserAdapter userAdapter) {
         List<ProductResponseDTO.myRegProductList> myRegProductLists = productCommandService.getMyProduct(userAdapter);
         return ApiResponse.onSuccess(ProductConverter.toMyProductReg(myRegProductLists));
+    }
   
     @GetMapping("/my")
     @Operation(summary = "제품 검색 조회 API")

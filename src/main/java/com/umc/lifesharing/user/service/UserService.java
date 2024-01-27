@@ -21,7 +21,7 @@ public interface UserService {
 
 //    UserResponseDTO.ChangePasswordResponseDTO changeUserInfo(UserAdapter userAdapter, UserRequestDTO.ChangePasswordDTO changePasswordDTO);
 
-    List<Product> getProductList(Long memberId);
+//    List<Product> getProductList(Long memberId);
     String getAdminAuth(UserAdapter userAdapter);
 
 //    NoticeResponse.CreateSuccessDTO createNotice(UserAdapter userAdapter, NoticeRequest.CreateDTO createDTO);
