@@ -147,14 +147,7 @@ public class ProductConverter {
                 .updatedAt(LocalDateTime.now())
                 .build();
     }
-
-    // 제품 이미지 수정 응답
-//    public static ProductResponseDTO.UpdateResDTO updateImageDTO(ProductImage productImage){
-//        return ProductResponseDTO.UpdateResDTO.builder()
-//                .productId(productImage.getProduct().getId())
-//                .updatedAt(LocalDateTime.now())
-//                .build();
-//    }
+  
 
     // 마이페이지 등록 내역 응답
     public static ProductResponseDTO.myRegProductList toMyRegProduct(Product product/*, String start, String end*/){
@@ -175,5 +168,37 @@ public class ProductConverter {
                 .myRegProductList(productList)
                 .build();
     }
+
+    // 내가 등록한 제품 조회시 응답
+    public static ProductResponseDTO.MyListDTO toMyResultDTO(Product product, String lent){
+
+        List<String> imageUrls = ProductConverter.getProductImagUrls(product);
+        // 이미지 리스트에서 첫 번째 이미지 가져오기
+        String firstImageUrl = imageUrls.isEmpty() ? null : imageUrls.get(0);
+
+        return ProductResponseDTO.MyListDTO.builder()
+                .product_id(product.getId())
+                .name(product.getName())
+                .image_url(firstImageUrl)
+                .score(product.getScore())
+                .review_count(product.getReviewCount())
+                .day_price(product.getDayPrice())
+                .hour_price(product.getHourPrice())
+                .deposit(product.getDeposit())
+                .isReserved(lent)
+                .location("사용자로부터 받아오기")
+                .build();
+    }
+
+//    public static List<ProductResponseDTO.MyListDTO> toMyResultList(List<RestaurantCategory> restaurantCategoryList){
+//
+//        return List<ProductResponseDTO.MyListDTO> toMyResultList() = searchProductList.stream()
+//                .map(product -> {
+//                    ProductResponseDTO.SearchListDTO searchListDTO = ProductConverter.searchResultDTO(product);
+//                    searchListDTO.setIsLiked(productCommandService.isProductLikedByUser(product, userAdapter));
+//                    return searchListDTO;
+//                })
+//                .collect(Collectors.toList());
+//    }
 
 }

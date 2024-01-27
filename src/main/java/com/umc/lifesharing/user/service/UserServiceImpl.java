@@ -7,10 +7,13 @@ import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.product.entity.enums.ProductStatus;
 import com.umc.lifesharing.config.security.*;
 import com.umc.lifesharing.product.repository.ProductRepository;
+import com.umc.lifesharing.s3.AwsS3Service
 import com.umc.lifesharing.user.converter.UserConverter;
 import com.umc.lifesharing.user.dto.UserRequestDTO;
 import com.umc.lifesharing.user.dto.UserResponseDTO;
+import com.umc.lifesharing.user.entity.Roles;
 import com.umc.lifesharing.user.entity.User;
+import com.umc.lifesharing.user.repository.RolesRepository;
 import com.umc.lifesharing.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +24,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,37 +40,36 @@ public class UserServiceImpl implements UserService {
 //    private final JwtUtil jwtUtil;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final RolesRepository rolesRepository;
+    private final AwsS3Service awsS3Service;
 
     @Override
-    public UserResponseDTO.ResponseDTO join(UserRequestDTO.JoinDTO joinDTO) {
-//        if(isDuplicated(joinDTO.getEmail())) {
-//            throw new UserHandler(ErrorStatus.DUPLICATED_EMAIL);
-//        }
-//
-//        User user = UserConverter.toUser(joinDTO, passwordEncoder);
-//        user = userRepository.save(user);
-//
-//        String token = createToken(user);
-//
-//        return UserConverter.toResponseDTO(user, token);
-        return null;
+    public UserResponseDTO.ResponseDTO join(UserRequestDTO.JoinDTO joinDTO, MultipartFile multipartFile) {
+        if(emailDuplicated(joinDTO.getEmail()) || nicknameDuplicated(joinDTO.getName())) {
+            throw new UserHandler(ErrorStatus.DUPLICATED_EMAIL_OR_NICKNAME);
+        }
+
+        String imageUrl = getImageUrl(multipartFile);
+        User user = UserConverter.toUser(joinDTO, passwordEncoder, imageUrl);
+        Roles roles = new Roles().addUser(user);
+
+        rolesRepository.save(roles);
+        user = userRepository.save(user);
+
+        TokenDTO tokenDTO = jwtProvider.generateTokenByUser(user);
+
+        return UserConverter.toResponseDTO(user, tokenDTO);
     }
 
     @Override
     public UserResponseDTO.ResponseDTO login(UserRequestDTO.LoginDTO loginDTO) {
-        // 1. Login ID/PW 를 기반으로 Authentication 객체 생성
-        // 이때 authentication 는 인증 여부를 확인하는 authenticated 값이 false
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword());
-
-        // 2. 실제 검증 (사용자 비밀번호 체크)이 이루어지는 부분
-        // authenticate 매서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드가 실행
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
-        // 3. 인증 정보를 기반으로 JWT 토큰 생성
-        TokenDTO tokenDTO = jwtProvider.generateTokenByAuthentication(authentication);
         User user = validUserByEmail(loginDTO.getEmail());
 
+        if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
+            throw new UserHandler(ErrorStatus.INVALID_PASSWORD);
+        }
+
+        TokenDTO tokenDTO = jwtProvider.generateTokenByUser(user);
         return UserConverter.toResponseDTO(user, tokenDTO);
     }
 
@@ -82,7 +83,7 @@ public class UserServiceImpl implements UserService {
             throw new UserHandler(ErrorStatus.INVALID_PASSWORD);
         }
 
-        user.setPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
+        user.updatePassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
         userRepository.save(user);
 
         return UserResponseDTO.ChangePasswordResponseDTO.builder()
@@ -91,16 +92,28 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-//    private String createToken(User user) {
-//        return jwt.generateToken(new CustomUserDetails(user));
-//    }
+    @Override
+    public String getAdminAuth(UserAdapter userAdapter) {
+        try {
+            User user = validUserByEmail(userAdapter.getUser().getEmail());
+            Roles roles = user.getRoles().get(0);
+            roles.toAdmin();
+            rolesRepository.save(roles);
+            return user.getEmail() + "에 admin 권한 부여 완료";
+        } catch (Exception e) {
+            throw new UserHandler(ErrorStatus._INTERNAL_SERVER_ERROR);
+        }
+    }
 
     private User validUserByEmail(String email)  {
         return userRepository.findByEmail(email).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
     }
 
-    private boolean isDuplicated(String email) {
+    private boolean emailDuplicated(String email) {
         return userRepository.findByEmail(email).isPresent();
+    }
+    private boolean nicknameDuplicated(String nickname) {
+        return userRepository.existsByName(nickname);
     }
 
     @Override
@@ -122,4 +135,17 @@ public class UserServiceImpl implements UserService {
 
         return productList;
     }
+
+    private String getImageUrl(MultipartFile multipartFile) {
+        String url;
+        if(!multipartFile.isEmpty())
+            url = awsS3Service.uploadUserFiles(Arrays.asList(multipartFile));
+        else
+            url = "";   // TODO: 기본 image url로 변경
+        return url;
+    }
+
+//    @Override
+//    public NoticeResponse.CreateSuccessDTO createNotice(NoticeRequest.CreateDTO createDTO) {
+//    }
 }

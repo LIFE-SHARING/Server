@@ -137,4 +137,20 @@ public class ProductResponseDTO {
         String startDate;
         String endDate;
     }
+
+    // 내가 등록한 제품 조회
+    public static class MyListDTO{
+        Long product_id;
+        String name;
+        String location;  //사용자로부터 위치 정보를 가져와야함
+        Integer deposit;
+        Integer day_price;
+        Integer hour_price;
+        Integer score;
+        Integer review_count;
+        Boolean isLiked;
+        String image_url;  //이미지 처리 방법 알아내기
+        String isReserved;
+    }
+
 }

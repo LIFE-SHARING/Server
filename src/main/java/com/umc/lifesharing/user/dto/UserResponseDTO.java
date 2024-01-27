@@ -2,13 +2,12 @@ package com.umc.lifesharing.user.dto;
 
 import com.umc.lifesharing.config.security.TokenDTO;
 import com.umc.lifesharing.location.dto.LocationDTO;
-import com.umc.lifesharing.location.entity.Location;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.time.LocalDateTime;
 
@@ -54,11 +53,12 @@ public class UserResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Getter
-    public static class UserInfoResponseDTO {   // 로그인 회원가입 용 응답 dto
+    public static class UserInfoResponseDTO {
         private Long userId;
         private String email;
         private String nickname;
         private String phone;
+        private String profileUrl;
         private LocationDTO locationDTO;
     }
 
@@ -70,7 +70,8 @@ public class UserResponseDTO {
         private Long userId;    // pk
         private String nickname;    // 닉네임
         private String area;    // 읍/면/동    ex. 무거동
-        private Integer score;  // 후기 평균
+        private Integer score;
+        private String profileUrl;
         private Long point;
     }
 
@@ -81,5 +82,43 @@ public class UserResponseDTO {
     public static class ChangePasswordResponseDTO {
         private Boolean isChanged;
         private LocalDateTime updatedAt;
+    }
+
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class CheckNicknameResponseDTO {
+        private String message;
+        private Boolean existNickname;
+    }
+
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class CreateInquiryDTO {
+        private Long inquiryId;
+        private LocalDateTime createdAt;
+    }
+
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class InquiryDTO {
+        private Long inquiryId;
+        private String title;
+        private String body;
+        private List<String> imageUrlList;
+        private LocalDateTime createdAt;
+    }
+
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class InquiryPreviewDTO {
+        private List<InquiryDTO> inquiryList;
     }
 }

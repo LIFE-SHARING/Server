@@ -3,16 +3,15 @@ package com.umc.lifesharing.user.entity;
 import com.umc.lifesharing.user.entity.common.BaseEntity;
 import jakarta.persistence.*;
 
-@Entity
-public class Terms extends BaseEntity {
+import java.util.ArrayList;
+import java.util.List;
+
+public class Reply extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "reply_id")
     private Long id;
 
-    private String title;
-
-    @Column(length = 5000)
+    @Column(nullable = false)
     private String body;
-
-    private Boolean requried;
 }

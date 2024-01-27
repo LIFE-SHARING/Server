@@ -16,6 +16,9 @@ import com.umc.lifesharing.product.repository.ProductImageRepository;
 import com.umc.lifesharing.product.repository.ProductRepository;
 import com.umc.lifesharing.review.entity.Review;
 import com.umc.lifesharing.review.rerpository.ReviewRepository;
+import com.umc.lifesharing.reservation.entity.Reservation;
+import com.umc.lifesharing.reservation.entity.enum_class.Status;
+import com.umc.lifesharing.reservation.repository.ReservationRepository;
 import com.umc.lifesharing.s3.AwsS3Service;
 import com.umc.lifesharing.user.entity.User;
 import com.umc.lifesharing.user.repository.UserRepository;
@@ -38,6 +41,14 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -52,6 +63,7 @@ public class ProductCommandServiceImpl implements ProductCommandService{
     private final HeartRepository heartRepository;
     private final AwsS3Service awsS3Service;
     private final ProductCategoryRepository productCategoryRepository;
+    private final ReservationRepository reservationRepository;
 
     @Value("${s3.url}")
     private String url;
@@ -294,4 +306,49 @@ public class ProductCommandServiceImpl implements ProductCommandService{
         return keyword.length() >= 2;
     }
 
+
+    // 제품 검색 시 필터별 조회
+    @Override
+    public List<ProductResponseDTO.MyListDTO> getMyProduct(User user) {
+        // 반환할 리스트
+        List<ProductResponseDTO.MyListDTO> myListDTO = new ArrayList<>();
+
+        List<Product> productList = productRepository.findAllByUser(user);
+        List<Reservation> reservationList = reservationRepository.findAllByProductInAndStatus(productList, Status.ACTIVE);
+
+        //제품 추가
+        myListDTO = productList.stream()
+                .map(product -> {
+                    ProductResponseDTO.MyListDTO toMyDto = ProductConverter.toMyResultDTO(product, null);
+                    return toMyDto;
+                })
+                .collect(Collectors.toList());
+
+        // 현재 날짜 구하기
+        LocalDateTime now = LocalDateTime.now();
+
+
+        // 포맷 정의
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd");
+
+        for(Reservation r : reservationList){
+            if(r.getEnd_date().isAfter(now) && r.getStart_date().isBefore(now)){
+                // 포맷 적용
+                String start = r.getStart_date().format(formatter);
+                String end = r.getEnd_date().format(formatter);
+                String lentDate = start+"-"+end+"\n대여중";
+
+                // 이미 제품이 리스트에 추가되었는지 확인
+                for(ProductResponseDTO.MyListDTO p : myListDTO){
+
+                    if(p.getProduct_id().equals(r.getProduct().getId())){
+                        p.setIsReserved(lentDate); // 대여 시작일-종료일과 대여중임을 표시
+                    }
+                }
+
+            }
+        }
+
+        return myListDTO.stream().distinct().collect(Collectors.toList());
+    }
 }
