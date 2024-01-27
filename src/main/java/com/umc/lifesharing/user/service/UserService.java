@@ -16,6 +16,9 @@ public interface UserService {
 
     UserResponseDTO.ChangePasswordResponseDTO changePassword(UserAdapter userAdapter, UserRequestDTO.ChangePasswordDTO changePasswordDTO);
 
+
+    List<Product> getProductList(UserAdapter userAdapter, String filter);
+
 //    UserResponseDTO.ChangePasswordResponseDTO changeUserInfo(UserAdapter userAdapter, UserRequestDTO.ChangePasswordDTO changePasswordDTO);
 
     List<Product> getProductList(Long memberId);

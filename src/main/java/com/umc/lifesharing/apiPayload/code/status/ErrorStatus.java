@@ -32,11 +32,12 @@ public enum ErrorStatus implements BaseErrorCode {
 
     CHARGE_POINT(HttpStatus.BAD_REQUEST, "PAYMENT4101", "캐쉬가 부족합니다."),
 
-    PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "PRODUCT4001", "없는 제품입니다."),
+    PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "PRODUCT4001", "해당 제품이 없습니다."),
     NO_PRODUCT_IMAGE(HttpStatus.NOT_FOUND, "PRODUCT4002", "제품 이미지가 없습니다."),
     NOT_EXIST_LIKED_PRODUCT(HttpStatus.NOT_FOUND,"PRODUCT4003", "찜한 제품이 없습니다."),
     ALREADY_HEART(HttpStatus.ALREADY_REPORTED, "HEART4001", "이미 좋아요한 제품입니다."),
     ALREADY_REMOVE(HttpStatus.ALREADY_REPORTED, "HEART4002", "이미 취소한 제품입니다."),
+    REVIEW_NOT_FOUND(HttpStatus.BAD_REQUEST, "REVIEW4001", "존재하지 않는 리뷰입니다."),
   
     // 예시,,,
     ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "ARTICLE4001", "게시글이 없습니다."),

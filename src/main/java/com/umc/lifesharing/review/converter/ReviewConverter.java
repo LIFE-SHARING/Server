@@ -1,5 +1,8 @@
 package com.umc.lifesharing.review.converter;
 
+import com.umc.lifesharing.heart.dto.HeartResponseDTO;
+import com.umc.lifesharing.heart.entity.Heart;
+import com.umc.lifesharing.reservation.entity.Reservation;
 import com.umc.lifesharing.review.dto.ReviewRequestDTO;
 import com.umc.lifesharing.review.dto.ReviewResponseDTO;
 import com.umc.lifesharing.review.entity.Review;
@@ -17,7 +20,7 @@ public class ReviewConverter {
         return Review.builder()
                 .content(request.getContent())
                 .score(request.getScore())
-//                .lent_day()  예약에서 가져오도록 해야함
+//                .lentDay()  //예약에서 가져오도록 해야함
                 .images(new ArrayList<>())
                 .build();
     }
@@ -31,7 +34,27 @@ public class ReviewConverter {
 
     // 사용자가 등록한 리뷰 목록 조회
     public static ReviewResponseDTO.ReviewListDTO toReviewList(Review review){
-        List<String> imageList = review.getImages().stream().map(ReviewImage::getImageUrl).collect(Collectors.toList());
+        List<String> imageList = review.getImages().stream()
+                .map(ReviewImage::getFullImageUrl)
+                .collect(Collectors.toList());
+
+//        // 예약 정보가 없을 경우를 고려하여 미리 초기화
+//        String reservationTotalTime = "";
+//
+//        // 예약 정보가 있는 경우에 대해서만 totalTime 설정
+//        if (review.getProduct() != null && !review.getProduct().getReservationList().isEmpty()) {
+//            Reservation reservation = review.getProduct().getReservationList().get(0); // 여기서 첫 번째 예약 정보를 가져옴
+//            reservationTotalTime = reservation.getTotal_time(); // 예약 정보에서 대여기간을 가져와서 설정
+//        }
+
+        // 예약 정보가 없을 경우를 고려하여 미리 초기화
+        String totalTime = "";
+
+        // 리뷰에 연결된 예약 정보가 있는 경우에만 totalTime 설정
+        Reservation reservation = review.getReservation();
+        if (reservation != null) {
+            totalTime = reservation.getTotal_time();
+        }
 
         return ReviewResponseDTO.ReviewListDTO.builder()
                 .reviewId(review.getId())
@@ -40,7 +63,7 @@ public class ReviewConverter {
                 .imageList(imageList)
                 .score(review.getScore())
                 .content(review.getContent())
-                .lentDay(review.getLentDay())
+                .lentDay(totalTime)  // 변경된 부분
                 .createdAt(review.getCreatedAt())
                 .build();
     }
@@ -52,6 +75,14 @@ public class ReviewConverter {
 
         return ReviewResponseDTO.UserReviewListDTO.builder()
                 .reviewListDTOList(userReviewList)
+                .reviewCount(reviewList.size())
+                .build();
+    }
+
+    public static ReviewResponseDTO.updateReview toUpdateReview(Review review){
+        return ReviewResponseDTO.updateReview.builder()
+                .reviewId(review.getId())
+                .updatedAt(LocalDateTime.now())
                 .build();
     }
 }

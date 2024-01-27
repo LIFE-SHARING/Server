@@ -1,5 +1,7 @@
 package com.umc.lifesharing.reservation.converter;
 
+import com.umc.lifesharing.product.converter.ProductConverter;
+import com.umc.lifesharing.product.entity.ProductImage;
 import com.umc.lifesharing.reservation.dto.ReservationResponseDto;
 import com.umc.lifesharing.reservation.entity.Reservation;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,10 @@ public class ReservationConverter {
         }else {
             filter = "대여";
         }
+
+        List<String> imageUrls = reservation.getProduct().getImages().stream().map(ProductImage::getImageUrl).collect(Collectors.toList());
+        // 이미지 리스트에서 첫 번째 이미지 가져오기
+        String firstImageUrl = imageUrls.isEmpty() ? null : imageUrls.get(0);
 
         return ReservationResponseDto.ReservationResultDto.builder()
                 .reservationId(reservation.getId())

@@ -14,6 +14,8 @@ import com.umc.lifesharing.product.entity.ProductImage;
 import com.umc.lifesharing.product.repository.ProductCategoryRepository;
 import com.umc.lifesharing.product.repository.ProductImageRepository;
 import com.umc.lifesharing.product.repository.ProductRepository;
+import com.umc.lifesharing.review.entity.Review;
+import com.umc.lifesharing.review.rerpository.ReviewRepository;
 import com.umc.lifesharing.reservation.entity.Reservation;
 import com.umc.lifesharing.reservation.entity.enum_class.Status;
 import com.umc.lifesharing.reservation.repository.ReservationRepository;
@@ -21,12 +23,24 @@ import com.umc.lifesharing.s3.AwsS3Service;
 import com.umc.lifesharing.user.entity.User;
 import com.umc.lifesharing.user.repository.UserRepository;
 import com.umc.lifesharing.user.service.UserQueryService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -35,6 +49,7 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 @Service
 @Repository
@@ -49,6 +64,9 @@ public class ProductCommandServiceImpl implements ProductCommandService{
     private final AwsS3Service awsS3Service;
     private final ProductCategoryRepository productCategoryRepository;
     private final ReservationRepository reservationRepository;
+
+    @Value("${s3.url}")
+    private String url;
 
     // 제품 등록
     @Override
@@ -66,11 +84,69 @@ public class ProductCommandServiceImpl implements ProductCommandService{
 
         // 이미지 URL을 ProductImage 엔티티로 매핑하여 리스트에 추가
         for (String imageUrl : uploadedFileNames) {
+            String fullUrl = url + imageUrl;
             ProductImage productImage = ProductImage.create(imageUrl);
+            productImage.setFullImageUrl(fullUrl);
             productImage.setProduct(newProduct);
             newProduct.getImages().add(productImage);
         }
+
         return productRepository.save(newProduct);
+    }
+
+    // 제품 이미지 수정
+    @Override
+    @Transactional
+    public void updateProductImage(Long productId, UserAdapter userAdapter, List<MultipartFile> imageList) {
+        Product product = productRepository.findById(productId).orElseThrow(() -> new ProductHandler(ErrorStatus.PRODUCT_NOT_FOUND));
+        User user = userRepository.findById(userAdapter.getUser().getId()).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
+
+
+        // 기존의 이미지 리스트를 삭제
+        product.getImages().forEach(productImage -> {
+            awsS3Service.deleteProductFile(productImage.getImageUrl());
+            productImageRepository.delete(productImage);
+        });
+        product.getImages().clear();
+
+        // 파일 업로드 처리
+        List<String> uploadedFileNames = awsS3Service.uploadProductFiles(imageList);
+
+        // 새로운 이미지 리스트 추가
+        for (String imageUrl : uploadedFileNames) {
+            ProductImage newProductImage = ProductImage.create(product, imageUrl, url + imageUrl);
+            product.getImages().add(newProductImage);
+        }
+    }
+
+    @Override
+    // 제품 정보 수정
+    public Product updateProduct(Long productId, ProductRequestDTO.UpdateProductDTO request, UserAdapter userAdapter) {
+        // productId를 사용하여 데이터베이스에서 제품을 가져온다.
+        Product existProduct = productRepository.findById(productId).orElseThrow(() -> new ProductHandler(ErrorStatus.PRODUCT_NOT_FOUND));
+
+        User loggedInUser = userAdapter.getUser();
+
+        if(!existProduct.getUser().getId().equals(loggedInUser.getId())){   // 등록자와 수정하고자 하는 사용자가 일치하지 않으면
+            throw new UserHandler(ErrorStatus.USER_NOT_FOUNDED);
+        }
+
+        // 카테고리 정보가 전달되었을 경우에만 업데이트
+        if (request.getCategoryId() != null) {
+            ProductCategory category = productCategoryRepository.findById(request.getCategoryId())
+                    .orElseThrow(() -> new ProductHandler(ErrorStatus.CATEGORY_NOT_FOUND));
+
+            // 제품에 새로운 카테고리 설정
+            existProduct.setCategory(category);
+        }
+        if (request.getName() != null){ existProduct.setName(request.getName()); }
+        if (request.getContent() != null){ existProduct.setContent(request.getContent()); }
+        if (request.getDayPrice() != null){ existProduct.setDayPrice(request.getDayPrice()); }
+        if (request.getHourPrice() != null){ existProduct.setHourPrice(request.getHourPrice()); }
+        if (request.getDeposit() != null){ existProduct.setDeposit(request.getDeposit()); }
+        if (request.getLendingPeriod() != null){ existProduct.setLendingPeriod(request.getLendingPeriod()); }
+
+        return productRepository.save(existProduct);
     }
 
     // 제품 삭제
@@ -88,11 +164,13 @@ public class ProductCommandServiceImpl implements ProductCommandService{
             List<ProductImage> productImages = product.getImages();
             for (ProductImage productImage : productImages) {
                 // S3에서 이미지 파일 삭제
-                awsS3Service.deleteFile(productImage.getImageUrl());
+                awsS3Service.deleteProductFile(productImage.getImageUrl());
+                //awsS3Service.deleteFileByUrl(productImage.getImageUrl());
 
                 // 이미지 엔티티 삭제
                 productImageRepository.delete(productImage);
             }
+
             // 제품 삭제
             productRepository.delete(product);
         }
@@ -109,8 +187,15 @@ public class ProductCommandServiceImpl implements ProductCommandService{
         // 좋아요 여부 확인 -> 좋아요가 눌러져있다면 해당 회원이 해당 제품을 상세 조회할 때 좋아요 여부가 true
         boolean isLiked = isProductLikedByUser(product, userAdapter);
 
+        // join fetch로 어떤 Product의 User 를 찾도록 함
+        Optional<Product> optionalProduct = productRepository.findProductWithUser(productId);
+        Product p = optionalProduct.get();
+        User u = p.getUser();
+
         ProductResponseDTO.ProductDetailDTO productDetailDTO = ProductConverter.toDetailRes(product);
         productDetailDTO.setIsLiked(isLiked);
+        productDetailDTO.setUserNickname(u.getName());
+        productDetailDTO.setUserImage(u.getProfileUrl());
 
         return productDetailDTO;
     }
@@ -137,29 +222,6 @@ public class ProductCommandServiceImpl implements ProductCommandService{
         productRepository.updateScore(productId, newScore);
     }
 
-    // 제품 정보 수정
-    public Product updateProduct(Long productId, ProductRequestDTO.UpdateProductDTO request, UserAdapter userAdapter) {
-        // productId를 사용하여 데이터베이스에서 제품을 가져온다.
-        Product newUpdateProduct = productRepository.findById(productId).orElseThrow(() -> new ProductHandler(ErrorStatus.PRODUCT_NOT_FOUND));
-
-        User loggedInUser = userAdapter.getUser();
-
-        if(!newUpdateProduct.getUser().getId().equals(loggedInUser.getId())){   // 등록자와 수정하고자 하는 사용자가 일치하지 않으면
-            throw new UserHandler(ErrorStatus.USER_NOT_FOUNDED);
-        }
-
-        // request에서 받은 정보로 제품 정보를 업데이트한다.
-        newUpdateProduct.setName(request.getName());
-        newUpdateProduct.setContent(request.getContent());
-        newUpdateProduct.setDayPrice(request.getDayPrice());
-        newUpdateProduct.setHourPrice(request.getHourPrice());
-        newUpdateProduct.setDeposit(request.getDeposit());
-        newUpdateProduct.setLendingPeriod(request.getLendingPeriod());
-        //product.setFiles(request.getFiles());
-
-        return productRepository.save(newUpdateProduct);
-    }
-
     // 홈에서 필터별 제품 조회
     @Override
     public List<Product> getHomeProduct(String filter) {
@@ -183,6 +245,10 @@ public class ProductCommandServiceImpl implements ProductCommandService{
     public List<Product> getSearchProduct(String filter, String keyword) {
         List<Product> productList = null;
 
+        if (!isValidKeyword(keyword)) {   // 검색어가 유효하지 않다면 빈 리스트 리턴
+            return Collections.emptyList();
+        }
+
         if (filter.equals("recent")){
             productList = productRepository.findByNameContainingOrderByCreatedAtDesc(keyword);
         }
@@ -194,6 +260,52 @@ public class ProductCommandServiceImpl implements ProductCommandService{
         }
         return productList;
     }
+
+    @Override
+    public List<ProductResponseDTO.myRegProductList> getMyProduct(UserAdapter userAdapter) {
+        User user = userRepository.findById(userAdapter.getUser().getId()).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
+
+        List<Product> productList = productRepository.findAllByUser(user);
+
+        List<ProductResponseDTO.myRegProductList> registList = new ArrayList<>();
+
+        for (Product product : productList){
+            String lendingDay = product.getLendingPeriod();
+
+            List<String> dateList = parseDate(lendingDay);
+
+            // 시작일과 종료일을 추출
+            String startDate = dateList.size() > 0 ? dateList.get(0) : null;
+            String endDate = dateList.size() > 1 ? dateList.get(dateList.size() - 1) : null;
+
+            ProductResponseDTO.myRegProductList myRegProductList = ProductConverter.toMyRegProduct(product);
+            myRegProductList.setStartDate(startDate);
+            myRegProductList.setEndDate(endDate);
+
+            // 리스트에 추가
+            registList.add(myRegProductList);
+        }
+        return registList;
+    }
+
+    private List<String> parseDate(String dateString) {
+        // 대여 기간 문자열에서 "M.d(EEE)" 패턴을 찾기
+        Pattern pattern = Pattern.compile("(\\d{1,2}\\.\\d{1,2}\\([^)]+\\))");
+        Matcher matcher = pattern.matcher(dateString);
+
+        List<String> dateList = new ArrayList<>();
+        
+        while (matcher.find()) {
+            dateList.add(matcher.group(1));
+        }
+        return dateList;
+    }
+
+    // 키워드 검사
+    private boolean isValidKeyword(String keyword){
+        return keyword.length() >= 2;
+    }
+
 
     // 제품 검색 시 필터별 조회
     @Override

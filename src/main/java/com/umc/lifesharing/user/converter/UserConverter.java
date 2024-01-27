@@ -21,11 +21,11 @@ import java.time.LocalDateTime;
 public class UserConverter {
 //    private PasswordEncoder passwordEncoder;
 
-      // 회원별 제품 조회 응답
+      // 회원별 제품 조회 응답 - 대여 물품
     public static UserResponseDTO.ProductPreviewDTO productPreviewDTO(Product product){
 
         List<String> imageUrls = product.getImages().stream()
-                .map(ProductImage::getImageUrl)
+                .map(ProductImage::getFullImageUrl)
                 .collect(Collectors.toList());
 
         // 이미지 리스트에서 첫 번째 이미지 가져오기

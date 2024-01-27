@@ -27,6 +27,9 @@ public class ReviewImage {
     @Column(nullable = false)
     private String imageUrl;
 
+    @Column
+    private String fullImageUrl;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id", nullable = false)
     private Review review;
@@ -36,5 +39,14 @@ public class ReviewImage {
         return ReviewImage.builder()
                 .imageUrl(imageUrl)
                 .build();
+    }
+
+    // 정적 팩토리 메서드
+    public static ReviewImage create(Review review, String imageUrl, String fullImageUrl) {
+        ReviewImage reviewImage = new ReviewImage();
+        reviewImage.setReview(review);
+        reviewImage.setImageUrl(imageUrl);
+        reviewImage.setFullImageUrl(fullImageUrl);
+        return reviewImage;
     }
 }
