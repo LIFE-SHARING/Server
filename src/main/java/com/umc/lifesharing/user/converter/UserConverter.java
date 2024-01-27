@@ -21,11 +21,11 @@ import java.time.LocalDateTime;
 public class UserConverter {
 //    private PasswordEncoder passwordEncoder;
 
-      // 회원별 제품 조회 응답
+      // 회원별 제품 조회 응답 - 대여 물품
     public static UserResponseDTO.ProductPreviewDTO productPreviewDTO(Product product){
 
         List<String> imageUrls = product.getImages().stream()
-                .map(ProductImage::getImageUrl)
+                .map(ProductImage::getFullImageUrl)
                 .collect(Collectors.toList());
 
         // 이미지 리스트에서 첫 번째 이미지 가져오기
@@ -40,7 +40,6 @@ public class UserConverter {
                 .score(product.getScore()) //별점(평균으로 가져오도록 해야함 - 구현완료)
                 .reviewCount(product.getReviewCount()) //리뷰 개수(해당 제품에 대한 리뷰 개수를 카운트해야함 - 구현완료)
                 .location("사용자로부터 받아오기")   //위치(구현전-1월 23일)
-                .rentStatus(product.getRentStatus().name())
                 .build();
     }
 

@@ -73,6 +73,7 @@ public class ProductConverter {
                 .content(product.getContent())
                 .reviewList(reviewList)
                 .location("사용자로부터 받아오기")
+//                .latitude()
 //                .mapInfo(generateMapInfo(product.getUser())
                 .build();
     }
@@ -128,7 +129,7 @@ public class ProductConverter {
 
     // 리뷰 이미지 가져오도록
     private static List<String> getReviewImageUrls(Review review) {
-        return review.getImages().stream().map(ReviewImage::getImageUrl).collect(Collectors.toList());
+        return review.getImages().stream().map(ReviewImage::getFullImageUrl).collect(Collectors.toList());
     }
 
     // 제품 이미지 가져오도록
@@ -148,10 +149,30 @@ public class ProductConverter {
     }
 
     // 제품 이미지 수정 응답
-    public static ProductResponseDTO.UpdateResDTO updateImageDTO(ProductImage productImage){
-        return ProductResponseDTO.UpdateResDTO.builder()
-                .productId(productImage.getProduct().getId())
-                .updatedAt(LocalDateTime.now())
+//    public static ProductResponseDTO.UpdateResDTO updateImageDTO(ProductImage productImage){
+//        return ProductResponseDTO.UpdateResDTO.builder()
+//                .productId(productImage.getProduct().getId())
+//                .updatedAt(LocalDateTime.now())
+//                .build();
+//    }
+
+    // 마이페이지 등록 내역 응답
+    public static ProductResponseDTO.myRegProductList toMyRegProduct(Product product/*, String start, String end*/){
+        List<String> imagUrls= ProductConverter.getProductImagUrls(product);
+
+        String firstImageUrl = imagUrls.isEmpty() ? null : imagUrls.get(0);
+
+        return ProductResponseDTO.myRegProductList.builder()
+                .name(product.getName())
+                .location("사용자로부터 받아오기")   // 27일 - 사용자 위치 받아오기
+                .imageUrl(firstImageUrl)
+                .build();
+    }
+
+    public static ProductResponseDTO.myRegProductDTO toMyProductReg(List<ProductResponseDTO.myRegProductList> productList){
+        return ProductResponseDTO.myRegProductDTO.builder()
+                .productCount(productList.size())
+                .myRegProductList(productList)
                 .build();
     }
 

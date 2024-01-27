@@ -31,10 +31,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 
@@ -245,6 +247,46 @@ public class ProductCommandServiceImpl implements ProductCommandService{
             productList = productRepository.findByNameContainingOrderByReviewCountDesc(keyword);
         }
         return productList;
+    }
+
+    @Override
+    public List<ProductResponseDTO.myRegProductList> getMyProduct(UserAdapter userAdapter) {
+        User user = userRepository.findById(userAdapter.getUser().getId()).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
+
+        List<Product> productList = productRepository.findAllByUser(user);
+
+        List<ProductResponseDTO.myRegProductList> registList = new ArrayList<>();
+
+        for (Product product : productList){
+            String lendingDay = product.getLendingPeriod();
+
+            List<String> dateList = parseDate(lendingDay);
+
+            // 시작일과 종료일을 추출
+            String startDate = dateList.size() > 0 ? dateList.get(0) : null;
+            String endDate = dateList.size() > 1 ? dateList.get(dateList.size() - 1) : null;
+
+            ProductResponseDTO.myRegProductList myRegProductList = ProductConverter.toMyRegProduct(product);
+            myRegProductList.setStartDate(startDate);
+            myRegProductList.setEndDate(endDate);
+
+            // 리스트에 추가
+            registList.add(myRegProductList);
+        }
+        return registList;
+    }
+
+    private List<String> parseDate(String dateString) {
+        // 대여 기간 문자열에서 "M.d(EEE)" 패턴을 찾기
+        Pattern pattern = Pattern.compile("(\\d{1,2}\\.\\d{1,2}\\([^)]+\\))");
+        Matcher matcher = pattern.matcher(dateString);
+
+        List<String> dateList = new ArrayList<>();
+        
+        while (matcher.find()) {
+            dateList.add(matcher.group(1));
+        }
+        return dateList;
     }
 
     // 키워드 검사
