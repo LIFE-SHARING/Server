@@ -43,7 +43,8 @@ public class PaymentRestController {
     @Parameters({
             @Parameter(name = "productId", description = "제품 아이디, path variable 입니다!"),
     })
-    public ApiResponse<TossPaymentReqDto.TossPaymentResDto> requestTossPaymentReservation(@AuthenticationPrincipal UserAdapter userAdapter, @ExistProduct @PathVariable Long productId, @RequestBody @Valid TossPaymentDto tossPaymentDto) {
+    public ApiResponse<TossPaymentReqDto.TossPaymentResDto> requestTossPaymentReservation(@AuthenticationPrincipal UserAdapter userAdapter,
+                                                                                          @ExistProduct @PathVariable Long productId, @RequestBody @Valid TossPaymentDto tossPaymentDto) {
         TossPaymentReqDto.TossPaymentResDto paymentResDto = paymentCommandService.requestTossPaymentReservation(tossPaymentDto, userAdapter.getUser().getId(), productId);
 //        paymentResDto.setSuccessUrl(tossPaymentDto.getYourSuccessUrl() == null ? tossPaymentConfig.getSuccessUrl() : tossPaymentDto.getYourSuccessUrl());
 //        paymentResDto.setFailUrl(tossPaymentDto.getYourFailUrl() == null ? tossPaymentConfig.getFailUrl() : tossPaymentDto.getYourFailUrl());
@@ -52,7 +53,7 @@ public class PaymentRestController {
         return ApiResponse.onSuccess(paymentResDto);
     }
 
-    @PostMapping("/toss/point")
+    @GetMapping("/toss/point")
     @Operation(summary = "포인트 결제 API",description = "포인트 충전용 API.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
@@ -68,12 +69,14 @@ public class PaymentRestController {
         return ApiResponse.onSuccess(paymentResDto);
     }
 
-    @PostMapping("/toss/success")
+    @GetMapping("/toss/success")
     public ApiResponse<TossPaymentSuccessDto> tossPaymentSuccess(
-            @AuthenticationPrincipal UserAdapter userAdapter,
-            @RequestBody @Valid TossPaymentReqDto.VerifyReqDto verifyReqDto) throws IOException, ParseException {
-
-        return ApiResponse.onSuccess(paymentCommandService.tossPaymentSuccess(verifyReqDto));
+            @RequestParam String paymentKey,
+            @RequestParam String orderId,
+            @RequestParam Long amount
+    ) throws IOException, ParseException {
+        System.out.println("Controller");
+        return ApiResponse.onSuccess(paymentCommandService.tossPaymentSuccess(paymentKey, orderId, amount));
     }
 
     @PostMapping("/toss/fail")

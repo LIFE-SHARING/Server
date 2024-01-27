@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 public class UserRequestDTO {
 
     @Builder
@@ -44,6 +46,7 @@ public class UserRequestDTO {
 //        @Length(min = 8, max = 16)
 //        @Pattern(regexp = "^[a-zA-Z0-9!@#$%^&*]{8,16}$", message = "비밀번호는 8~16자의 영문 대소문자, 숫자, 특수문자로 이루어져야 합니다.")
         private String password;
+//        private List<TermDto> terms;
     }
 
     @Builder
@@ -68,6 +71,25 @@ public class UserRequestDTO {
 //        private String newPasswordConfirm;
     }
 
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class CheckNickname {
+        @NotEmpty(message = "닉네임은 필수 입력 값입니다.")
+        private String nickname;
+    }
 
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class InquiryDTO {
+        @NotEmpty
+        private String title;
+
+        @NotEmpty
+        private String body;
+    }
 
 }
