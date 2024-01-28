@@ -163,7 +163,7 @@ public class ProductRestController {
     @GetMapping("/my-regist")
     @Operation(summary = "마이페이지 제품 등록 내역")
     public ApiResponse<ProductResponseDTO.myRegProductDTO> getMyRegProduct(@AuthenticationPrincipal UserAdapter userAdapter) {
-        List<ProductResponseDTO.myRegProductList> myRegProductLists = productCommandService.getMyProduct(userAdapter);
+        List<ProductResponseDTO.myRegProductList> myRegProductLists = productCommandService.getMyPageProduct(userAdapter);
         return ApiResponse.onSuccess(ProductConverter.toMyProductReg(myRegProductLists));
     }
   

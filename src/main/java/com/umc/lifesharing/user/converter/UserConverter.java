@@ -4,6 +4,8 @@ import com.umc.lifesharing.config.security.TokenDTO;
 import com.umc.lifesharing.config.security.UserAdapter;
 import com.umc.lifesharing.location.dto.LocationDTO;
 import com.umc.lifesharing.product.entity.ProductImage;
+import com.umc.lifesharing.reservation.entity.Reservation;
+import com.umc.lifesharing.review.dto.ReviewResponseDTO;
 import com.umc.lifesharing.review.entity.Review;
 import com.umc.lifesharing.review.entity.ReviewImage;
 import com.umc.lifesharing.user.dto.UserRequestDTO;
@@ -42,12 +44,20 @@ public class UserConverter {
                 .location("사용자로부터 받아오기")   //위치(구현전-1월 23일)
                 .build();
     }
-
-    public static UserResponseDTO.ProductPreviewListDTO productPreviewListDTO(List<Product> productList){
+    public static UserResponseDTO.ProductPreviewListDTO productPreviewListDTO(User user, List<Product> productList, Integer productCnt, Integer averageScore, Integer totalReviewCount){
         List<UserResponseDTO.ProductPreviewDTO> productPreViewDTOList = productList.stream()
                 .map(UserConverter::productPreviewDTO).collect(Collectors.toList());
 
+        String imageUrl = "https://lifesharing.s3.ap-northeast-2.amazonaws.com/" + user.getProfileUrl();
+
         return UserResponseDTO.ProductPreviewListDTO.builder()
+                .userId(user.getId())
+                .imageUrl(imageUrl)
+                .userName(user.getName())
+                .score(averageScore)   // 모든 제품 별점의 평균
+                .reviewCount(totalReviewCount)   // 어떤 사용자의 제품들에 대한 리뷰 개수
+                .location("사용자로부터 받아오기")  // 28일 - 구현전
+                .productCount(productCnt)
                 .productList(productPreViewDTOList)
                 .build();
     }
@@ -102,6 +112,95 @@ public class UserConverter {
         return UserResponseDTO.CheckNicknameResponseDTO.builder()
                 .message(existNickname ? "이미 존재하는 닉네임입니다." : "사용할 수 있는 닉네임입니다.")
                 .existNickname(existNickname)
+                .build();
+    }
+
+    // 대여자 프로필 리뷰 목록 응답
+    public static UserResponseDTO.ReviewListDTO otherUserReview(Review review){
+                List<String> imageList = review.getImages().stream()
+                .map(ReviewImage::getFullImageUrl)
+                .collect(Collectors.toList());
+
+//        List<String> imageList = review.getImages().stream()
+//                .map(image -> {
+//                    String imageUrl = image.getImageUrl(); // 이미지의 상대 경로
+//
+//                    // 이미지 URL이 상대 경로인 경우에만 baseUrl을 추가
+//                    return imageUrl != null && !imageUrl.startsWith("https") ? "https://lifesharing.s3.ap-northeast-2.amazonaws.com/" + imageUrl : imageUrl;
+//                })
+//                .collect(Collectors.toList());
+
+        // 예약 정보가 없을 경우를 고려하여 미리 초기화
+        String totalTime = "";
+
+        // 리뷰에 연결된 예약 정보가 있는 경우에만 totalTime 설정
+        Reservation reservation = review.getReservation();
+        if (reservation != null) {
+            totalTime = reservation.getTotal_time();
+        }
+
+        return UserResponseDTO.ReviewListDTO.builder()
+                .reviewId(review.getId())
+                .userId(review.getUser().getId())
+                .nickName(review.getUser().getName())
+                .imageList(imageList)
+                .score(review.getScore())
+                .content(review.getContent())
+                .lentDay(totalTime)  // 변경된 부분
+                .createdAt(review.getCreatedAt())
+                .build();
+    }
+
+    public static UserResponseDTO.UserReviewListDTO otherUserReviewListDTO (User user, List<Review> reviewList, Integer averageScore, Integer totalReviewCount, String imageUrl){
+        List<UserResponseDTO.ReviewListDTO> reviewListDTO = reviewList.stream()
+                .map(UserConverter::otherUserReview).collect(Collectors.toList());
+
+        return UserResponseDTO.UserReviewListDTO.builder()
+                .userId(user.getId())
+                .userName(user.getName())
+                .imageUrl(imageUrl)
+                .score(averageScore)   // 모든 제품 별점의 평균
+                .reviewCount(totalReviewCount)   // 어떤 사용자의 제품들에 대한 리뷰 개수
+                .location("사용자로부터 받아오기")  // 28일 - 구현전
+                .reviewList(reviewListDTO)
+                .build();
+    }
+
+
+    // 회원별 제품 조회 응답 - 대여중 물품
+    public static UserResponseDTO.ProductPreviewDTO otherRentingProduct(Product product, String rent){
+
+        List<String> imageUrls = product.getImages().stream()
+                .map(ProductImage::getFullImageUrl)
+                .collect(Collectors.toList());
+
+        // 이미지 리스트에서 첫 번째 이미지 가져오기
+        String firstImageUrl = imageUrls.isEmpty() ? null : imageUrls.get(0);
+
+        return UserResponseDTO.ProductPreviewDTO.builder()
+                .productId(product.getId())
+                .name(product.getName())
+                .imageUrl(firstImageUrl)
+                .deposit(product.getDeposit())
+                .dayPrice(product.getDayPrice())
+                .score(product.getScore()) //별점(평균으로 가져오도록 해야함 - 구현완료)
+                .reviewCount(product.getReviewCount()) //리뷰 개수(해당 제품에 대한 리뷰 개수를 카운트해야함 - 구현완료)
+                .location("사용자로부터 받아오기")   //위치(구현전-1월 23일)
+                .isReserved(rent)
+                .build();
+    }
+
+    public static UserResponseDTO.ProductPreviewListDTO otherRentingProductList(User user, List<UserResponseDTO.ProductPreviewDTO> productPreViewList, Integer productCnt, Integer averageScore, Integer totalReviewCount, String imageUrl){
+
+        return UserResponseDTO.ProductPreviewListDTO.builder()
+                .userId(user.getId())
+                .imageUrl(imageUrl)  // 대여자 프로필 이미지
+                .userName(user.getName())  // 대여자 닉네임
+                .score(averageScore)   // 모든 제품 별점의 평균
+                .reviewCount(totalReviewCount)   // 어떤 사용자의 제품들에 대한 리뷰 개수
+                .location("사용자로부터 받아오기")  // 28일 - 구현전
+                .productCount(productCnt)
+                .productList(productPreViewList)
                 .build();
     }
 }
