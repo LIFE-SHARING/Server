@@ -101,7 +101,6 @@ public class ProductCommandServiceImpl implements ProductCommandService{
         Product product = productRepository.findById(productId).orElseThrow(() -> new ProductHandler(ErrorStatus.PRODUCT_NOT_FOUND));
         User user = userRepository.findById(userAdapter.getUser().getId()).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
 
-
         // 기존의 이미지 리스트를 삭제
         product.getImages().forEach(productImage -> {
             awsS3Service.deleteProductFile(productImage.getImageUrl());
@@ -207,7 +206,7 @@ public class ProductCommandServiceImpl implements ProductCommandService{
     // 카테고리별 제품 조회
     @Override
     public List<Product> getProductsByCategory(Long categoryId) {
-        List<Product> productList = productRepository.findByCategoryId(categoryId);
+        List<Product> productList = productRepository.findByCategoryIdOrderByCreatedAtDesc(categoryId);
         return productList;
     }
 

@@ -4,10 +4,7 @@ import com.umc.lifesharing.config.security.TokenDTO;
 import com.umc.lifesharing.location.dto.LocationDTO;
 import com.umc.lifesharing.review.dto.ReviewResponseDTO;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,6 +16,7 @@ public class UserResponseDTO {
     // 회원이 등록한 제품 조회
     @Builder
     @Getter
+    @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ProductPreviewDTO{
@@ -30,7 +28,7 @@ public class UserResponseDTO {
         Integer deposit;
         Integer dayPrice;
         String imageUrl;
-        String rentStatus;   // 대여 여부(대여중 false / 대여가능 true)
+        String isReserved;   // 대여 여부(대여중 false / 대여가능 true)
     }
 
     @Builder

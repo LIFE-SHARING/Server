@@ -1,13 +1,19 @@
 package com.umc.lifesharing.user.service;
 
+import com.amazonaws.services.ec2.model.ReservationState;
 import com.umc.lifesharing.apiPayload.code.status.ErrorStatus;
 import com.umc.lifesharing.apiPayload.exception.handler.UserHandler;
 import com.umc.lifesharing.config.security.UserAdapter;
+import com.umc.lifesharing.product.converter.ProductConverter;
+import com.umc.lifesharing.product.dto.ProductResponseDTO;
 import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.product.entity.enums.ProductStatus;
 import com.umc.lifesharing.config.security.*;
 import com.umc.lifesharing.product.repository.ProductRepository;
 import com.umc.lifesharing.product.service.ProductCommandService;
+import com.umc.lifesharing.reservation.entity.Reservation;
+import com.umc.lifesharing.reservation.entity.enum_class.Status;
+import com.umc.lifesharing.reservation.repository.ReservationRepository;
 import com.umc.lifesharing.review.converter.ReviewConverter;
 import com.umc.lifesharing.review.entity.Review;
 import com.umc.lifesharing.review.rerpository.ReviewRepository;
@@ -23,6 +29,7 @@ import com.umc.lifesharing.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -32,6 +39,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -50,6 +58,10 @@ public class UserServiceImpl implements UserService {
     private final ProductCommandService productCommandService;
     private final ReviewCommandService reviewCommandService;
     private final ReviewRepository reviewRepository;
+    private final ReservationRepository reservationRepository;
+
+    @Value("${s3.url}")
+    private String url;
 
     @Override
     public UserResponseDTO.ResponseDTO join(UserRequestDTO.JoinDTO joinDTO, MultipartFile multipartFile) {
@@ -159,22 +171,6 @@ public class UserServiceImpl implements UserService {
 //    }
 
     @Override
-    public UserResponseDTO.ProductPreviewListDTO getOtherProduct(Long userId, UserAdapter userAdapter) {
-        User otherUser = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
-        User loggedInUser = userRepository.findById(userAdapter.getUser().getId()).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
-
-        // 사용자가 등록한 제품 목록을 가져오는 코드 (예시)
-        List<Product> productList = getProductsByUserId(userId);
-
-        Integer averageScore = productCommandService.otherAverageScoreByUserId(otherUser.getId());
-        Integer totalReviewCount = reviewCommandService.otherUserReviewCount(otherUser.getId());
-
-        UserResponseDTO.ProductPreviewListDTO list = UserConverter.productPreviewListDTO(otherUser, productList, productList.size(), averageScore, totalReviewCount);
-
-        return list;
-    }
-
-    @Override
     public List<Product> getProductsByUserId(Long userId) {
         // userRepository에서 사용자를 가져온 후 해당 사용자가 등록한 제품들을 반환하는 코드
         User user = userRepository.findById(userId).orElse(null);
@@ -188,11 +184,77 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Review> getReviewByUserId(Long userId) {
-        // userRepository에서 사용자를 가져온 후 해당 사용자가 등록한 제품들을 반환하는 코드
-        User user = userRepository.findById(userId).orElse(null);
-        if (user != null){
-            return reviewRepository.findAllByUserId(userId);
+    public UserResponseDTO.ProductPreviewListDTO getOtherProduct(Long userId, UserAdapter userAdapter) {
+        User otherUser = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
+        User loggedInUser = userRepository.findById(userAdapter.getUser().getId()).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
+
+        // 대여자가 등록한 제품 목록을 가져오는 코드
+        List<Product> productList = getProductsByUserId(userId);
+
+        Integer averageScore = productCommandService.otherAverageScoreByUserId(otherUser.getId());
+        Integer totalReviewCount = reviewCommandService.otherUserReviewCount(otherUser.getId());
+
+        UserResponseDTO.ProductPreviewListDTO list = UserConverter.productPreviewListDTO(otherUser, productList, productList.size(), averageScore, totalReviewCount);
+
+        return list;
+    }
+
+    @Override
+    public UserResponseDTO.ProductPreviewListDTO getOtherRentProduct(Long userId, UserAdapter userAdapter) {
+        User otherUser = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
+
+        String imageUrl = (otherUser.getProfileUrl() == null) ? null : url + otherUser.getProfileUrl();
+
+        Integer averageScore = productCommandService.otherAverageScoreByUserId(otherUser.getId());
+        Integer totalReviewCount = reviewCommandService.otherUserReviewCount(otherUser.getId());
+
+        // 반환할 리스트
+        List<UserResponseDTO.ProductPreviewDTO> rentingList = new ArrayList<>();
+
+        List<Product> productList = getProductsByUserId(userId);
+        List<Reservation> reservationList = reservationRepository.findAllByProductInAndStatus(productList, Status.ACTIVE);
+
+        //제품 추가
+        rentingList = reservationList.stream()
+                .map(reservation -> {
+                    UserResponseDTO.ProductPreviewDTO toProductDto = UserConverter.otherRentingProduct(reservation.getProduct(), null);
+                    return toProductDto;
+                })
+                .collect(Collectors.toList());
+
+        // 현재 날짜 구하기
+        LocalDateTime now = LocalDateTime.now();
+
+        // 포맷 정의
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd");
+
+        for (Reservation r : reservationList) {
+            if (r.getEnd_date().isAfter(now) && r.getStart_date().isBefore(now)) {
+                // 포맷 적용
+                String start = r.getStart_date().format(formatter);
+                String end = r.getEnd_date().format(formatter);
+                String lentDate = start + " - " + end;
+
+                // 이미 제품이 리스트에 추가되었는지 확인
+                for (UserResponseDTO.ProductPreviewDTO p : rentingList) {
+                    if (p.getProductId().equals(r.getProduct().getId())) {
+                        if (p.getProductId().equals(r.getProduct().getId())) {
+                            p.setIsReserved(lentDate); // 대여 시작일-종료일과 대여중임을 표시
+                        }
+                    }
+                }
+            }
+        }
+
+        return UserConverter.otherRentingProductList(otherUser, rentingList, rentingList.size(), averageScore, totalReviewCount, imageUrl);
+    }
+
+    @Override
+    public List<Review> getReviewByProductId(Long productId) {
+        // 사용자를 가져온 후 해당 사용자가 등록한 제품들을 반환
+        Product product = productRepository.findById(productId).orElse(null);
+        if (product != null){
+            return reviewRepository.findByProductId(productId);
         }
         else{
             return Collections.emptyList();
@@ -204,13 +266,18 @@ public class UserServiceImpl implements UserService {
         User otherUser = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
         User loggedInUser = userRepository.findById(userAdapter.getUser().getId()).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
 
-        // 사용자가 등록한 제품 목록을 가져오는 코드 (예시)
-        List<Review> reviewList = getReviewByUserId(userId);
+        String imageUrl = (otherUser.getProfileUrl() == null) ? null : url + otherUser.getProfileUrl();
+
+        List<Product> productList = productRepository.findAllByUser(otherUser);
+        /// 각 제품에 대한 리뷰 목록을 가져오는 코드
+        List<Review> reviewList = productList.stream()
+                .flatMap(product -> getReviewByProductId(product.getId()).stream())
+                .collect(Collectors.toList());
 
         Integer averageScore = productCommandService.otherAverageScoreByUserId(otherUser.getId());
         Integer totalReviewCount = reviewCommandService.otherUserReviewCount(otherUser.getId());
 
-        UserResponseDTO.UserReviewListDTO userReviewListDTO = UserConverter.otherUserReviewListDTO(otherUser, reviewList, averageScore, totalReviewCount);
+        UserResponseDTO.UserReviewListDTO userReviewListDTO = UserConverter.otherUserReviewListDTO(otherUser, reviewList, averageScore, totalReviewCount, imageUrl);
         return userReviewListDTO;
     }
 }

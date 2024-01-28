@@ -81,6 +81,9 @@ public class ReviewCommandServiceImpl implements ReviewCommandService{
 
         List<Review> userReviewList = reviewRepository.findByUserIdWithProduct(loggendInUser.getId());
 
+        if (userReviewList.isEmpty()){
+            throw new ReviewHandler(ErrorStatus.NOT_REVIEWLIST);
+        }
         return userReviewList;
     }
 
