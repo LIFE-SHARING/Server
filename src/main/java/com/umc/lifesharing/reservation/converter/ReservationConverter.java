@@ -31,8 +31,8 @@ public class ReservationConverter {
                 .productName(reservation.getProduct().getName())
                 .productImage(reservation.getProduct().getImages().get(0).getImageUrl())
                 .filter(filter)
-                .startDate(reservation.getStart_date())
-                .endDate(reservation.getEnd_date())
+                .startDate(reservation.getStartDate())
+                .endDate(reservation.getEndDate())
                 .location(null) // 아직 입력이 정해지지 않아 null로 설정
                 .build();
     }

@@ -15,6 +15,7 @@ import com.umc.lifesharing.payment.dto.TossPaymentSuccessDto;
 import com.umc.lifesharing.payment.entity.TossPayment;
 import com.umc.lifesharing.payment.entity.enum_class.PaymentType;
 import com.umc.lifesharing.payment.repository.TossPaymentRepository;
+import com.umc.lifesharing.product.dto.ProductResponseDTO;
 import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.product.repository.ProductRepository;
 import com.umc.lifesharing.reservation.entity.*;
@@ -35,6 +36,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 
 @Service
@@ -47,7 +50,7 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
     private final TossPaymentConfig tossPaymentConfig;
     private final UserQueryService userQueryService;
 
-    @Override // 결제 요청
+    @Override // 예약 결제 요청
     public TossPaymentReqDto.TossPaymentResDto requestTossPaymentReservation(TossPaymentDto tossPaymentDto, Long userId, Long productId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -55,8 +58,19 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
                 .orElseThrow(() -> new ProductHandler(ErrorStatus.PRODUCT_NOT_FOUND));
         TossPayment payment = tossPaymentDto.toEntity();
 
+        LocalDateTime now = LocalDateTime.now();
+
+        // 포맷 정의
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd");
+
         if (payment.getAmount() < 0) {
             throw new PaymentHandler(ErrorStatus.INVALID_PAYMENT_AMOUNT);
+        } else if(tossPaymentDto.getDeposit() > user.getPoint()){
+            throw new PaymentHandler(ErrorStatus.CHARGE_POINT);
+        } else if(tossPaymentDto.getEndDate().isAfter(now) && tossPaymentDto.getStartDate().isBefore(now)){
+            throw new PaymentHandler(ErrorStatus.CHECK_RESERVATION_DATE);
+        }else if(reservationRepository.existsReservationByProductAndStartDateAndEndDate(product, tossPaymentDto.getStartDate(), tossPaymentDto.getEndDate())){
+            throw new PaymentHandler(ErrorStatus.INVALID_RESERVATION_DATE);
         }
         // 결제 내역 생성
         Reservation reservation = Reservation.builder()
@@ -64,16 +78,15 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
                 .product(product)
                 .amount(tossPaymentDto.getAmount())
                 .deposit(tossPaymentDto.getDeposit())
-                .start_date(tossPaymentDto.getStartDate())
-                .end_date(tossPaymentDto.getEndDate())
-                .total_time(tossPaymentDto.getTotalTime())
+                .startDate(tossPaymentDto.getStartDate())
+                .endDate(tossPaymentDto.getEndDate())
+                .totalTime(tossPaymentDto.getTotalTime())
                 .orderId(payment.getOrderId())
                 .build();
         reservation.setStatus(Status.INACTIVE);
         reservationRepository.save(reservation);
 
         payment.setUser(user);
-        payment.setAmount(tossPaymentDto.getAmount() + tossPaymentDto.getDeposit());
         tossPaymentRepository.save(payment);
 
         return TossPaymentConverter.toPaymentResDto(payment, tossPaymentDto.getPaymentType());
@@ -106,7 +119,9 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
             Reservation reservation = reservationRepository.findByOrderId(payment.getOrderId())
                     .orElseThrow(() -> new ReservationHandler(ErrorStatus.ORDER_ID_NOT_FOUND));
             reservation.setStatus(Status.ACTIVE);
-            reservationRepository.save(reservation);
+            reservationRepository.save(reservation); // 예약 성공 -> 상태 변경
+            User user = reservation.getUser(); // 보증금 만큼 포인트 차감
+            user.setPoint(user.getPoint() - reservation.getDeposit());
             System.out.println("SAVE");
         }else if(orderId.contains("POINT-")){
             payment.getUser().setPoint(payment.getUser().getPoint() + amount);
