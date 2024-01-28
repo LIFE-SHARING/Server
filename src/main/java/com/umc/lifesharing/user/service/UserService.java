@@ -33,8 +33,11 @@ public interface UserService {
     // 1. 대여자의 물품 리스트 가져오기
     List<Product> getProductsByUserId(Long userId);
 
+    // 2. 대여자의 대여중 물품 리스트 가져오기
+    UserResponseDTO.ProductPreviewListDTO getOtherRentProduct(Long userId, UserAdapter userAdapter);
+
     // 3. 대여자의 리뷰 목록 가져오기
-    List<Review> getReviewByUserId(Long userId);
+    List<Review> getReviewByProductId(Long productId);
     UserResponseDTO.UserReviewListDTO getOtherReview(Long userId, UserAdapter userAdapter);
 }
 

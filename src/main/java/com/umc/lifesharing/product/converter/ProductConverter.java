@@ -164,6 +164,7 @@ public class ProductConverter {
         String firstImageUrl = imagUrls.isEmpty() ? null : imagUrls.get(0);
 
         return ProductResponseDTO.myRegProductList.builder()
+                .productId(product.getId())
                 .name(product.getName())
                 .location("사용자로부터 받아오기")   // 27일 - 사용자 위치 받아오기
                 .imageUrl(firstImageUrl)

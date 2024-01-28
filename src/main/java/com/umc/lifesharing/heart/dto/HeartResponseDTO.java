@@ -40,7 +40,7 @@ public class HeartResponseDTO {
         Integer dayPrice;
         Integer score;
         Integer reviewCount;
-        String image_url;  //이미지 처리 방법 알아내기
+        String imageUrl;  //이미지 처리 방법 알아내기
     }
 
     @Builder
