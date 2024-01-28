@@ -34,18 +34,18 @@ public class ReviewConverter {
 
     // 사용자가 등록한 리뷰 목록 조회
     public static ReviewResponseDTO.ReviewListDTO toReviewList(Review review){
-//        List<String> imageList = review.getImages().stream()
-//                .map(ReviewImage::getFullImageUrl)
-//                .collect(Collectors.toList());
-
         List<String> imageList = review.getImages().stream()
-                .map(image -> {
-                    String imageUrl = image.getImageUrl(); // 이미지의 상대 경로
-
-                    // 이미지 URL이 상대 경로인 경우에만 baseUrl을 추가
-                    return imageUrl != null && !imageUrl.startsWith("https") ? "https://lifesharing.s3.ap-northeast-2.amazonaws.com/" + imageUrl : imageUrl;
-                })
+                .map(ReviewImage::getFullImageUrl)
                 .collect(Collectors.toList());
+
+//        List<String> imageList = review.getImages().stream()
+//                .map(image -> {
+//                    String imageUrl = image.getImageUrl(); // 이미지의 상대 경로
+//
+//                    // 이미지 URL이 상대 경로인 경우에만 baseUrl을 추가
+//                    return imageUrl != null && !imageUrl.startsWith("https") ? "https://lifesharing.s3.ap-northeast-2.amazonaws.com/" + imageUrl : imageUrl;
+//                })
+//                .collect(Collectors.toList());
 
 //        // 예약 정보가 없을 경우를 고려하여 미리 초기화
 //        String reservationTotalTime = "";

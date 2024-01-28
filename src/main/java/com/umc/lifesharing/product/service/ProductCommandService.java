@@ -45,7 +45,7 @@ public interface ProductCommandService {
     List<Product> getSearchProduct(String filter, String keyword);
 
     // 마이페이지 - 등록내역
-    List<ProductResponseDTO.myRegProductList> getMyProduct(UserAdapter userAdapter);
+    List<ProductResponseDTO.myRegProductList> getMyPageProduct(UserAdapter userAdapter);
 
     // 내가 등록한 제품 조회
     List<ProductResponseDTO.MyListDTO> getMyProduct(User user);

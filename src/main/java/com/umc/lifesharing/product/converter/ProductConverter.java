@@ -130,22 +130,22 @@ public class ProductConverter {
     }
 
     // 제품 이미지 가져오도록
-//    private static List<String> getProductImagUrls(Product product){
-//        return product.getImages().stream()
-//                .map(ProductImage::getImageUrl)
-//                .collect(Collectors.toList());
-//    }
-    // 전체 이미지 URL 가져오기
-    private static List<String> getProductImagUrls(Product product/*, String baseUrl*/) {
+    private static List<String> getProductImagUrls(Product product){
         return product.getImages().stream()
-                .map(image -> {
-                    String imageUrl = image.getImageUrl(); // 이미지의 상대 경로
-
-                    // 이미지 URL이 null이 아니고, 상대 경로인 경우에만 baseUrl을 추가
-                    return imageUrl != null && !imageUrl.startsWith("https") ? "https://lifesharing.s3.ap-northeast-2.amazonaws.com/" + imageUrl : imageUrl;
-                })
+                .map(ProductImage::getFullImageUrl)
                 .collect(Collectors.toList());
     }
+    // 전체 이미지 URL 가져오기
+//    private static List<String> getProductImagUrls(Product product/*, String baseUrl*/) {
+//        return product.getImages().stream()
+//                .map(image -> {
+//                    String imageUrl = image.getImageUrl(); // 이미지의 상대 경로
+//
+//                    // 이미지 URL이 null이 아니고, 상대 경로인 경우에만 baseUrl을 추가
+//                    return imageUrl != null && !imageUrl.startsWith("https") ? "https://lifesharing.s3.ap-northeast-2.amazonaws.com/" + imageUrl : imageUrl;
+//                })
+//                .collect(Collectors.toList());
+//    }
 
 
     // 제품 정보 수정 응답

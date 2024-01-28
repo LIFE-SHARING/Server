@@ -130,12 +130,9 @@ public class ProductCommandServiceImpl implements ProductCommandService{
         if(!existProduct.getUser().getId().equals(loggedInUser.getId())){   // 등록자와 수정하고자 하는 사용자가 일치하지 않으면
             throw new UserHandler(ErrorStatus.USER_NOT_FOUNDED);
         }
-
-        // 카테고리 정보가 전달되었을 경우에만 업데이트
         if (request.getCategoryId() != null) {
             ProductCategory category = productCategoryRepository.findById(request.getCategoryId())
                     .orElseThrow(() -> new ProductHandler(ErrorStatus.CATEGORY_NOT_FOUND));
-
             // 제품에 새로운 카테고리 설정
             existProduct.setCategory(category);
         }
@@ -154,7 +151,6 @@ public class ProductCommandServiceImpl implements ProductCommandService{
     public void deleteProduct(Long productId, Long userId) {
 
         Product product = productRepository.findById(productId).orElseThrow(() -> new ProductHandler(ErrorStatus.PRODUCT_NOT_FOUND));
-
         User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         // 여기에서 현재 로그인한 회원이 해당 제품의 소유자인지 확인하는 로직 추가
@@ -170,7 +166,6 @@ public class ProductCommandServiceImpl implements ProductCommandService{
                 // 이미지 엔티티 삭제
                 productImageRepository.delete(productImage);
             }
-
             // 제품 삭제
             productRepository.delete(product);
         }
@@ -261,8 +256,9 @@ public class ProductCommandServiceImpl implements ProductCommandService{
         return productList;
     }
 
+    // 마이페이지 제품 등록 내역
     @Override
-    public List<ProductResponseDTO.myRegProductList> getMyProduct(UserAdapter userAdapter) {
+    public List<ProductResponseDTO.myRegProductList> getMyPageProduct(UserAdapter userAdapter) {
         User user = userRepository.findById(userAdapter.getUser().getId()).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
 
         List<Product> productList = productRepository.findAllByUser(user);
