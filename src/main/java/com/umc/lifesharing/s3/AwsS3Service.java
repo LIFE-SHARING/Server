@@ -5,7 +5,17 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.umc.lifesharing.apiPayload.code.status.ErrorStatus;
+import com.umc.lifesharing.apiPayload.exception.handler.ProductHandler;
+import com.umc.lifesharing.apiPayload.exception.handler.ReviewHandler;
+import com.umc.lifesharing.product.entity.Product;
+import com.umc.lifesharing.product.entity.ProductImage;
+import com.umc.lifesharing.product.repository.ProductImageRepository;
+import com.umc.lifesharing.product.repository.ProductRepository;
+import com.umc.lifesharing.review.entity.Review;
+import com.umc.lifesharing.review.entity.ReviewImage;
 import com.umc.lifesharing.review.rerpository.ReviewImageRepository;
+import com.umc.lifesharing.review.rerpository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -18,6 +28,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

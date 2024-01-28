@@ -131,14 +131,13 @@ public class UserController {
         return ApiResponse.onSuccess(userService.getAdminAuth(userAdapter));
     }
 
-    // 회원이 등록한 제품 목록 - 다른 유저가 어떤 등록자의 프로필 클릭시 (대여물품)
-//    @GetMapping("/user/products")
-//    @Operation(summary = "회원이 등록한 제품 조회 API")
-//    public ApiResponse<UserResponseDTO.ProductPreviewListDTO> getUserProductList(@RequestParam(name = "filter", defaultValue = "recent") String filter, @AuthenticationPrincipal UserAdapter userAdapter){
-//        List<Product> productList = userService.getProductList(userAdapter, filter);
-////        return ApiResponse.onSuccess(UserConverter.productPreviewListDTO(productList));
-//        return null;
-//    }
+    // 회원이 등록한 제품 목록
+    @GetMapping("/user/products")
+    @Operation(summary = "회원이 등록한 제품 조회 API")
+    public ApiResponse<UserResponseDTO.ProductPreviewListDTO> getUserProductList(@RequestParam(name = "filter", defaultValue = "recent") String filter, @AuthenticationPrincipal UserAdapter userAdapter){
+        List<Product> productList = userService.getProductList(userAdapter, filter);
+        return ApiResponse.onSuccess(UserConverter.productPreviewListDTO(productList));
+    }
 
 
 //    @GetMapping("/user/inquiry")
@@ -152,29 +151,4 @@ public class UserController {
 //                                                                              @Nullable @RequestPart(value = "multipartFile") List<MultipartFile> multipartFile) {
 //        return ApiResponse.onSuccess();
 //    }
-
-    // 다른 유저가 어떤 등록자의 프로필 클릭시 (대여물품)
-    @GetMapping("/seller/{sellerId}/products")
-    @Operation(summary = "대여자 프로필 대여 물품 조회 API")
-    public ApiResponse<UserResponseDTO.ProductPreviewListDTO> getOtherProducts(@PathVariable(name = "sellerId") Long sellerId, @AuthenticationPrincipal UserAdapter userAdapter){
-        UserResponseDTO.ProductPreviewListDTO itemlist = userService.getOtherProduct(sellerId, userAdapter);
-        return ApiResponse.onSuccess(itemlist);
-    }
-
-    // 다른 유저가 어떤 등록자의 프로필 클릭시 (대여중 물품)
-    @GetMapping("/seller/{sellerId}/rentProduct")
-    @Operation(summary = "대여자 프로필 대여중 물품 조회 API")
-    public ApiResponse<UserResponseDTO.ProductPreviewListDTO> getOtherRentProducts(@PathVariable(name = "sellerId") Long sellerId, @AuthenticationPrincipal UserAdapter userAdapter){
-        UserResponseDTO.ProductPreviewListDTO productList = userService.getOtherRentProduct(sellerId, userAdapter);
-        return ApiResponse.onSuccess(productList);
-    }
-
-
-    // 다른 유저가 어떤 등록자의 프로필 클릭시 (리뷰리스트)
-    @GetMapping("/seller/{sellerId}/reviews")
-    @Operation(summary = "대여자 프로필 리뷰 목록 조회 API")
-    public ApiResponse<UserResponseDTO.UserReviewListDTO> getOtherReviews(@PathVariable(name = "sellerId") Long sellerId, @AuthenticationPrincipal UserAdapter userAdapter){
-        UserResponseDTO.UserReviewListDTO reviewList = userService.getOtherReview(sellerId, userAdapter);
-        return ApiResponse.onSuccess(reviewList);
-    }
 }

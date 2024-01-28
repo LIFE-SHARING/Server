@@ -42,7 +42,6 @@ public enum ErrorStatus implements BaseErrorCode {
     ALREADY_HEART(HttpStatus.ALREADY_REPORTED, "HEART4001", "이미 좋아요한 제품입니다."),
     ALREADY_REMOVE(HttpStatus.ALREADY_REPORTED, "HEART4002", "이미 취소한 제품입니다."),
     REVIEW_NOT_FOUND(HttpStatus.BAD_REQUEST, "REVIEW4001", "존재하지 않는 리뷰입니다."),
-    NOT_REVIEWLIST(HttpStatus.NOT_FOUND, "REVIEW4002", "리뷰가 없습니다."),
   
     // 예시,,,
     ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "ARTICLE4001", "게시글이 없습니다."),

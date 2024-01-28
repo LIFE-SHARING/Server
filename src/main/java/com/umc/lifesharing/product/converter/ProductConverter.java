@@ -19,6 +19,9 @@ import java.util.stream.Collectors;
 
 public class ProductConverter {
 
+    @Value("${s3.url}")
+    private static String s3BaseUrl;
+
     public static Product toProduct(ProductRequestDTO.RegisterProductDTO request){
         return Product.builder()
                 .name(request.getName())
@@ -135,17 +138,6 @@ public class ProductConverter {
                 .map(ProductImage::getFullImageUrl)
                 .collect(Collectors.toList());
     }
-    // 전체 이미지 URL 가져오기
-//    private static List<String> getProductImagUrls(Product product/*, String baseUrl*/) {
-//        return product.getImages().stream()
-//                .map(image -> {
-//                    String imageUrl = image.getImageUrl(); // 이미지의 상대 경로
-//
-//                    // 이미지 URL이 null이 아니고, 상대 경로인 경우에만 baseUrl을 추가
-//                    return imageUrl != null && !imageUrl.startsWith("https") ? "https://lifesharing.s3.ap-northeast-2.amazonaws.com/" + imageUrl : imageUrl;
-//                })
-//                .collect(Collectors.toList());
-//    }
 
 
     // 제품 정보 수정 응답
@@ -164,7 +156,6 @@ public class ProductConverter {
         String firstImageUrl = imagUrls.isEmpty() ? null : imagUrls.get(0);
 
         return ProductResponseDTO.myRegProductList.builder()
-                .productId(product.getId())
                 .name(product.getName())
                 .location("사용자로부터 받아오기")   // 27일 - 사용자 위치 받아오기
                 .imageUrl(firstImageUrl)

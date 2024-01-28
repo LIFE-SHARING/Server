@@ -1,12 +1,18 @@
 package com.umc.lifesharing.review.service;
 
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.umc.lifesharing.apiPayload.code.status.ErrorStatus;
+import com.umc.lifesharing.apiPayload.exception.handler.ProductHandler;
 import com.umc.lifesharing.apiPayload.exception.handler.ReservationHandler;
 import com.umc.lifesharing.apiPayload.exception.handler.ReviewHandler;
 import com.umc.lifesharing.apiPayload.exception.handler.UserHandler;
 import com.umc.lifesharing.config.security.UserAdapter;
+import com.umc.lifesharing.heart.entity.Heart;
 import com.umc.lifesharing.product.entity.Product;
+import com.umc.lifesharing.product.entity.ProductImage;
+import com.umc.lifesharing.product.repository.ProductRepository;
 import com.umc.lifesharing.product.service.ProductCommandServiceImpl;
+import com.umc.lifesharing.product.service.ProductQueryService;
 import com.umc.lifesharing.reservation.entity.Reservation;
 import com.umc.lifesharing.reservation.repository.ReservationRepository;
 import com.umc.lifesharing.review.converter.ReviewConverter;
@@ -18,14 +24,18 @@ import com.umc.lifesharing.review.rerpository.ReviewRepository;
 import com.umc.lifesharing.s3.AwsS3Service;
 import com.umc.lifesharing.user.entity.User;
 import com.umc.lifesharing.user.repository.UserRepository;
+import com.umc.lifesharing.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -81,9 +91,6 @@ public class ReviewCommandServiceImpl implements ReviewCommandService{
 
         List<Review> userReviewList = reviewRepository.findByUserIdWithProduct(loggendInUser.getId());
 
-        if (userReviewList.isEmpty()){
-            throw new ReviewHandler(ErrorStatus.NOT_REVIEWLIST);
-        }
         return userReviewList;
     }
 
@@ -147,12 +154,6 @@ public class ReviewCommandServiceImpl implements ReviewCommandService{
                 review.getImages().add(newReviewImage);
             }
         }
-    }
-
-    @Override
-    public Integer otherUserReviewCount(Long userId) {
-        List<Review> userReviews = reviewRepository.findAllByUserId(userId);
-        return userReviews.size();
     }
 
     private String getOriginalFileName(String fileName) {

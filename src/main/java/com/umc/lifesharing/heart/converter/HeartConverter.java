@@ -50,7 +50,7 @@ public class HeartConverter {
                 .deposit(product.getDeposit())
                 .dayPrice(product.getDayPrice())
                 .location("사용자로부터 받아오기")
-                .imageUrl(firstImageUrl)
+                .image_url(firstImageUrl)
                 .build();
     }
 

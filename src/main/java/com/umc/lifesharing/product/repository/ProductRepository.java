@@ -17,7 +17,7 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findById(Long id);
 
-    List<Product> findByCategoryIdOrderByCreatedAtDesc(Long categoryId);
+    List<Product> findByCategoryId(Long categoryId);
 
     // 제품의 평점과 리뷰 개수 업데이트
     @Modifying
@@ -62,7 +62,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     // 제품 - 리뷰
 //    @Query("SELECT p FROM Product p LEFT JOIN FETCH p.reviewList WHERE p.id = :productId")
 //    Optional<Product> findProductWithReviews(@Param("productId") Long productId);
-
-    List<Product> findAllByUserId(Long userId);
 
 }

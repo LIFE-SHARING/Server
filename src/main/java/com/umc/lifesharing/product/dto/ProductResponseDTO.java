@@ -117,6 +117,7 @@ public class ProductResponseDTO {
     // 마이페이지 - 등록 내역 응답
     @Builder
     @Getter
+    @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class myRegProductDTO {
@@ -130,7 +131,6 @@ public class ProductResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class myRegProductList{
-        Long productId;
         String imageUrl;
         String location;
         String name;
