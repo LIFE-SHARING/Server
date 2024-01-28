@@ -20,4 +20,6 @@ public interface ReviewCommandService {
 
     void updateReviewImage(Long reviewId, UserAdapter userAdapter, List<MultipartFile> imageList);
 
+    Integer otherUserReviewCount(Long userId);
+
 }

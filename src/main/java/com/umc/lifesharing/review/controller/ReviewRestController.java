@@ -40,7 +40,6 @@ import java.util.List;
 public class ReviewRestController {
 
     private final ReviewCommandService reviewCommandService;
-    private final ReviewRepository reviewRepository;
     private final AwsS3Service awsS3Service;
 
     // 리뷰 등록 API
