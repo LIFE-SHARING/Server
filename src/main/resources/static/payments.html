@@ -10,8 +10,8 @@
 <section>
     <!--  충전하기 버튼 만들기  -->
     <span>총 포인트 충전 금액 :</span>
-    <span>5500원</span>
-    <button id="payment-button">5500원 충전하기</button>
+    <span>5000원</span>
+    <button id="payment-button">5000원 충전하기</button>
 </section>
 <script>
     // ------ 클라이언트 키로 객체 초기화 ------
@@ -23,9 +23,9 @@
     button.addEventListener('click', function () {
         // ------ 결제창 띄우기 ------
         tossPayments.requestPayment('CARD', {
-            amount: 5500,
-            orderId: 'RESERVATION-3da8d0fb-906f-4f80-8f87-5679e0154cb1',
-            orderName: '뉴발란스 993',
+            amount: 5000,
+            orderId: 'RESERVATION-4fa57a74-acac-4cdc-8c15-8e724287a51d',
+            orderName: '마샬 스피커',
             customerName: 'max',
             customerEmail: 'test1@gmail.com',
             successUrl: 'http://localhost:8080/payments/toss/success',

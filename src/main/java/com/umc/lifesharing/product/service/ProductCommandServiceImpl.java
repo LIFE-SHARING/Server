@@ -332,10 +332,10 @@ public class ProductCommandServiceImpl implements ProductCommandService{
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd");
 
         for(Reservation r : reservationList){
-            if(r.getEnd_date().isAfter(now) && r.getStart_date().isBefore(now)){
+            if(r.getEndDate().isAfter(now) && r.getStartDate().isBefore(now)){
                 // 포맷 적용
-                String start = r.getStart_date().format(formatter);
-                String end = r.getEnd_date().format(formatter);
+                String start = r.getStartDate().format(formatter);
+                String end = r.getEndDate().format(formatter);
                 String lentDate = start+"-"+end+"\n대여중";
 
                 // 이미 제품이 리스트에 추가되었는지 확인

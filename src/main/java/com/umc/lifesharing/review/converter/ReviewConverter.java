@@ -53,7 +53,7 @@ public class ReviewConverter {
         // 리뷰에 연결된 예약 정보가 있는 경우에만 totalTime 설정
         Reservation reservation = review.getReservation();
         if (reservation != null) {
-            totalTime = reservation.getTotal_time();
+            totalTime = reservation.getTotalTime();
         }
 
         return ReviewResponseDTO.ReviewListDTO.builder()
