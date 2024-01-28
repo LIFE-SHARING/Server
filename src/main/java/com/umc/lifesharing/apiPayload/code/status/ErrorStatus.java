@@ -28,9 +28,13 @@ public enum ErrorStatus implements BaseErrorCode {
     PAYMENT_AMOUNT_EXP(HttpStatus.BAD_REQUEST, "PAYMENT4002", "결제 금액이 일치하지 않습니다."),
     PAYMENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "PAYMENT4003", "결제 내역을 찾을 수 없습니다."),
     ALREADY_APPROVED(HttpStatus.BAD_REQUEST, "PAYMENT4004", "이미 인증된 결제입니다."),
-    ORDER_ID_NOT_FOUND(HttpStatus.BAD_REQUEST, "PAYMENT4003", "주문 번호를 찾을 수 없습니다."),
+    ORDER_ID_NOT_FOUND(HttpStatus.BAD_REQUEST, "PAYMENT4005", "주문 번호를 찾을 수 없습니다."),
 
     CHARGE_POINT(HttpStatus.BAD_REQUEST, "PAYMENT4101", "캐쉬가 부족합니다."),
+
+    //예약 관련 에러
+    CHECK_RESERVATION_DATE(HttpStatus.BAD_REQUEST, "RESERVATION4001", "예약 날짜를 다시 확인해 주세요."),
+    INVALID_RESERVATION_DATE(HttpStatus.BAD_REQUEST, "RESERVATION4002", "예약 불가능한 날짜입니다."),
 
     PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "PRODUCT4001", "해당 제품이 없습니다."),
     NO_PRODUCT_IMAGE(HttpStatus.NOT_FOUND, "PRODUCT4002", "제품 이미지가 없습니다."),
