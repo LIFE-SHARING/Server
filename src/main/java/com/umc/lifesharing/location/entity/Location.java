@@ -2,10 +2,16 @@ package com.umc.lifesharing.location.entity;
 
 import com.umc.lifesharing.user.entity.User;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -16,11 +22,17 @@ public class Location {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private String latitude;    // 위도
-    private String longitude;   // 경도
-    private String city;    // 시/도
-    private String local;   // 군/구
-    private String area;    // 읍/면/동
-    private String status;
+    private String roadAddress;     // 도로명 ex. 주소 서울특별시 마포구 성암로 301
+    private String dong;            // 읍/면/동    ex. 상암동
+    private String zipCode;         // 우편번호
+    private String districtCode;    // 행정구역코드
+    private String readNameCode;    // 도로명코드
+    private String buildingCode;    // 건물본번
+    private String buildingName;    // 건물명
 
+    public Location addUser(User user) {
+        this.user = user;
+        user.getLocationList().add(this);
+        return this;
+    }
 }
