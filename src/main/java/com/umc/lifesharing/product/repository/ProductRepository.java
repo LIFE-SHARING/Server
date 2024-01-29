@@ -64,5 +64,4 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 //    Optional<Product> findProductWithReviews(@Param("productId") Long productId);
 
     List<Product> findAllByUserId(Long userId);
-
 }

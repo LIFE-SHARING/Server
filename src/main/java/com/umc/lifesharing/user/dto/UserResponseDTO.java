@@ -36,13 +36,13 @@ public class UserResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ProductPreviewListDTO{
-        Long userId;
-        String userName;
-        String imageUrl;
-        String location;  // 대여자 위치 정보
-        Integer score;
-        Integer reviewCount;
-        Integer productCount;
+//        Long userId;
+//        String userName;
+//        String imageUrl;
+//        String location;  // 대여자 위치 정보
+//        Integer score;
+//        Integer reviewCount;
+//        Integer productCount;
         List<ProductPreviewDTO> productList;
     }
 
@@ -149,12 +149,27 @@ public class UserResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class UserReviewListDTO{
+//        Long userId;
+//        String userName;
+//        String imageUrl;
+//        String location;  // 대여자 위치 정보
+//        Integer score;
+//        Integer reviewCount;
+        List<ReviewListDTO> reviewList;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserProfileDTO {
         Long userId;
         String userName;
         String imageUrl;
         String location;  // 대여자 위치 정보
         Integer score;
         Integer reviewCount;
-        List<ReviewListDTO> reviewList;
+        Integer productCount;
+        Integer rentProductCnt;
     }
 }
