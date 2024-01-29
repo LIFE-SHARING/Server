@@ -6,6 +6,7 @@ import com.umc.lifesharing.apiPayload.exception.handler.ReviewHandler;
 import com.umc.lifesharing.apiPayload.exception.handler.UserHandler;
 import com.umc.lifesharing.config.security.UserAdapter;
 import com.umc.lifesharing.product.entity.Product;
+import com.umc.lifesharing.product.repository.ProductRepository;
 import com.umc.lifesharing.product.service.ProductCommandServiceImpl;
 import com.umc.lifesharing.reservation.entity.Reservation;
 import com.umc.lifesharing.reservation.repository.ReservationRepository;
@@ -38,6 +39,7 @@ public class ReviewCommandServiceImpl implements ReviewCommandService{
     private final UserRepository userRepository;
     private final AwsS3Service awsS3Service;
     private final ProductCommandServiceImpl productCommandService;
+    private final ProductRepository productRepository;
 
     @Value("${s3.url}")
     private String url;
@@ -82,7 +84,7 @@ public class ReviewCommandServiceImpl implements ReviewCommandService{
         List<Review> userReviewList = reviewRepository.findByUserIdWithProduct(loggendInUser.getId());
 
         if (userReviewList.isEmpty()){
-            throw new ReviewHandler(ErrorStatus.NOT_REVIEWLIST);
+            return null;
         }
         return userReviewList;
     }
@@ -102,6 +104,28 @@ public class ReviewCommandServiceImpl implements ReviewCommandService{
             }
             // 리뷰 삭제
             reviewRepository.delete(review);
+            // 리뷰와 연결된 제품 가져오기
+            Product product = review.getProduct();
+
+            // 연결된 제품의 리뷰 개수 감소
+            if (product != null) {
+                product.setReviewCount(product.getReviewCount() - 1);
+
+                // 삭제된 리뷰의 점수를 뺌
+                int totalScore = product.getScore() * product.getReviewCount();
+                totalScore -= review.getScore();
+
+                // 리뷰가 남아있다면 평균 점수 갱신
+                if (product.getReviewCount() > 0) {
+                    product.setScore(totalScore / product.getReviewCount());
+                } else {
+                    // 리뷰가 하나도 없으면 평균 점수를 0으로 설정
+                    product.setScore(0);
+                }
+
+                // 제품 업데이트
+                productRepository.save(product);
+            }
         }
         else {
             throw new NotFoundException("로그인해주세요.");
@@ -120,7 +144,36 @@ public class ReviewCommandServiceImpl implements ReviewCommandService{
         }
         // 수정된 정보 업데이트
         if (request.getContent() != null){ existReview.setContent(request.getContent()); }
-        if (request.getScore() != null) {existReview.setScore(request.getScore()); }
+        if (request.getScore() != null) {
+            existReview.setScore(request.getScore());
+
+            // 수정 전의 리뷰에서 평점 정보 가져오기
+            Integer originalScore = existReview.getScore();
+
+            // 리뷰를 작성한 제품 가져오기
+            Product product = existReview.getProduct();
+
+            if (product != null) {
+                // 제품의 현재 총 점수와 리뷰 개수 가져오기
+                int totalScore = product.getScore() * product.getReviewCount();
+                int reviewCount = product.getReviewCount();
+
+                // 수정 전의 리뷰의 평점 빼기
+                totalScore -= originalScore;
+                // 수정 후의 리뷰의 평점 더하기
+                totalScore += request.getScore();
+
+                // 제품의 평점 업데이트
+                if (reviewCount > 0) {
+                    product.setScore(totalScore / reviewCount);
+                } else {
+                    product.setScore(0);
+                }
+
+                // 제품 정보 저장
+                productRepository.save(product);
+            }
+        }
 
         // 리뷰 저장
         return reviewRepository.save(existReview);
