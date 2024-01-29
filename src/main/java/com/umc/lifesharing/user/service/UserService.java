@@ -39,5 +39,8 @@ public interface UserService {
     // 3. 대여자의 리뷰 목록 가져오기
     List<Review> getReviewByProductId(Long productId);
     UserResponseDTO.UserReviewListDTO getOtherReview(Long userId, UserAdapter userAdapter);
+
+    // 대여자 프로필
+    UserResponseDTO.UserProfileDTO getOtherProfile(Long userId, UserAdapter userAdapter);
 }
 

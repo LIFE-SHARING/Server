@@ -191,22 +191,13 @@ public class UserServiceImpl implements UserService {
         // 대여자가 등록한 제품 목록을 가져오는 코드
         List<Product> productList = getProductsByUserId(userId);
 
-        Integer averageScore = productCommandService.otherAverageScoreByUserId(otherUser.getId());
-        Integer totalReviewCount = reviewCommandService.otherUserReviewCount(otherUser.getId());
-
-        UserResponseDTO.ProductPreviewListDTO list = UserConverter.productPreviewListDTO(otherUser, productList, productList.size(), averageScore, totalReviewCount);
-
+        UserResponseDTO.ProductPreviewListDTO list = UserConverter.productPreviewListDTO(productList);
         return list;
     }
 
     @Override
     public UserResponseDTO.ProductPreviewListDTO getOtherRentProduct(Long userId, UserAdapter userAdapter) {
         User otherUser = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
-
-        String imageUrl = (otherUser.getProfileUrl() == null) ? null : url + otherUser.getProfileUrl();
-
-        Integer averageScore = productCommandService.otherAverageScoreByUserId(otherUser.getId());
-        Integer totalReviewCount = reviewCommandService.otherUserReviewCount(otherUser.getId());
 
         // 반환할 리스트
         List<UserResponseDTO.ProductPreviewDTO> rentingList = new ArrayList<>();
@@ -229,10 +220,10 @@ public class UserServiceImpl implements UserService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd");
 
         for (Reservation r : reservationList) {
-            if (r.getEnd_date().isAfter(now) && r.getStart_date().isBefore(now)) {
+            if (r.getEndDate().isAfter(now) && r.getStartDate().isBefore(now)) {
                 // 포맷 적용
-                String start = r.getStart_date().format(formatter);
-                String end = r.getEnd_date().format(formatter);
+                String start = r.getStartDate().format(formatter);
+                String end = r.getEndDate().format(formatter);
                 String lentDate = start + " - " + end;
 
                 // 이미 제품이 리스트에 추가되었는지 확인
@@ -246,7 +237,7 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        return UserConverter.otherRentingProductList(otherUser, rentingList, rentingList.size(), averageScore, totalReviewCount, imageUrl);
+        return UserConverter.otherRentingProductList(rentingList);
     }
 
     @Override
@@ -266,6 +257,21 @@ public class UserServiceImpl implements UserService {
         User otherUser = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
         User loggedInUser = userRepository.findById(userAdapter.getUser().getId()).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
 
+        List<Product> productList = productRepository.findAllByUser(otherUser);
+        /// 각 제품에 대한 리뷰 목록을 가져오는 코드
+        List<Review> reviewList = productList.stream()
+                .flatMap(product -> getReviewByProductId(product.getId()).stream())
+                .collect(Collectors.toList());
+
+        UserResponseDTO.UserReviewListDTO userReviewListDTO = UserConverter.otherUserReviewListDTO(reviewList);
+        return userReviewListDTO;
+    }
+
+    @Override
+    public UserResponseDTO.UserProfileDTO getOtherProfile(Long userId, UserAdapter userAdapter) {
+        User otherUser = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
+        User loggedInUser = userRepository.findById(userAdapter.getUser().getId()).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
+
         String imageUrl = (otherUser.getProfileUrl() == null) ? null : url + otherUser.getProfileUrl();
 
         List<Product> productList = productRepository.findAllByUser(otherUser);
@@ -274,10 +280,22 @@ public class UserServiceImpl implements UserService {
                 .flatMap(product -> getReviewByProductId(product.getId()).stream())
                 .collect(Collectors.toList());
 
-        Integer averageScore = productCommandService.otherAverageScoreByUserId(otherUser.getId());
-        Integer totalReviewCount = reviewCommandService.otherUserReviewCount(otherUser.getId());
+        // 반환할 리스트
+        List<UserResponseDTO.ProductPreviewDTO> rentingList = new ArrayList<>();
 
-        UserResponseDTO.UserReviewListDTO userReviewListDTO = UserConverter.otherUserReviewListDTO(otherUser, reviewList, averageScore, totalReviewCount, imageUrl);
-        return userReviewListDTO;
+        List<Reservation> reservationList = reservationRepository.findAllByProductInAndStatus(productList, Status.ACTIVE);
+
+        //제품 추가
+        rentingList = reservationList.stream()
+                .map(reservation -> {
+                    UserResponseDTO.ProductPreviewDTO toProductDto = UserConverter.otherRentingProduct(reservation.getProduct(), null);
+                    return toProductDto;
+                })
+                .collect(Collectors.toList());
+
+        Integer averageScore = productCommandService.otherAverageScoreByUserId(otherUser.getId());
+
+        UserResponseDTO.UserProfileDTO userProfile = UserConverter.otherUserProfileDTO(otherUser, averageScore, reviewList.size(), productList.size(), rentingList.size(), imageUrl);
+        return userProfile;
     }
 }

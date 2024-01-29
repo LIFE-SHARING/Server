@@ -10,6 +10,7 @@ import com.umc.lifesharing.review.entity.ReviewImage;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -78,6 +79,10 @@ public class ReviewConverter {
     }
 
     public static ReviewResponseDTO.UserReviewListDTO toUserReviewList(List<Review> reviewList){
+        if (reviewList == null) {
+            // reviewList가 null인 경우 빈 리스트로 초기화
+            reviewList = Collections.emptyList();
+        }
         List<ReviewResponseDTO.ReviewListDTO> userReviewList = reviewList.stream()
                 .map(ReviewConverter::toReviewList)
                 .collect(Collectors.toList());
