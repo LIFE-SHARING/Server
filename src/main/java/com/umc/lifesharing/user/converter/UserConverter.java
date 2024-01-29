@@ -2,6 +2,7 @@ package com.umc.lifesharing.user.converter;
 
 import com.umc.lifesharing.config.security.TokenDTO;
 import com.umc.lifesharing.config.security.UserAdapter;
+import com.umc.lifesharing.location.converter.LocationConverter;
 import com.umc.lifesharing.location.dto.LocationDTO;
 import com.umc.lifesharing.product.entity.ProductImage;
 import com.umc.lifesharing.reservation.entity.Reservation;
@@ -76,8 +77,7 @@ public class UserConverter {
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .nickname(user.getName())
-//                .locationDTO(new LocationDTO(user.getLocationList().get(0)))
-                .locationDTO(new LocationDTO("위치 관련 기능 미구현", "위치 관련 기능 미구현", "위치 관련 기능 미구현", "위치 관련 기능 미구현","위치 관련 기능 미구현","위치 관련 기능 미구현"))
+                .locationDTO(LocationConverter.toResponseDTO(user.getLocationList()))
                 .profileUrl(user.getProfileUrl())
                 .build();
     }
@@ -94,15 +94,14 @@ public class UserConverter {
         return UserResponseDTO.MyPageResponseDTO.builder()
                 .userId(user.getId())
                 .point(user.getPoint())
-//                .area(user.getLocationList().get(0).getArea())
-                .area("위치 관련 기능 미구현")
+                .area(user.getLocationList().get(0).getDong())
                 .score((int) Math.round(user.getProductList().stream()
                         .mapToInt(Product::getScore)
                         .average()
                         .orElse(0)
                 ))
                 .nickname(user.getName())
-                .profileUrl("이미지 미구현")
+                .profileUrl(user.getProfileUrl())
                 .build();
     }
 
