@@ -1,6 +1,7 @@
 package com.umc.lifesharing.chat.controller;
 
 import com.umc.lifesharing.apiPayload.ApiResponse;
+import com.umc.lifesharing.apiPayload.code.status.SuccessStatus;
 import com.umc.lifesharing.chat.dto.ChatResponseDTO;
 import com.umc.lifesharing.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
@@ -31,4 +32,17 @@ public class ChatController {
     public ApiResponse<List<ChatResponseDTO.ChatMessageDTO>> chatList(@PathVariable(name = "chatroom") Long chatroom){
         return ApiResponse.onSuccess(chatService.chatList(chatroom));
     }
+
+    @DeleteMapping("/room-out/receiver/{roomId}/{receiver}")
+    public ApiResponse<String> chatRoomOutReceiver(@PathVariable(name = "roomId") Long roomId, @PathVariable(name = "receiver")Long receiver){
+        chatService.chatRoomReceiverDelete(roomId, receiver);
+        return ApiResponse.of(SuccessStatus.CHAT_OUT_RECEIVER,"receiver 삭제");
+    }
+
+    @DeleteMapping("/room-out/sender/{roomId}/{sender}")
+    public ApiResponse<String> chatRoomOutSender(@PathVariable(name = "roomId") Long roomId, @PathVariable(name = "sender")Long sender){
+        chatService.chatRoomSenderDelete(roomId, sender);
+        return ApiResponse.of(SuccessStatus.CHAT_OUT_SENDER,"sender 삭제");
+    }
+
 }

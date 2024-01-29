@@ -64,6 +64,14 @@ public enum ErrorStatus implements BaseErrorCode {
 
     USER_NOT_FOUNDED(HttpStatus.NOT_FOUND, "USER_404_1", "사용자를 찾을 수 없습니다."),
 
+    // chat
+    CHATROOM_NOT_EXIST(HttpStatus.NOT_FOUND, "CHATROOM_400_1", "채팅방을 찾을 수 없습니다."),
+    CHAT_NOT_AVAILABLE_SENDER(HttpStatus.NOT_FOUND, "CHATROOM_400_2", "구매자가 채팅방을 나갔습니다."),
+    CHAT_NOT_AVAILABLE_RECEIVER(HttpStatus.NOT_FOUND, "CHATROOM_400_3", "판매자가 채팅방을 나갔습니다."),
+    CHAT_NOT_MATCH_SENDER(HttpStatus.NOT_FOUND, "CHATROOM_400_4", "구매자가 일치하지 않습니다."),
+    CHAT_NOT_MATCH_RECEIVER(HttpStatus.NOT_FOUND, "CHATROOM_400_5", "판매자가 일치하지 않습니다."),
+    CHATROOM_NULL_SENDER(HttpStatus.BAD_REQUEST, "CHATROOM_400_6", "구매자가 이미 채팅방을 나갔습니다."),
+    CHATROOM_NULL_RECEIVER(HttpStatus.BAD_REQUEST, "CHATROOM_400_7", "판매자가 이미 채팅방을 나갔습니다."),
     // token
     TOKEN_NOT_EXIST(HttpStatus.BAD_REQUEST, "TOKEN_400_1", "헤더에 토큰이 존재하지 않음"),
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "TOKEN_401_1", "토큰이 만료됨"),
