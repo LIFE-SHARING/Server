@@ -16,11 +16,20 @@ public class ChatRoom {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @JoinColumn(name = "sender_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private User sender;
 
+    @JoinColumn(name = "receiver_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private User receiver;
 
 
+    public void deleteSender(){
+        this.sender = null;
+    }
+
+    public void deleteReceiver(){
+        this.receiver = null;
+    }
 }
