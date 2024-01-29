@@ -42,4 +42,12 @@ public class ChatResponseDTO {
         Long senderId;
         String message;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ChatRoomOutResponseDTO {
+        String message;
+    }
 }

@@ -33,7 +33,6 @@ public class ChatConverter {
                 .build();
     }
 
-    //나중에 유저로 변경 예정
     public static ChatRoom toChatRoom(User receiver, User sender){
         return ChatRoom.builder()
                 .receiver(receiver)

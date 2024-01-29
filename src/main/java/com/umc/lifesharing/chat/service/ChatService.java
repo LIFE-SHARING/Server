@@ -17,4 +17,8 @@ public interface ChatService {
 
     List<ChatResponseDTO.ChatMessageDTO> chatList(Long roomId);
 
+    boolean chatRoomSenderDelete(Long roomId, Long senderId);
+    boolean chatRoomReceiverDelete(Long roomId, Long receiverId);
+
+    boolean chatDelete(Long roodId);
 }
