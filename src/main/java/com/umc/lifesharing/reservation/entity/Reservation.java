@@ -29,13 +29,13 @@ public class Reservation extends BaseEntity {
     private Product product;
 
     @Column(nullable = false, name = "start_date")
-    private LocalDateTime start_date;
+    private LocalDateTime startDate;
 
     @Column(nullable = false, name = "end_date")
-    private LocalDateTime end_date;
+    private LocalDateTime endDate;
 
     @Column(nullable = false, name = "total_time")
-    private String total_time;       // 총 대여 시간
+    private String totalTime;       // 총 대여 시간
 
     @Column(nullable = false, name = "amount")
     private Long amount;

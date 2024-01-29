@@ -43,8 +43,8 @@ public class UserController {
             description = "로그인 API 입니다. RequestBody 입니다. 사용자 아이디와 패스워디를 담아주세요"
     )
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON500", description = "서버 에러!",content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON500", description = "서버 에러!", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     @Parameters({
             @Parameter(name = "loginDTO", description = "로그인에 아이디, 패스워드입니다.")
@@ -59,16 +59,15 @@ public class UserController {
             description = "회원가입 API 입니다. RequestBody입니다. 회원가입에 필요한 정보를 담아주세요"
     )
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON500",description = "OK, 성공"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON500", description = "access 토큰을 주세요!",content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON500", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON500", description = "access 토큰을 주세요!", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     @Parameters({
             @Parameter(name = "joinDTO", description = "회원가입에 필요한 정보들 입니다."),
             @Parameter(name = "multipartFile", description = "사용자의 프로필 이미지입니다. multipartFile입니다.")
     })
     public ApiResponse<UserResponseDTO.ResponseDTO> join(@Valid @RequestPart UserRequestDTO.JoinDTO joinDTO,
-                                                         @Nullable @RequestPart(value = "multipartFile", required = false) MultipartFile multipartFile) {
-
+                                                         @Nullable @RequestPart(value = "multipartFile") MultipartFile multipartFile) {
         return ApiResponse.onSuccess(userService.join(joinDTO, multipartFile));
     }
 
@@ -79,10 +78,10 @@ public class UserController {
             description = "닉네임이 중복인지 검사하는 API 입니다. RequestBody입니다. 중복을 확인할 닉네임을 넣어주세요"
     )
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH003", description = "access 토큰을 주세요!",content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "access 토큰 만료",content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "access 토큰 모양이 이상함",content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH003", description = "access 토큰을 주세요!", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "access 토큰 만료", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "access 토큰 모양이 이상함", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
     })
     @Parameters({
             @Parameter(name = "checkNickname", description = "중복을 확읺할 닉네임을 넣어주세요..")
@@ -97,10 +96,10 @@ public class UserController {
             description = "마이페이지 진입 시 내 정보를 불러오는 API 입니다. 헤더에 access token 을 넣어주세요!"
     )
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH003", description = "access 토큰을 주세요!",content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "access 토큰 만료",content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "access 토큰 모양이 이상함",content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH003", description = "access 토큰을 주세요!", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "access 토큰 만료", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "access 토큰 모양이 이상함", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
     })
     public ApiResponse<UserResponseDTO.MyPageResponseDTO> getMyPage(@AuthenticationPrincipal UserAdapter userAdapter) {
         return ApiResponse.onSuccess(userQueryService.getMyPage(userAdapter));
@@ -109,7 +108,7 @@ public class UserController {
     // 사용자 비밀번호 정보 변경
     @PatchMapping("/user/password")
     public ApiResponse<UserResponseDTO.ChangePasswordResponseDTO> changeUserPassword(@AuthenticationPrincipal UserAdapter userAdapter,
-                                                   @Valid @RequestBody UserRequestDTO.ChangePasswordDTO changePasswordDTO) {
+                                                                                     @Valid @RequestBody UserRequestDTO.ChangePasswordDTO changePasswordDTO) {
         return ApiResponse.onSuccess(userService.changePassword(userAdapter, changePasswordDTO));
     }
 
@@ -132,16 +131,14 @@ public class UserController {
         return ApiResponse.onSuccess(userService.getAdminAuth(userAdapter));
     }
 
-    // 회원이 등록한 제품 목록
-    @GetMapping("/user/products")
-    @Operation(summary = "회원이 등록한 제품 조회 API")
-    public ApiResponse<UserResponseDTO.ProductPreviewListDTO> getUserProductList(@AuthenticationPrincipal UserAdapter userAdapter){
-        // 현재 로그인한 사용자의 정보
-        User loggedInUser = userAdapter.getUser();
-        List<Product> productList = userService.getProductList(loggedInUser.getId());
-
-        return ApiResponse.onSuccess(UserConverter.productPreviewListDTO(productList));
-    }
+    // 회원이 등록한 제품 목록 - 다른 유저가 어떤 등록자의 프로필 클릭시 (대여물품)
+//    @GetMapping("/user/products")
+//    @Operation(summary = "회원이 등록한 제품 조회 API")
+//    public ApiResponse<UserResponseDTO.ProductPreviewListDTO> getUserProductList(@RequestParam(name = "filter", defaultValue = "recent") String filter, @AuthenticationPrincipal UserAdapter userAdapter){
+//        List<Product> productList = userService.getProductList(userAdapter, filter);
+////        return ApiResponse.onSuccess(UserConverter.productPreviewListDTO(productList));
+//        return null;
+//    }
 
 
 //    @GetMapping("/user/inquiry")
@@ -155,4 +152,37 @@ public class UserController {
 //                                                                              @Nullable @RequestPart(value = "multipartFile") List<MultipartFile> multipartFile) {
 //        return ApiResponse.onSuccess();
 //    }
+
+    // 다른 유저가 어떤 등록자의 프로필 클릭시 (대여물품)
+    @GetMapping("/seller/{sellerId}/products")
+    @Operation(summary = "대여자 프로필 대여 물품 조회 API")
+    public ApiResponse<UserResponseDTO.ProductPreviewListDTO> getOtherProducts(@PathVariable(name = "sellerId") Long sellerId, @AuthenticationPrincipal UserAdapter userAdapter) {
+        UserResponseDTO.ProductPreviewListDTO itemlist = userService.getOtherProduct(sellerId, userAdapter);
+        return ApiResponse.onSuccess(itemlist);
+    }
+
+    // 다른 유저가 어떤 등록자의 프로필 클릭시 (대여중 물품)
+    @GetMapping("/seller/{sellerId}/rentProduct")
+    @Operation(summary = "대여자 프로필 대여중 물품 조회 API")
+    public ApiResponse<UserResponseDTO.ProductPreviewListDTO> getOtherRentProducts(@PathVariable(name = "sellerId") Long sellerId, @AuthenticationPrincipal UserAdapter userAdapter) {
+        UserResponseDTO.ProductPreviewListDTO productList = userService.getOtherRentProduct(sellerId, userAdapter);
+        return ApiResponse.onSuccess(productList);
+    }
+
+
+    // 다른 유저가 어떤 등록자의 프로필 클릭시 (리뷰리스트)
+    @GetMapping("/seller/{sellerId}/reviews")
+    @Operation(summary = "대여자 프로필 리뷰 목록 조회 API")
+    public ApiResponse<UserResponseDTO.UserReviewListDTO> getOtherReviews(@PathVariable(name = "sellerId") Long sellerId, @AuthenticationPrincipal UserAdapter userAdapter) {
+        UserResponseDTO.UserReviewListDTO reviewList = userService.getOtherReview(sellerId, userAdapter);
+        return ApiResponse.onSuccess(reviewList);
+    }
+
+    // 대여자 프로필
+    @GetMapping("/seller/profile/{sellerId}")
+    @Operation(summary = "대여자 프로필 리뷰 목록 조회 API")
+    public ApiResponse<UserResponseDTO.UserProfileDTO> getOtherProfile(@PathVariable(name = "sellerId") Long sellerId, @AuthenticationPrincipal UserAdapter userAdapter) {
+        UserResponseDTO.UserProfileDTO userProfile = userService.getOtherProfile(sellerId, userAdapter);
+        return ApiResponse.onSuccess(userProfile);
+    }
 }

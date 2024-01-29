@@ -62,6 +62,10 @@ public class ProductResponseDTO {
         Integer hourPrice;
         Boolean isLiked; //찜여부
         String content;
+        String latitude;    // 위도
+        String longitude;   // 경도
+        String userNickname;  // 등록자 닉네임
+        String userImage;     // 등록자 이미지
         List<ReviewListDTO> reviewList;   //리뷰 리스트를 출력해야함
     }
 
@@ -74,7 +78,7 @@ public class ProductResponseDTO {
         Long reviewId;
         Long userId;
         LocalDate createdAt;
-        Integer lentDay;  // 이후에 Reservation lent_day로 가져와야 함
+        String lentDay;  // 이후에 Reservation lent_day로 가져와야 함
         List<String> imageList;
         Integer score;
         String content;
@@ -110,12 +114,36 @@ public class ProductResponseDTO {
         LocalDateTime updatedAt;
     }
 
-    // 내가 등록한 제품 조회
+    // 마이페이지 - 등록 내역 응답
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class myRegProductDTO {
+        Integer productCount;   // 제품 개수
+        List<myRegProductList> myRegProductList;   // 등록 제품 리스트
+    }
+
     @Builder
     @Getter
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class myRegProductList{
+        Long productId;
+        String imageUrl;
+        String location;
+        String name;
+        String startDate;
+        String endDate;
+    }
+
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    // 내가 등록한 제품 조회
     public static class MyListDTO{
         Long product_id;
         String name;

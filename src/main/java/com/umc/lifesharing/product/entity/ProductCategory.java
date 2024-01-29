@@ -1,6 +1,6 @@
 package com.umc.lifesharing.product.entity;
 
-import com.umc.lifesharing.product.entity.common.BaseEntity;
+import com.umc.lifesharing.product.entity.enums.ProductStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;

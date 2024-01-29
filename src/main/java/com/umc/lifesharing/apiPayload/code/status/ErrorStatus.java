@@ -28,15 +28,21 @@ public enum ErrorStatus implements BaseErrorCode {
     PAYMENT_AMOUNT_EXP(HttpStatus.BAD_REQUEST, "PAYMENT4002", "결제 금액이 일치하지 않습니다."),
     PAYMENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "PAYMENT4003", "결제 내역을 찾을 수 없습니다."),
     ALREADY_APPROVED(HttpStatus.BAD_REQUEST, "PAYMENT4004", "이미 인증된 결제입니다."),
-    ORDER_ID_NOT_FOUND(HttpStatus.BAD_REQUEST, "PAYMENT4003", "주문 번호를 찾을 수 없습니다."),
+    ORDER_ID_NOT_FOUND(HttpStatus.BAD_REQUEST, "PAYMENT4005", "주문 번호를 찾을 수 없습니다."),
 
     CHARGE_POINT(HttpStatus.BAD_REQUEST, "PAYMENT4101", "캐쉬가 부족합니다."),
 
-    PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "PRODUCT4001", "없는 제품입니다."),
+    //예약 관련 에러
+    CHECK_RESERVATION_DATE(HttpStatus.BAD_REQUEST, "RESERVATION4001", "예약 날짜를 다시 확인해 주세요."),
+    INVALID_RESERVATION_DATE(HttpStatus.BAD_REQUEST, "RESERVATION4002", "예약 불가능한 날짜입니다."),
+
+    PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "PRODUCT4001", "해당 제품이 없습니다."),
     NO_PRODUCT_IMAGE(HttpStatus.NOT_FOUND, "PRODUCT4002", "제품 이미지가 없습니다."),
     NOT_EXIST_LIKED_PRODUCT(HttpStatus.NOT_FOUND,"PRODUCT4003", "찜한 제품이 없습니다."),
     ALREADY_HEART(HttpStatus.ALREADY_REPORTED, "HEART4001", "이미 좋아요한 제품입니다."),
     ALREADY_REMOVE(HttpStatus.ALREADY_REPORTED, "HEART4002", "이미 취소한 제품입니다."),
+    REVIEW_NOT_FOUND(HttpStatus.BAD_REQUEST, "REVIEW4001", "존재하지 않는 리뷰입니다."),
+    NOT_REVIEWLIST(HttpStatus.NOT_FOUND, "REVIEW4002", "리뷰가 없습니다."),
   
     // 예시,,,
     ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "ARTICLE4001", "게시글이 없습니다."),
@@ -58,6 +64,14 @@ public enum ErrorStatus implements BaseErrorCode {
 
     USER_NOT_FOUNDED(HttpStatus.NOT_FOUND, "USER_404_1", "사용자를 찾을 수 없습니다."),
 
+    // chat
+    CHATROOM_NOT_EXIST(HttpStatus.NOT_FOUND, "CHATROOM_400_1", "채팅방을 찾을 수 없습니다."),
+    CHAT_NOT_AVAILABLE_SENDER(HttpStatus.NOT_FOUND, "CHATROOM_400_2", "구매자가 채팅방을 나갔습니다."),
+    CHAT_NOT_AVAILABLE_RECEIVER(HttpStatus.NOT_FOUND, "CHATROOM_400_3", "판매자가 채팅방을 나갔습니다."),
+    CHAT_NOT_MATCH_SENDER(HttpStatus.NOT_FOUND, "CHATROOM_400_4", "구매자가 일치하지 않습니다."),
+    CHAT_NOT_MATCH_RECEIVER(HttpStatus.NOT_FOUND, "CHATROOM_400_5", "판매자가 일치하지 않습니다."),
+    CHATROOM_NULL_SENDER(HttpStatus.BAD_REQUEST, "CHATROOM_400_6", "구매자가 이미 채팅방을 나갔습니다."),
+    CHATROOM_NULL_RECEIVER(HttpStatus.BAD_REQUEST, "CHATROOM_400_7", "판매자가 이미 채팅방을 나갔습니다."),
     // token
     TOKEN_NOT_EXIST(HttpStatus.BAD_REQUEST, "TOKEN_400_1", "헤더에 토큰이 존재하지 않음"),
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "TOKEN_401_1", "토큰이 만료됨"),

@@ -76,7 +76,7 @@ public class UserQueryServiceImpl implements UserQueryService {
         return mem.map(member -> {
             // 회원이 가진 Product 중 상태가 "EXIST"인 것만 필터링하여 반환
             return member.getProductList().stream()
-                    .filter(product -> ProductStatus.EXIST.equals(product.getProduct_status()))
+                    .filter(product -> ProductStatus.EXIST.equals(product.getProductStatus()))
                     .collect(Collectors.toList());
         }).orElse(Collections.emptyList());
     }

@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.umc.lifesharing.review.rerpository.ReviewImageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,8 @@ public class AwsS3Service {
 
     private final AmazonS3 amazonS3;
 
+    private final ReviewImageRepository reviewImageRepository;
+
     public List<String> uploadReviewFiles(List<MultipartFile> multipartFiles){
         return uploadFiles(multipartFiles, reviewPath);
     }
@@ -51,6 +54,7 @@ public class AwsS3Service {
         List<String> fileNameList = new ArrayList<>();
 
         multipartFiles.forEach(file -> {
+
             String fileName = /*"https://lifesharing.s3.ap-northeast-2.amazonaws.com/" + */path + "/" + createFileName(file.getOriginalFilename());
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentLength(file.getSize());
@@ -65,27 +69,35 @@ public class AwsS3Service {
 //            fileNameList.add(fileName);
             fileNameList.add(amazonS3.getUrl(bucket, fileName).toString().split(".com/")[1]);
         });
-
         return fileNameList;
     }
 
     // 먼저 파일 업로드시, 파일명을 난수화하기 위해 UUID 를 활용하여 난수를 돌린다.
     public String createFileName(String fileName){
-        return UUID.randomUUID().toString().concat(getFileExtension(fileName));
+        String uniqueId = UUID.randomUUID().toString();
+ //       String fileExtension = getFileExtension(fileName);
+
+        return uniqueId + "_" + fileName;
     }
 
-    // file 형식이 잘못된 경우를 확인하기 위해 만들어진 로직이며, 파일 타입과 상관없이 업로드할 수 있게 하기위해, "."의 존재 유무만 판단하였습니다.
-    private String getFileExtension(String fileName){
-        try{
-            return fileName.substring(fileName.lastIndexOf("."));
-        } catch (StringIndexOutOfBoundsException e){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 형식의 파일" + fileName + ") 입니다.");
+    public void deleteProductFile(String imageUrl) {
+        String fileName = getFileNameFromUrl(imageUrl);
+        amazonS3.deleteObject(new DeleteObjectRequest(bucket, "product/" + fileName));
+    }
+
+    public void deleteReviewFile(String imageUrl) {
+        String fileName = getFileNameFromUrl(imageUrl);
+        amazonS3.deleteObject(new DeleteObjectRequest(bucket, "review/" + fileName));
+    }
+
+    private String getFileNameFromUrl(String imageUrl) {
+        // URL에서 마지막 슬래시('/') 뒤의 문자열을 추출하여 파일 이름으로 사용
+        int lastSlashIndex = imageUrl.lastIndexOf("/");
+        if (lastSlashIndex != -1 && lastSlashIndex < imageUrl.length() - 1) {
+            return imageUrl.substring(lastSlashIndex + 1);
+        } else {
+            // 슬래시가 없거나 마지막에 위치한 경우 URL 전체를 반환
+            return imageUrl;
         }
-    }
-
-
-    public void deleteFile(String fileName){
-        amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
-        System.out.println(bucket);
     }
 }

@@ -1,6 +1,5 @@
 package com.umc.lifesharing.user.dto;
 
-import com.umc.lifesharing.location.dto.LocationDTO;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -28,10 +27,10 @@ public class UserRequestDTO {
 
         private String name;
 
-        // TODO: '-' 포함 or 포함 x ?
+        // TODO: - 포함 or 포함 x ?
         private String phone;
 
-        private LocationDTO.RequestDTO location;
+//        private Location location;
     }
 
     @Builder

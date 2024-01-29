@@ -8,6 +8,7 @@ import com.umc.lifesharing.product.converter.ProductConverter;
 import com.umc.lifesharing.product.dto.ProductRequestDTO;
 import com.umc.lifesharing.product.dto.ProductResponseDTO;
 import com.umc.lifesharing.product.entity.Product;
+import com.umc.lifesharing.product.entity.ProductImage;
 import com.umc.lifesharing.product.repository.ProductRepository;
 import com.umc.lifesharing.product.service.ProductCommandService;
 import com.umc.lifesharing.product.service.ProductQueryService;
@@ -24,14 +25,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,6 +57,13 @@ public class ProductRestController {
         List<String> uploadedFileNames = awsS3Service.uploadProductFiles(files);
         // 현재 로그인한 사용자의 아이디를 사용하여 제품을 등록
         Product product = productCommandService.ProductRegister(request, userAdapter, uploadedFileNames);
+
+        // 새로운 이미지 리스트 추가
+//        for (String imageUrl : uploadedFileNames) {
+//
+//            ProductImage newProductImage = ProductImage.create(product, imageUrl, url + imageUrl);
+//            product.getImages().add(newProductImage);
+//        }
         return ApiResponse.onSuccess(ProductConverter.toRegisterResultDTO(product));
     }
 
@@ -74,14 +85,27 @@ public class ProductRestController {
         }
     }
 
-    // 제품 수정 API
+    // 제품 정보 수정 API
     @PatchMapping("/update/{productId}")
     @Operation(summary = "제품 정보 수정 API")
     @Parameter(name = "productId", description = "제품 번호를 넣어주세요.")
-    public ApiResponse<ProductResponseDTO.UpdateResDTO> toUpdateProduct(@PathVariable(name = "productId") Long productId, @RequestBody ProductRequestDTO.UpdateProductDTO request,
+    public ApiResponse<ProductResponseDTO.UpdateResDTO> toUpdateProduct(@PathVariable(name = "productId") Long productId, @RequestBody(required = false) ProductRequestDTO.UpdateProductDTO request,
                                                                         @AuthenticationPrincipal UserAdapter userAdapter){
         Product updateProduct = productCommandService.updateProduct(productId, request, userAdapter);
         return ApiResponse.onSuccess(ProductConverter.updateResDTO(updateProduct));
+    }
+
+    // 제품 이미지 수정 API
+    @PutMapping("/update-image/{productId}")
+    @Operation(summary = "제품 이미지 수정 API")
+    @Parameter(name = "productId", description = "제품 번호를 넣어주세요.")
+    public ApiResponse<String> toUpdateImage(@PathVariable(name = "productId") Long productId, @RequestPart List<MultipartFile> imageList,
+                                             @AuthenticationPrincipal UserAdapter userAdapter){
+
+        // 현재 로그인한 사용자의 아이디를 사용하여 제품 이미지 수정
+        productCommandService.updateProductImage(productId, userAdapter, imageList);
+
+        return ApiResponse.onSuccess("수정되었습니다." + LocalDateTime.now());
     }
 
     // 카테고리별 제품 조회 API
@@ -107,7 +131,7 @@ public class ProductRestController {
     @GetMapping("/home")
     @Operation(summary = "홈에서 필터별 제품 조회")
     @Parameter(name = "filter", description = "필터를 적용하세요. recent / popular / review")
-    public ApiResponse<ProductResponseDTO.HomePreviewListDTO> getHomeProduct(@RequestParam(name = "filter") String filter){
+    public ApiResponse<ProductResponseDTO.HomePreviewListDTO> getHomeProduct(@RequestParam(name = "filter", defaultValue = "recent") String filter){
         List<Product> homeProductList = productCommandService.getHomeProduct(filter);
         return ApiResponse.onSuccess(ProductConverter.homeAndCateList(homeProductList));
     }
@@ -115,7 +139,6 @@ public class ProductRestController {
     // 제품 검색 API
     @GetMapping("/search")
     @Operation(summary = "제품 검색 조회 API")
-
     public ApiResponse<List<ProductResponseDTO.SearchListDTO>> getSearchProduct(@RequestParam(name = "keyword") String keyword, @RequestParam(name = "filter", defaultValue = "recent") String filter,
                                                                                 @AuthenticationPrincipal UserAdapter userAdapter){
         List<Product> searchProductList = productCommandService.getSearchProduct(filter, keyword);
@@ -134,6 +157,16 @@ public class ProductRestController {
             return ApiResponse.onSuccess(searchList);
         }
     }
+
+
+    // 마이페이지 - 제품 등록 내역
+    @GetMapping("/my-regist")
+    @Operation(summary = "마이페이지 제품 등록 내역")
+    public ApiResponse<ProductResponseDTO.myRegProductDTO> getMyRegProduct(@AuthenticationPrincipal UserAdapter userAdapter) {
+        List<ProductResponseDTO.myRegProductList> myRegProductLists = productCommandService.getMyPageProduct(userAdapter);
+        return ApiResponse.onSuccess(ProductConverter.toMyProductReg(myRegProductLists));
+    }
+  
     @GetMapping("/my")
     @Operation(summary = "제품 검색 조회 API")
     public ApiResponse<List<ProductResponseDTO.MyListDTO>> getMyProduct(@AuthenticationPrincipal UserAdapter userAdapter){

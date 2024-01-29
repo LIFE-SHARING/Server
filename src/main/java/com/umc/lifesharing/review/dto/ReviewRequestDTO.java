@@ -25,4 +25,11 @@ public class ReviewRequestDTO {
     public static class ImageUpload{
         List<MultipartFile> image;
     }
+
+    @Getter
+    @Setter
+    public static class reviewUpdateDTO{
+        String content;
+        Integer score;
+    }
 }

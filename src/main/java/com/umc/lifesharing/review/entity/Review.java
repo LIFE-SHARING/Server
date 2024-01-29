@@ -1,6 +1,7 @@
 package com.umc.lifesharing.review.entity;
 
 import com.umc.lifesharing.product.entity.Product;
+import com.umc.lifesharing.reservation.entity.Reservation;
 import com.umc.lifesharing.review.entity.common.BaseEntity;
 import com.umc.lifesharing.user.entity.User;
 import jakarta.persistence.*;
@@ -8,6 +9,8 @@ import jakarta.validation.constraints.Max;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +35,7 @@ public class Review extends BaseEntity {
     @Max(value = 5)
     private Integer score;
 
-    private Integer lentDay;
+    private String lentDay;
 
 //    @ElementCollection
 //    @CollectionTable(name = "review_image_url", joinColumns = @JoinColumn(name = "review_id"))
@@ -48,8 +51,14 @@ public class Review extends BaseEntity {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
+//    @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "product_id")
     private Product product;
+
+    // 리뷰 작성을 위한 단방향 매핑
+    @ManyToOne
+    @JoinColumn(name = "reservation_id")
+    private Reservation reservation;
 
     public void setUser(User user){
         this.user = user;
@@ -58,6 +67,4 @@ public class Review extends BaseEntity {
     public void setProduct(Product product){
         this.product = product;
     }
-
-
 }

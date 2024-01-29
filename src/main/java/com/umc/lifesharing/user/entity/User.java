@@ -55,7 +55,6 @@ public class User extends BaseEntity {
     private List<Product> productList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @Builder.Default
     private List<Location> locationList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval = true)

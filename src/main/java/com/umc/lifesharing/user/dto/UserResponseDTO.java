@@ -2,12 +2,11 @@ package com.umc.lifesharing.user.dto;
 
 import com.umc.lifesharing.config.security.TokenDTO;
 import com.umc.lifesharing.location.dto.LocationDTO;
+import com.umc.lifesharing.review.dto.ReviewResponseDTO;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.time.LocalDateTime;
 
@@ -17,6 +16,7 @@ public class UserResponseDTO {
     // 회원이 등록한 제품 조회
     @Builder
     @Getter
+    @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ProductPreviewDTO{
@@ -28,6 +28,7 @@ public class UserResponseDTO {
         Integer deposit;
         Integer dayPrice;
         String imageUrl;
+        String isReserved;   // 대여 여부(대여중 false / 대여가능 true)
     }
 
     @Builder
@@ -35,6 +36,13 @@ public class UserResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ProductPreviewListDTO{
+//        Long userId;
+//        String userName;
+//        String imageUrl;
+//        String location;  // 대여자 위치 정보
+//        Integer score;
+//        Integer reviewCount;
+//        Integer productCount;
         List<ProductPreviewDTO> productList;
     }
 
@@ -58,7 +66,7 @@ public class UserResponseDTO {
         private String nickname;
         private String phone;
         private String profileUrl;
-        private LocationDTO.ResponseDTO locationDTO;
+        private LocationDTO locationDTO;
     }
 
     @Builder
@@ -68,7 +76,7 @@ public class UserResponseDTO {
     public static class MyPageResponseDTO {
         private Long userId;    // pk
         private String nickname;    // 닉네임
-        private String dong;    // 읍/면/동    ex. 무거동
+        private String area;    // 읍/면/동    ex. 무거동
         private Integer score;
         private String profileUrl;
         private Long point;
@@ -119,5 +127,49 @@ public class UserResponseDTO {
     @Getter
     public static class InquiryPreviewDTO {
         private List<InquiryDTO> inquiryList;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ReviewListDTO{
+        Long reviewId;
+        Long userId;
+        String nickName;
+        LocalDate createdAt;
+        String lentDay;  // 이후에 Reservation lent_day로 가져와야 함
+        List<String> imageList;
+        Integer score;
+        String content;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserReviewListDTO{
+//        Long userId;
+//        String userName;
+//        String imageUrl;
+//        String location;  // 대여자 위치 정보
+//        Integer score;
+//        Integer reviewCount;
+        List<ReviewListDTO> reviewList;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserProfileDTO {
+        Long userId;
+        String userName;
+        String imageUrl;
+        String location;  // 대여자 위치 정보
+        Integer score;
+        Integer reviewCount;
+        Integer productCount;
+        Integer rentProductCnt;
     }
 }
