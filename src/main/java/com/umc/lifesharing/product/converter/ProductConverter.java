@@ -11,6 +11,7 @@ import com.umc.lifesharing.review.entity.ReviewImage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -209,5 +210,20 @@ public class ProductConverter {
 //                })
 //                .collect(Collectors.toList());
 //    }
+
+    // 제품 이미지 수정 응답
+    public static ProductResponseDTO.UpdateResDTO updateImageRes(List<MultipartFile> imageLlist){
+        return ProductResponseDTO.UpdateResDTO.builder()
+                .updatedAt(LocalDateTime.now())
+                .build();
+    }
+
+    // 제품 삭제 응답
+    public static ProductResponseDTO.DeleteRes deleteResult(Product product){
+        return ProductResponseDTO.DeleteRes.builder()
+                .productId(product.getId())
+                .deletedAt(LocalDateTime.now())
+                .build();
+    }
 
 }

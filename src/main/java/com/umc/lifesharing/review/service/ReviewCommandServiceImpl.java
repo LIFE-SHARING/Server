@@ -83,15 +83,12 @@ public class ReviewCommandServiceImpl implements ReviewCommandService{
 
         List<Review> userReviewList = reviewRepository.findByUserIdWithProduct(loggendInUser.getId());
 
-        if (userReviewList.isEmpty()){
-            return null;
-        }
         return userReviewList;
     }
 
     // 리뷰 삭제
     @Override
-    public void deleteReview(Long reviewId, Long userId) {
+    public Review deleteReview(Long reviewId, Long userId) {
         Review review = reviewRepository.findById(reviewId).get();
         User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
 
@@ -126,6 +123,7 @@ public class ReviewCommandServiceImpl implements ReviewCommandService{
                 // 제품 업데이트
                 productRepository.save(product);
             }
+            return review;
         }
         else {
             throw new NotFoundException("로그인해주세요.");

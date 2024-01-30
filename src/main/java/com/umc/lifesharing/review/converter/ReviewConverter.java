@@ -99,4 +99,12 @@ public class ReviewConverter {
                 .updatedAt(LocalDateTime.now())
                 .build();
     }
+
+    // 리뷰 삭제 응답
+    public static ReviewResponseDTO.deleteReview toDeleteReview(Review review){
+        return ReviewResponseDTO.deleteReview.builder()
+                .reviewId(review.getId())
+                .deletedAt(LocalDateTime.now())
+                .build();
+    }
 }
