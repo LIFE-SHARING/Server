@@ -61,4 +61,13 @@ public class ReviewResponseDTO {
         Long reviewId;
         LocalDateTime updatedAt;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class deleteReview{
+        private Long reviewId;
+        private LocalDateTime deletedAt;
+    }
 }

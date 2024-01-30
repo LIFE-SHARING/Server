@@ -18,10 +18,10 @@ public interface ProductCommandService {
     Product ProductRegister(ProductRequestDTO.RegisterProductDTO request, UserAdapter userAdapter, List<String> uploadedFileNames);
 
     // 제품 이미지 수정
-    void updateProductImage(Long productId, UserAdapter userAdapter, List<MultipartFile> imageList);
+    Product updateProductImage(Long productId, UserAdapter userAdapter, List<MultipartFile> imageList);
 
     // 제품 삭제
-    void deleteProduct(Long productId, Long userId);
+    Product deleteProduct(Long productId, Long userId);
 
     // 제품 상세 조회
     ProductResponseDTO.ProductDetailDTO productDetail(Long productId, UserAdapter userAdapter);

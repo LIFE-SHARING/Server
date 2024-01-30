@@ -158,4 +158,12 @@ public class ProductResponseDTO {
         String isReserved;
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DeleteRes{
+        private Long productId;
+        private LocalDateTime deletedAt;
+    }
 }

@@ -71,18 +71,10 @@ public class ProductRestController {
     @DeleteMapping("/delete/{productId}")
     @Operation(summary = "제품 삭제 API", description = "해당 제품을 삭제하는 API입니다.")
     @Parameters({@Parameter(name = "productId", description = "path variable에 제품 번호를 넣어주세요.")})
-    public ApiResponse<String> deleteProduct(@Positive @PathVariable(name = "productId") Long productId, @AuthenticationPrincipal UserAdapter userAdapter){
-
+    public ApiResponse<ProductResponseDTO.DeleteRes> deleteProduct(@Positive @PathVariable(name = "productId") Long productId, @AuthenticationPrincipal UserAdapter userAdapter){
         Long loggedInUser = userAdapter.getUser().getId();
-
-        try {
-            productCommandService.deleteProduct(productId, loggedInUser);
-            return ApiResponse.onSuccess("성공적으로 삭제되었습니다.");
-        } catch (NotFoundException e) {
-            return ApiResponse.onFailure(ErrorStatus.PRODUCT_NOT_FOUND.getCode(), ErrorStatus.PRODUCT_NOT_FOUND.getMessage(), null);
-        } catch (Exception e) {
-            return ApiResponse.onFailure(ErrorStatus._INTERNAL_SERVER_ERROR.getCode(), ErrorStatus._INTERNAL_SERVER_ERROR.getMessage(), null);
-        }
+        Product deleteProduct = productCommandService.deleteProduct(productId, loggedInUser);
+        return ApiResponse.onSuccess(ProductConverter.deleteResult(deleteProduct));
     }
 
     // 제품 정보 수정 API
@@ -99,13 +91,13 @@ public class ProductRestController {
     @PutMapping("/update-image/{productId}")
     @Operation(summary = "제품 이미지 수정 API")
     @Parameter(name = "productId", description = "제품 번호를 넣어주세요.")
-    public ApiResponse<String> toUpdateImage(@PathVariable(name = "productId") Long productId, @RequestPart List<MultipartFile> imageList,
+    public ApiResponse<ProductResponseDTO.UpdateResDTO> toUpdateImage(@PathVariable(name = "productId") Long productId, @RequestPart(required = false) List<MultipartFile> imageList,
                                              @AuthenticationPrincipal UserAdapter userAdapter){
 
         // 현재 로그인한 사용자의 아이디를 사용하여 제품 이미지 수정
-        productCommandService.updateProductImage(productId, userAdapter, imageList);
+        Product changeProdut = productCommandService.updateProductImage(productId, userAdapter, imageList);
 
-        return ApiResponse.onSuccess("수정되었습니다." + LocalDateTime.now());
+        return ApiResponse.onSuccess(ProductConverter.updateResDTO(changeProdut));
     }
 
     // 카테고리별 제품 조회 API

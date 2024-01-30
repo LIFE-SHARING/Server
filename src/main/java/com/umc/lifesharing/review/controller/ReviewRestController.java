@@ -70,18 +70,10 @@ public class ReviewRestController {
 
     @DeleteMapping("/remove")
     @Operation(summary = "리뷰 삭제 API")
-    public ApiResponse<String> remove(@RequestParam Long reviewId, @AuthenticationPrincipal UserAdapter userAdapter){
-
+    public ApiResponse<ReviewResponseDTO.deleteReview> remove(@RequestParam Long reviewId, @AuthenticationPrincipal UserAdapter userAdapter){
         Long loggedInUser = userAdapter.getUser().getId();
-
-        try {
-            reviewCommandService.deleteReview(reviewId, loggedInUser);
-            return ApiResponse.onSuccess("성공적으로 삭제되었습니다.");
-        } catch (NotFoundException e) {
-            return ApiResponse.onFailure(ErrorStatus.REVIEW_NOT_FOUND.getCode(), ErrorStatus.REVIEW_NOT_FOUND.getMessage(), null);
-        } catch (Exception e) {
-            return ApiResponse.onFailure(ErrorStatus._INTERNAL_SERVER_ERROR.getCode(), ErrorStatus._INTERNAL_SERVER_ERROR.getMessage(), null);
-        }
+        Review deletedReview = reviewCommandService.deleteReview(reviewId, loggedInUser);
+        return ApiResponse.onSuccess(ReviewConverter.toDeleteReview(deletedReview));
     }
 
     @PatchMapping("/update/{reviewId}")

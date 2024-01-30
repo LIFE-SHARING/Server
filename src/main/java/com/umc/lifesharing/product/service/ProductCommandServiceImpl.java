@@ -97,25 +97,31 @@ public class ProductCommandServiceImpl implements ProductCommandService{
     // 제품 이미지 수정
     @Override
     @Transactional
-    public void updateProductImage(Long productId, UserAdapter userAdapter, List<MultipartFile> imageList) {
+    public Product updateProductImage(Long productId, UserAdapter userAdapter, List<MultipartFile> imageList) {
         Product product = productRepository.findById(productId).orElseThrow(() -> new ProductHandler(ErrorStatus.PRODUCT_NOT_FOUND));
         User user = userRepository.findById(userAdapter.getUser().getId()).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
 
-        // 기존의 이미지 리스트를 삭제
-        product.getImages().forEach(productImage -> {
-            awsS3Service.deleteProductFile(productImage.getImageUrl());
-            productImageRepository.delete(productImage);
-        });
-        product.getImages().clear();
-
-        // 파일 업로드 처리
-        List<String> uploadedFileNames = awsS3Service.uploadProductFiles(imageList);
-
-        // 새로운 이미지 리스트 추가
-        for (String imageUrl : uploadedFileNames) {
-            ProductImage newProductImage = ProductImage.create(product, imageUrl, url + imageUrl);
-            product.getImages().add(newProductImage);
+        if (imageList == null || imageList.isEmpty()){
+            return product;
         }
+        else {
+            // 기존의 이미지 리스트를 삭제
+            product.getImages().forEach(productImage -> {
+                awsS3Service.deleteProductFile(productImage.getImageUrl());
+                productImageRepository.delete(productImage);
+            });
+            product.getImages().clear();
+
+            // 파일 업로드 처리
+            List<String> uploadedFileNames = awsS3Service.uploadProductFiles(imageList);
+
+            // 새로운 이미지 리스트 추가
+            for (String imageUrl : uploadedFileNames) {
+                ProductImage newProductImage = ProductImage.create(product, imageUrl, url + imageUrl);
+                product.getImages().add(newProductImage);
+            }
+        }
+        return product;
     }
 
     @Override
@@ -147,7 +153,7 @@ public class ProductCommandServiceImpl implements ProductCommandService{
 
     // 제품 삭제
     @Override
-    public void deleteProduct(Long productId, Long userId) {
+    public Product deleteProduct(Long productId, Long userId) {
 
         Product product = productRepository.findById(productId).orElseThrow(() -> new ProductHandler(ErrorStatus.PRODUCT_NOT_FOUND));
         User user = userRepository.findById(userId).orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -167,6 +173,7 @@ public class ProductCommandServiceImpl implements ProductCommandService{
             }
             // 제품 삭제
             productRepository.delete(product);
+            return product;
         }
         else {
             throw new NotFoundException("로그인해주세요.");

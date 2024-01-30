@@ -14,7 +14,7 @@ public interface ReviewCommandService {
 
     List<Review> getUserReview(UserAdapter userAdapter);
 
-    void deleteReview(Long reviewId, Long userId);
+    Review deleteReview(Long reviewId, Long userId);
 
     Review updateReview(Long reviewId, UserAdapter userAdapter, ReviewRequestDTO.reviewUpdateDTO request);
 
