@@ -105,6 +105,7 @@ public class ChatServiceImpl implements ChatService {
                 chatRoomRepository.delete(room);
             } else{
                 room.deleteSender();
+
             }
             return true;
         } else{
