@@ -66,7 +66,7 @@ public class UserResponseDTO {
         private String nickname;
         private String phone;
         private String profileUrl;
-        private LocationDTO locationDTO;
+        private LocationDTO.ResponseDTO locationDTO;
     }
 
     @Builder
