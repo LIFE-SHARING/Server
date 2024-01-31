@@ -6,6 +6,7 @@ import com.umc.lifesharing.product.dto.ProductRequestDTO;
 import com.umc.lifesharing.product.dto.ProductResponseDTO;
 import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.product.entity.ProductImage;
+import com.umc.lifesharing.reservation.entity.Reservation;
 import com.umc.lifesharing.review.entity.Review;
 import com.umc.lifesharing.review.entity.ReviewImage;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,8 +47,10 @@ public class ProductConverter {
                 .map(review -> new ProductResponseDTO.ReviewListDTO(
                         review.getId(),
                         review.getUser().getId(),
+                        review.getUser().getName(),
+                        review.getUser().getProfileUrl(),   // 리뷰 작성자 프로필 이미지
                         review.getCreatedAt(),
-                        review.getLentDay(),
+                        getLentDayFromReservation(review.getReservation()),
                         getReviewImageUrls(review),
                         review.getScore(),
                         review.getContent()
@@ -62,7 +65,7 @@ public class ProductConverter {
                 .name(product.getName())
                 .categoryId(product.getCategory().getId())
                 .categoryName(product.getCategory().getName())
-                .imageUrl(imageUrls)  // 등록된 이미지 리스트
+                .imageUrl(imageUrls)  // 등록된 제품 이미지 리스트
                 .score(product.getScore())
                 .reviewCount(product.getReviewCount())
                 .deposit(product.getDeposit())
@@ -70,10 +73,19 @@ public class ProductConverter {
                 .hourPrice(product.getHourPrice())
                 .content(product.getContent())
                 .reviewList(reviewList)
-                .location("사용자로부터 받아오기")
-//                .latitude()
-//                .mapInfo(generateMapInfo(product.getUser())
+                .location(product.getUser().getLocationList().get(0).getDong())    // 읍/면/동    ex. 상암동
+                .detailAddress(product.getUser().getLocationList().get(0).getRoadAddress())  // 도로명 ex. 주소 서울특별시 마포구 성암로 301
                 .build();
+    }
+
+    // getLentDay 메서드 정의
+    public static String getLentDayFromReservation(Reservation reservation) {
+        // 예약이 널이 아닌지 확인
+        if (reservation != null) {
+            // 예약의 totalTime 필드 반환
+            return reservation.getTotalTime();
+        }
+        return null; // 또는 다른 기본값 또는 예외 처리 방법 선택
     }
     
     // 제품 검색 시 응답
@@ -92,7 +104,7 @@ public class ProductConverter {
                 .day_price(product.getDayPrice())
                 .hour_price(product.getHourPrice())
                 .deposit(product.getDeposit())
-                .location("사용자로부터 받아오기")
+                .location(product.getUser().getLocationList().get(0).getDong())
                 .build();
     }
 
@@ -111,7 +123,7 @@ public class ProductConverter {
                 .reviewCount(product.getReviewCount())
                 .deposit(product.getDeposit())
                 .dayPrice(product.getDayPrice())
-                .location("사용자로부터 받아오기")
+                .location(product.getUser().getLocationList().get(0).getDong())
                 .build();
     }
 
@@ -167,7 +179,7 @@ public class ProductConverter {
         return ProductResponseDTO.myRegProductList.builder()
                 .productId(product.getId())
                 .name(product.getName())
-                .location("사용자로부터 받아오기")   // 27일 - 사용자 위치 받아오기
+                .location(product.getUser().getLocationList().get(0).getDong())   // 27일 - 사용자 위치 받아오기
                 .imageUrl(firstImageUrl)
                 .build();
     }
@@ -196,7 +208,7 @@ public class ProductConverter {
                 .hour_price(product.getHourPrice())
                 .deposit(product.getDeposit())
                 .isReserved(lent)
-                .location("사용자로부터 받아오기")
+                .location(product.getUser().getLocationList().get(0).getDong())
                 .build();
     }
 
@@ -223,6 +235,19 @@ public class ProductConverter {
         return ProductResponseDTO.DeleteRes.builder()
                 .productId(product.getId())
                 .deletedAt(LocalDateTime.now())
+                .build();
+    }
+
+    // 제품 정보 수정 페이지 진입 응답
+    public static ProductResponseDTO.ForProductUpdateDTO forProductUpdate(Product product){
+        return ProductResponseDTO.ForProductUpdateDTO.builder()
+                .categoryId(product.getCategory().getId())
+                .name(product.getName())
+                .deposit(product.getDeposit())
+                .dayPrice(product.getDayPrice())
+                .hourPrice(product.getHourPrice())
+                .lendingPeriod(product.getLendingPeriod())
+                .content(product.getContent())
                 .build();
     }
 

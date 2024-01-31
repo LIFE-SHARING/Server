@@ -63,6 +63,7 @@ public enum ErrorStatus implements BaseErrorCode {
     USER_ALREADY_SUBSCRIBED(HttpStatus.BAD_REQUEST, "USER_400_4", "이미 가입된 사용자입니다."),
 
     USER_NOT_FOUNDED(HttpStatus.NOT_FOUND, "USER_404_1", "사용자를 찾을 수 없습니다."),
+    DO_NOT_CHANGE_PRODUCT(HttpStatus.BAD_REQUEST, "USER_400_5", "제품을 수정할 수 없습니다."),
 
     // chat
     CHATROOM_NOT_EXIST(HttpStatus.NOT_FOUND, "CHATROOM_400_1", "채팅방을 찾을 수 없습니다."),

@@ -17,7 +17,7 @@ public class HeartConverter {
 
     public static HeartResponseDTO.createResult toCreateHeart(Heart heart){
         return HeartResponseDTO.createResult.builder()
-//                .productId(heart.getProduct().getId())
+                .productId(heart.getProduct().getId())
                 .createdAt(LocalDateTime.now())
                 .build();
     }
@@ -25,7 +25,7 @@ public class HeartConverter {
     public static HeartResponseDTO.removeResult toRemoveHeart(Heart heart){
         return HeartResponseDTO.removeResult.builder()
                 .productId(heart.getProduct().getId())
-                .updatedAt(LocalDateTime.now())
+                .deletedAt(LocalDateTime.now())
                 .build();
     }
 

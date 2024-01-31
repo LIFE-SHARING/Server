@@ -40,9 +40,9 @@ public class UserConverter {
                 .imageUrl(firstImageUrl)
                 .deposit(product.getDeposit())
                 .dayPrice(product.getDayPrice())
-                .score(product.getScore()) //별점(평균으로 가져오도록 해야함 - 구현완료)
-                .reviewCount(product.getReviewCount()) //리뷰 개수(해당 제품에 대한 리뷰 개수를 카운트해야함 - 구현완료)
-                .location("사용자로부터 받아오기")   //위치(구현전-1월 23일)
+                .score(product.getScore())                    //별점(평균으로 가져오도록 해야함 - 구현완료)
+                .reviewCount(product.getReviewCount())        //리뷰 개수(해당 제품에 대한 리뷰 개수를 카운트해야함 - 구현완료)
+                .location(product.getUser().getLocationList().get(0).getDong())   //위치(구현중-1월 31일)
                 .build();
     }
     public static UserResponseDTO.ProductPreviewListDTO productPreviewListDTO(List<Product> productList){
@@ -50,13 +50,6 @@ public class UserConverter {
                 .map(UserConverter::productPreviewDTO).collect(Collectors.toList());
 
         return UserResponseDTO.ProductPreviewListDTO.builder()
-//                .userId(user.getId())
-//                .imageUrl(imageUrl)
-//                .userName(user.getName())
-//                .score(averageScore)   // 모든 제품 별점의 평균
-//                .reviewCount(totalReviewCount)   // 어떤 사용자의 제품들에 대한 리뷰 개수
-//                .location("사용자로부터 받아오기")  // 28일 - 구현전
-//                .productCount(productCnt)
                 .productList(productPreViewDTOList)
                 .build();
     }
@@ -140,6 +133,7 @@ public class UserConverter {
                 .reviewId(review.getId())
                 .userId(review.getUser().getId())
                 .nickName(review.getUser().getName())
+                .profileUrl(review.getUser().getProfileUrl())
                 .imageList(imageList)
                 .score(review.getScore())
                 .content(review.getContent())
@@ -153,12 +147,6 @@ public class UserConverter {
                 .map(UserConverter::otherUserReview).collect(Collectors.toList());
 
         return UserResponseDTO.UserReviewListDTO.builder()
-//                .userId(user.getId())
-//                .userName(user.getName())
-//                .imageUrl(imageUrl)
-//                .score(averageScore)   // 모든 제품 별점의 평균
-//                .reviewCount(totalReviewCount)   // 어떤 사용자의 제품들에 대한 리뷰 개수
-//                .location("사용자로부터 받아오기")  // 28일 - 구현전
                 .reviewList(reviewListDTO)
                 .build();
     }
@@ -180,9 +168,9 @@ public class UserConverter {
                 .imageUrl(firstImageUrl)
                 .deposit(product.getDeposit())
                 .dayPrice(product.getDayPrice())
-                .score(product.getScore()) //별점(평균으로 가져오도록 해야함 - 구현완료)
-                .reviewCount(product.getReviewCount()) //리뷰 개수(해당 제품에 대한 리뷰 개수를 카운트해야함 - 구현완료)
-                .location("사용자로부터 받아오기")   //위치(구현전-1월 23일)
+                .score(product.getScore())               //별점(평균으로 가져오도록 해야함 - 구현완료)
+                .reviewCount(product.getReviewCount())   //리뷰 개수(해당 제품에 대한 리뷰 개수를 카운트해야함 - 구현완료)
+                .location(product.getUser().getLocationList().get(0).getDong())   //위치(구현중-1월 31일)
                 .isReserved(rent)
                 .build();
     }
@@ -209,7 +197,7 @@ public class UserConverter {
                 .score(averageScore)
                 .reviewCount(totalReviewCount)
                 .imageUrl(imageUrl)
-                .location(null)
+                .location(user.getLocationList().get(0).getDong())
                 .productCount(productCnt)
                 .rentProductCnt(rentProductCnt)
                 .build();

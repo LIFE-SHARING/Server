@@ -203,15 +203,15 @@ public class UserServiceImpl implements UserService {
         List<UserResponseDTO.ProductPreviewDTO> rentingList = new ArrayList<>();
 
         List<Product> productList = getProductsByUserId(userId);
-        List<Reservation> reservationList = reservationRepository.findAllByProductInAndStatus(productList, Status.ACTIVE);
+        List<Reservation> reservationList = reservationRepository.findAllByProductIn(productList);
 
         //제품 추가
-        rentingList = reservationList.stream()
-                .map(reservation -> {
-                    UserResponseDTO.ProductPreviewDTO toProductDto = UserConverter.otherRentingProduct(reservation.getProduct(), null);
-                    return toProductDto;
-                })
-                .collect(Collectors.toList());
+//        rentingList = reservationList.stream()
+//                .map(reservation -> {
+//                    UserResponseDTO.ProductPreviewDTO toProductDto = UserConverter.otherRentingProduct(reservation.getProduct(), null);
+//                    return toProductDto;
+//                })
+//                .collect(Collectors.toList());
 
         // 현재 날짜 구하기
         LocalDateTime now = LocalDateTime.now();
@@ -220,19 +220,26 @@ public class UserServiceImpl implements UserService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd");
 
         for (Reservation r : reservationList) {
-            if (r.getEndDate().isAfter(now) && r.getStartDate().isBefore(now)) {
+            if (now.isAfter(r.getStartDate()) && now.isBefore(r.getEndDate())) {
                 // 포맷 적용
                 String start = r.getStartDate().format(formatter);
                 String end = r.getEndDate().format(formatter);
                 String lentDate = start + " - " + end;
 
                 // 이미 제품이 리스트에 추가되었는지 확인
+                boolean productAlreadyAdded = false;
                 for (UserResponseDTO.ProductPreviewDTO p : rentingList) {
                     if (p.getProductId().equals(r.getProduct().getId())) {
-                        if (p.getProductId().equals(r.getProduct().getId())) {
-                            p.setIsReserved(lentDate); // 대여 시작일-종료일과 대여중임을 표시
-                        }
+                        p.setIsReserved(lentDate); // 대여 시작일-종료일과 대여중임을 표시
+                        productAlreadyAdded = false;
+                        break;
                     }
+                }
+
+                // 제품이 리스트에 추가되지 않은 경우 새로운 DTO를 생성하여 추가
+                if (!productAlreadyAdded) {
+                    UserResponseDTO.ProductPreviewDTO toProductDto = UserConverter.otherRentingProduct(r.getProduct(), lentDate);
+                    rentingList.add(toProductDto);
                 }
             }
         }

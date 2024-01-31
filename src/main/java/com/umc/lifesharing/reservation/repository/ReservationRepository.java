@@ -21,4 +21,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findAllByProductInAndStatus(List<Product> productList, Status status);
 
     boolean existsReservationByProductAndStartDateAndEndDate(Product product, LocalDateTime startDate, LocalDateTime endDate);
+
+    List<Reservation> findAllByProductIn(List<Product> productList);
 }

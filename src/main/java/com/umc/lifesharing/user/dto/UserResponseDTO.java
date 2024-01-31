@@ -137,6 +137,7 @@ public class UserResponseDTO {
         Long reviewId;
         Long userId;
         String nickName;
+        String profileUrl;
         LocalDate createdAt;
         String lentDay;  // 이후에 Reservation lent_day로 가져와야 함
         List<String> imageList;

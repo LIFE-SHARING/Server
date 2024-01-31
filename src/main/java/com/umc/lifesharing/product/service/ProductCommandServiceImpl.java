@@ -369,4 +369,19 @@ public class ProductCommandServiceImpl implements ProductCommandService{
 
         return totalScore / userProducts.size();
     }
+
+    @Override
+    public Product getProductInfo(Long productId, UserAdapter userAdapter) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductHandler(ErrorStatus.PRODUCT_NOT_FOUND));
+        User user = userRepository.findById(userAdapter.getUser().getId())
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
+
+        // 수정하고자 하는 제품을 등록한 유저와 수정하려는 유저가 다르면 예외
+        if (!product.getUser().getId().equals(user.getId())){
+            throw new UserHandler(ErrorStatus.DO_NOT_CHANGE_PRODUCT);
+        }
+        // 같다면 제품 정보 전달
+        return product;
+    }
 }
