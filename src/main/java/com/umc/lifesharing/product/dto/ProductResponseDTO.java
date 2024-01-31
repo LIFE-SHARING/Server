@@ -1,6 +1,9 @@
 package com.umc.lifesharing.product.dto;
 
 import com.umc.lifesharing.review.entity.Review;
+import com.umc.lifesharing.validation.annotation.ExistCategories;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -53,6 +56,7 @@ public class ProductResponseDTO {
         Long userId;
         String categoryName;
         String location;  // 위치정보
+        String detailAddress;
         List<String> imageUrl;
         String name;
         Integer score;
@@ -62,8 +66,6 @@ public class ProductResponseDTO {
         Integer hourPrice;
         Boolean isLiked; //찜여부
         String content;
-        String latitude;    // 위도
-        String longitude;   // 경도
         String userNickname;  // 등록자 닉네임
         String userImage;     // 등록자 이미지
         List<ReviewListDTO> reviewList;   //리뷰 리스트를 출력해야함
@@ -77,6 +79,8 @@ public class ProductResponseDTO {
     public static class ReviewListDTO{
         Long reviewId;
         Long userId;
+        String nickName;
+        String profileUrl;
         LocalDate createdAt;
         String lentDay;  // 이후에 Reservation lent_day로 가져와야 함
         List<String> imageList;
@@ -165,5 +169,20 @@ public class ProductResponseDTO {
     public static class DeleteRes{
         private Long productId;
         private LocalDateTime deletedAt;
+    }
+
+    // 제품 정보 수정 페이지 진입 시 필요 정보
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ForProductUpdateDTO{
+        private Long categoryId;
+        private String name;
+        private String content;
+        private Integer dayPrice;
+        private Integer hourPrice;
+        private Integer deposit;
+        private String lendingPeriod;
     }
 }

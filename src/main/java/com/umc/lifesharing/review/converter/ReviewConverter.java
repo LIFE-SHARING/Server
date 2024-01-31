@@ -70,6 +70,7 @@ public class ReviewConverter {
                 .reviewId(review.getId())
                 .userId(review.getUser().getId())
                 .nickName(review.getUser().getName())
+                .profileUrl(review.getUser().getProfileUrl())
                 .imageList(imageList)
                 .score(review.getScore())
                 .content(review.getContent())

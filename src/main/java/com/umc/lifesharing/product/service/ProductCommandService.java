@@ -53,4 +53,6 @@ public interface ProductCommandService {
     // 특정 사용자가 등록한 제품들의 평균 별점 계산
     Integer otherAverageScoreByUserId(Long userId);
 
+    // 제품 정보 수정 시 기존 정보 전달
+    Product getProductInfo(Long productId, UserAdapter userAdapter);
 }

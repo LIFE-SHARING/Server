@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -43,7 +44,7 @@ public class ReviewRestController {
     private final AwsS3Service awsS3Service;
 
     // 리뷰 등록 API
-    @PostMapping("/write/{reservationId}")
+    @PostMapping(value = "/write/{reservationId}" , consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "리뷰 작성 API")
     public ApiResponse<ReviewResponseDTO.ReviewCreateResultDTO> createReview(@PathVariable(name = "reservationId") Long reservationId, @AuthenticationPrincipal UserAdapter userAdapter,
                                                                              @Valid @RequestPart(name = "request") ReviewRequestDTO.ReviewCreateDTO request, @RequestPart(name = "files", required = false) List<MultipartFile> files) {

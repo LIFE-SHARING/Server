@@ -27,6 +27,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.parameters.P;
@@ -49,7 +50,7 @@ public class ProductRestController {
     private final AwsS3Service awsS3Service;
 
     // 제품 등록 API
-    @PostMapping("/register")
+    @PostMapping(value = "/register", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "제품 등록을 위한 API", description = "제품을 등록할 수 있는 API입니다. 회원과 카테고리를 적어주세요.")
     public ApiResponse<ProductResponseDTO.RegisterResultDTO> registerProduct(@RequestPart @Valid ProductRequestDTO.RegisterProductDTO request,
             @AuthenticationPrincipal UserAdapter userAdapter, @RequestPart(name = "files") List<MultipartFile> files){
@@ -166,5 +167,13 @@ public class ProductRestController {
 
         return ApiResponse.onSuccess(myProductList);
 
+    }
+
+    // 제품 수정 페이지 진입 시 정보 요청 API
+    @GetMapping("/info/{productId}")
+    @Operation(summary = "기존 제품 정보 전달 API")
+    public ApiResponse<ProductResponseDTO.ForProductUpdateDTO> getProductInfo(@PathVariable(name = "productId") Long productId, @AuthenticationPrincipal UserAdapter userAdapter){
+        Product product = productCommandService.getProductInfo(productId, userAdapter);
+        return ApiResponse.onSuccess(ProductConverter.forProductUpdate(product));
     }
 }

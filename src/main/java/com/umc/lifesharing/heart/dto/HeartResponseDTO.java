@@ -16,6 +16,7 @@ public class HeartResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class createResult{
+        Long productId;
         LocalDateTime createdAt;
     }
 
@@ -25,7 +26,7 @@ public class HeartResponseDTO {
     @AllArgsConstructor
     public static class removeResult{
         Long productId;
-        LocalDateTime updatedAt;
+        LocalDateTime deletedAt;
     }
 
     @Builder
