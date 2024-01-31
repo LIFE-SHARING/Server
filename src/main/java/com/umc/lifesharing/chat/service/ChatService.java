@@ -14,6 +14,7 @@ public interface ChatService {
 
     // 나중에 실제 유저 데이터와 연동 예정
     List<ChatResponseDTO.RoomDetailResponseDTO> roomList(Long sender);
+    List<ChatResponseDTO.RoomDetailDTO> roomListTemp(Long sender);
 
     List<ChatResponseDTO.ChatMessageDTO> chatList(Long roomId);
 

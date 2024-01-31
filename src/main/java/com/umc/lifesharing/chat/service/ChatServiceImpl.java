@@ -9,6 +9,7 @@ import com.umc.lifesharing.chat.entity.Chat;
 import com.umc.lifesharing.chat.entity.ChatRoom;
 import com.umc.lifesharing.chat.repository.ChatRepository;
 import com.umc.lifesharing.chat.repository.ChatRoomRepository;
+import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.product.repository.ProductRepository;
 import com.umc.lifesharing.user.entity.User;
 import com.umc.lifesharing.user.repository.UserRepository;
@@ -40,7 +41,10 @@ public class ChatServiceImpl implements ChatService {
                 .orElseThrow(() -> new ChatHandler(ErrorStatus.PRODUCT_NOT_FOUND)).getUser();
         User sender = userRepository.findById(senderId)
                 .orElseThrow(() -> new ChatHandler(ErrorStatus.USER_NOT_FOUNDED));
-        ChatRoom chatRoom = ChatConverter.toChatRoom(sender,receiver);
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ChatHandler(ErrorStatus.PRODUCT_NOT_FOUND));
+
+        ChatRoom chatRoom = ChatConverter.toChatRoom(sender,receiver,product);
         chatRoomRepository.save(chatRoom);
         return ChatConverter.toMakeRoomResponseDTO(chatRoom);
     }
@@ -63,11 +67,22 @@ public class ChatServiceImpl implements ChatService {
         return ChatConverter.toRoomList(chatRooms);
     }
 
+    // 보내는 사람의 채팅방 리스트 최신
+    @Override
+    public List<ChatResponseDTO.RoomDetailDTO> roomListTemp(Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ChatHandler(ErrorStatus.USER_NOT_FOUNDED));
+        List<ChatRoom> chatRoomsSender = chatRoomRepository.findAllBySender(user);
+        List<ChatRoom> chatRoomsReceiver = chatRoomRepository.findAllByReceiver(user);
+        return ChatConverter.toRoomListTemp(chatRoomsSender, chatRoomsReceiver);
+    }
+
     @Override
     public List<ChatResponseDTO.ChatMessageDTO> chatList(Long roomId){
         List<Chat> chats = chatRepository.findAllByRoomIdOrderByCreatedAtDesc(roomId);
         return ChatConverter.toChatList(chats);
     }
+
 
     // 두 명다 채팅방 삭제 시 true, 아닐 시 false
     @Override

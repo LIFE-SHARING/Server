@@ -28,10 +28,16 @@ public class ChatController {
         return ApiResponse.onSuccess(chatService.roomList(sender));
     }
 
+    @GetMapping("/room-list-temp/{user}")
+    public ApiResponse<List<ChatResponseDTO.RoomDetailDTO>> roomListTemp(@PathVariable(name = "user") Long user){
+        return ApiResponse.onSuccess(chatService.roomListTemp(user));
+    }
+
     @GetMapping("/chat-list/{chatroom}")
     public ApiResponse<List<ChatResponseDTO.ChatMessageDTO>> chatList(@PathVariable(name = "chatroom") Long chatroom){
         return ApiResponse.onSuccess(chatService.chatList(chatroom));
     }
+
 
     @DeleteMapping("/room-out/receiver/{roomId}/{receiver}")
     public ApiResponse<String> chatRoomOutReceiver(@PathVariable(name = "roomId") Long roomId, @PathVariable(name = "receiver")Long receiver){

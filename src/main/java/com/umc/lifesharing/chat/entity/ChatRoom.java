@@ -1,5 +1,7 @@
 package com.umc.lifesharing.chat.entity;
 
+import com.umc.lifesharing.chat.entity.common.BaseEntity;
+import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,7 +13,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class ChatRoom {
+public class ChatRoom  extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -24,6 +26,8 @@ public class ChatRoom {
     @ManyToOne(fetch = FetchType.LAZY)
     private User receiver;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Product product;
 
     public void deleteSender(){
         this.sender = null;

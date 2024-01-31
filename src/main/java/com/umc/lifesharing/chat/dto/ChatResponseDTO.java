@@ -2,6 +2,8 @@ package com.umc.lifesharing.chat.dto;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 public class ChatResponseDTO {
     @Builder
     @Getter
@@ -31,6 +33,21 @@ public class ChatResponseDTO {
         Long roomId;
         Long senderId;
         Long receiverId;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RoomDetailDTO {
+        Long roomId;
+        Long senderId;
+        Long receiverId;
+        Long productId;
+        String opponentName;
+        String opponentImage;
+        String opponentAddress;
+        LocalDateTime updatedAt;
     }
 
     @Builder

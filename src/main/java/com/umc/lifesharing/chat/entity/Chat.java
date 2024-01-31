@@ -19,10 +19,10 @@ public class Chat extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    // sql 호출을 줄이기 위해 id만 저장.
+    // sql 호출을 줄이기 위해 id만 저장
     private Long roomId;
 
-    // sql 호출을 줄이기 위해 id만 저장.
+    // sql 호출을 줄이기 위해 id만 저장
     private Long sender;
 
     private String message;
