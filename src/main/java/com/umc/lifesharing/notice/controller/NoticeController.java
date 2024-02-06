@@ -19,12 +19,10 @@ public class NoticeController {
     private final NoticeService noticeService;
 
     @GetMapping("/notice")
-    public ApiResponse<NoticeResponse.NoticePreviewDTO> getNoticePreviewList(@Positive @RequestParam(name = "page") Integer page){
-        // TODO: 시간되면 어노테이션으로 대체
-        if(page < 1)
-            throw new GeneralException(ErrorStatus.PAGE_INVALID);
+    public ApiResponse<NoticeResponse.NoticePreviewDTO> getNoticePreviewList(@Positive @RequestParam(name = "lastNoticeId", defaultValue = "9223372036854775807") Long lastNoticeId,
+                                                                             @Positive @RequestParam(name = "size") Integer size){
 
-        return ApiResponse.onSuccess(noticeService.getNoticePreviewList(--page));
+        return ApiResponse.onSuccess(noticeService.getNoticePreviewList(lastNoticeId, size));
     }
 
     @PostMapping("/admin/notice")

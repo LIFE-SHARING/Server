@@ -50,10 +50,6 @@ public class NoticeResponse {
     @AllArgsConstructor
     public static class NoticePreviewDTO {
         private List<NoticeDTO> noticeList;
-        Integer listSize;
-        Integer totalPage;
-        Long totalElements;
-        Boolean isFirst;
-        Boolean isLast;
+        Boolean hasNext;
     }
 }

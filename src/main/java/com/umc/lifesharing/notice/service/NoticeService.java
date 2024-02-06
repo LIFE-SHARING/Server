@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -23,9 +24,9 @@ import java.util.List;
 public class NoticeService {
     private final NoticeRepository noticeRepository;
 
-    public NoticeResponse.NoticePreviewDTO getNoticePreviewList(Integer page) {
-        Page<Notice> noticeList = noticeRepository.findAll(PageRequest.of(page, 10, Sort.by("updatedAt").descending()));
-        return NoticeConverter.toNoticePreviewDTO(noticeList);
+    public NoticeResponse.NoticePreviewDTO getNoticePreviewList(Long lastNoticeId, Integer size) {
+        Slice<Notice> noticeSlice = noticeRepository.findSliceByIdLessThan(lastNoticeId, PageRequest.of(0, size, Sort.by("updatedAt").descending()));
+        return NoticeConverter.toNoticePreviewDTO(noticeSlice);
     }
 
     public NoticeResponse.CreateSuccessDTO createNotice(NoticeRequest.NoticeDTO noticeDTO) {
