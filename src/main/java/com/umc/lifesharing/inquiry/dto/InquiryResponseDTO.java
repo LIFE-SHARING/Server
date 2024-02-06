@@ -19,11 +19,7 @@ public class InquiryResponseDTO {
     @AllArgsConstructor
     public static class InquiryPreviewDTO {
         private List<InquiryDTO> inquiryList;
-        private Integer listSize;
-        private Integer totalPage;
-        private Long totalElements;
-        private Boolean isFirst;
-        private Boolean isLast;
+        private Boolean hasNext;
     }
 
     @Builder

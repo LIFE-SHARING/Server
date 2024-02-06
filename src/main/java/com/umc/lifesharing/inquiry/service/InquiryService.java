@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,9 +59,9 @@ public class InquiryService {
     }
 
     @Transactional
-    public InquiryResponseDTO.InquiryPreviewDTO getInquiry(UserAdapter userAdapter, Integer page) {
+    public InquiryResponseDTO.InquiryPreviewDTO getInquiry(UserAdapter userAdapter, Long lastInquiryId, Integer size) {
         User user = userRepository.findByEmail(userAdapter.getUser().getEmail()).get();
-        Page<Inquiry> inquiryPage = inquiryRepository.findAllByUser(user, PageRequest.of(page, 10));
+        Slice<Inquiry> inquiryPage = inquiryRepository.findSliceByIdLessThanAndUser(lastInquiryId, user, PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "createdAt")));
         return InquiryConverter.toInquiryPreviewDTO(inquiryPage);
     }
 

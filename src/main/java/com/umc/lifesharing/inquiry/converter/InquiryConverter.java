@@ -8,6 +8,7 @@ import com.umc.lifesharing.notice.entity.Notice;
 import com.umc.lifesharing.user.dto.UserRequestDTO;
 import com.umc.lifesharing.user.dto.UserResponseDTO;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 
 import java.awt.print.Pageable;
 import java.time.LocalDateTime;
@@ -29,7 +30,7 @@ public class InquiryConverter {
                 .title(inquiry.getTitle())
                 .body(inquiry.getBody())
                 .imageUrlList(inquiry.getInquiryImageList())
-                .createdAt(LocalDateTime.now())
+                .createdAt(inquiry.getCreatedAt())
                 .build();
     }
 
@@ -46,18 +47,14 @@ public class InquiryConverter {
                 .collect(Collectors.toList());
     }
 
-    public static InquiryResponseDTO.InquiryPreviewDTO toInquiryPreviewDTO (Page<Inquiry> inquiryPage)  {
-        List<InquiryResponseDTO.InquiryDTO> inquiryDTOList = inquiryPage.stream()
+    public static InquiryResponseDTO.InquiryPreviewDTO toInquiryPreviewDTO (Slice<Inquiry> inquirySlice)  {
+        List<InquiryResponseDTO.InquiryDTO> inquiryDTOList = inquirySlice.stream()
                 .map(InquiryConverter::toInquiryResponseDTO)
                 .collect(Collectors.toList());
 
         return InquiryResponseDTO.InquiryPreviewDTO.builder()
                 .inquiryList(inquiryDTOList)
-                .listSize(inquiryPage.getSize())
-                .totalPage(inquiryPage.getTotalPages())
-                .totalElements(inquiryPage.getTotalElements())
-                .isFirst(inquiryPage.isFirst())
-                .isLast(inquiryPage.isLast())
+                .hasNext(inquirySlice.hasNext())
                 .build();
 
     }

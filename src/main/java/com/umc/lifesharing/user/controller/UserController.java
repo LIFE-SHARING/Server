@@ -25,6 +25,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -137,19 +138,16 @@ public class UserController {
 
     @PostMapping("/user/inquiry")
     public ApiResponse<InquiryResponseDTO.InquiryDTO> createInquiry(@AuthenticationPrincipal UserAdapter userAdapter,
-                                                         @RequestPart InquiryRequestDTO.InquiryDTO inquiryDTO,
+                                                         @RequestPart(value = "inquiryDTO") InquiryRequestDTO.InquiryDTO inquiryDTO,
                                                          @Nullable @RequestPart(value = "multipartFiles") List<MultipartFile> multipartFiles) {
         return ApiResponse.onSuccess(inquiryService.createInquiry(userAdapter, inquiryDTO, multipartFiles));
     }
 
     @GetMapping("/user/inquiry")
     public ApiResponse<InquiryResponseDTO.InquiryPreviewDTO> getInquiry(@AuthenticationPrincipal UserAdapter userAdapter,
-                                                                        @Positive @RequestParam(name = "page") Integer page){
-        // TODO: 시간되면 어노테이션으로 대체
-        if(page < 1)
-            throw new UserHandler(ErrorStatus.PAGE_INVALID);
-
-        return ApiResponse.onSuccess(inquiryService.getInquiry(userAdapter, page - 1));
+                                                                        @Positive @RequestParam(name = "lastInquiryId", defaultValue = "9223372036854775807") Long lastInquiryId,
+                                                                        @Positive @RequestParam(name = "size") Integer size) {
+        return ApiResponse.onSuccess(inquiryService.getInquiry(userAdapter, lastInquiryId, size));
     }
 
     @DeleteMapping("/user/inquiry/{inquiry-id}")
