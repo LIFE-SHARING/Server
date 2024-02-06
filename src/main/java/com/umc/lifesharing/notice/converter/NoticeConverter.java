@@ -45,6 +45,7 @@ public class NoticeConverter {
 
         return NoticeResponse.NoticePreviewDTO.builder()
                 .noticeList(noticeList)
+                .size(noticeSlice.getSize())
                 .hasNext(noticeSlice.hasNext())
                 .build();
     }

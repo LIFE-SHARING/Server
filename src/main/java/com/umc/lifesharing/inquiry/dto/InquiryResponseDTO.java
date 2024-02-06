@@ -19,6 +19,7 @@ public class InquiryResponseDTO {
     @AllArgsConstructor
     public static class InquiryPreviewDTO {
         private List<InquiryDTO> inquiryList;
+        private Integer size;
         private Boolean hasNext;
     }
 

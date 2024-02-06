@@ -50,6 +50,7 @@ public class NoticeResponse {
     @AllArgsConstructor
     public static class NoticePreviewDTO {
         private List<NoticeDTO> noticeList;
-        Boolean hasNext;
+        private Integer size;
+        private Boolean hasNext;
     }
 }

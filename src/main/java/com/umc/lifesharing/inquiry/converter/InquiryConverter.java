@@ -54,6 +54,7 @@ public class InquiryConverter {
 
         return InquiryResponseDTO.InquiryPreviewDTO.builder()
                 .inquiryList(inquiryDTOList)
+                .size(inquirySlice.getSize())
                 .hasNext(inquirySlice.hasNext())
                 .build();
 
