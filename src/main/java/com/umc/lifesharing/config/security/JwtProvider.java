@@ -90,7 +90,7 @@ public class JwtProvider {
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token);
-
+            log.info("통과");
             return true;
     }
 

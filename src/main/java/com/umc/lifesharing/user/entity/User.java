@@ -75,7 +75,7 @@ public class User extends BaseEntity {
     }
 
     public void setTemporaryNickname() {
-        this.name = this.name + getId().toString();
+        this.name = this.name + "#" + getSocialType() + "_" + getId().toString();
     }
 
 

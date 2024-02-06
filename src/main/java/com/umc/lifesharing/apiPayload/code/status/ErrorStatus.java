@@ -17,7 +17,7 @@ public enum ErrorStatus implements BaseErrorCode {
     _FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON403", "금지된 요청입니다."),
 
     // 알수 없는 에러
-    UNKNOWN_ERROR(HttpStatus.BAD_REQUEST,"UNKNOWN_ERROr","알 수 없는 에러입니다."),
+    UNKNOWN_ERROR(HttpStatus.BAD_REQUEST,"UNKNOWN_ERROR","알 수 없는 에러입니다."),
 
     // 멤버 관려 에러
     MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4001", "사용자가 없습니다."),
@@ -81,6 +81,8 @@ public enum ErrorStatus implements BaseErrorCode {
 
 
     PAGE_INVALID(HttpStatus.BAD_REQUEST, "PAGE_400_1", "페이지는 1이상입니다!"),
+
+    LOCATION_VALUE_NOT_FOUND(HttpStatus.BAD_REQUEST, "LOCATION_400_1", "사용자의 인증된 위치 정보를 찾을 수 없습니다."),
 
     NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTICEE_400_1","공지를 찾을 수 없습니다.");
 

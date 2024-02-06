@@ -1,5 +1,6 @@
 package com.umc.lifesharing.location.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 
@@ -9,7 +10,9 @@ public class LocationDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class RequestDTO {
+        @NotNull
         private String roadAddrPart1;   // 도로명 ex. 주소 서울특별시 마포구 성암로 301
+        @NotNull
         private String emdNm;       // 읍/면/동    ex. 상암동
         private String zipNo;       // 우편번호
         private String admCd;       // 행정구역코드

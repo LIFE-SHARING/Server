@@ -1,5 +1,7 @@
 package com.umc.lifesharing.user.converter;
 
+import com.umc.lifesharing.apiPayload.code.status.ErrorStatus;
+import com.umc.lifesharing.apiPayload.exception.handler.UserHandler;
 import com.umc.lifesharing.config.security.TokenDTO;
 import com.umc.lifesharing.config.security.UserAdapter;
 import com.umc.lifesharing.location.converter.LocationConverter;
@@ -94,7 +96,10 @@ public class UserConverter {
         return UserResponseDTO.MyPageResponseDTO.builder()
                 .userId(user.getId())
                 .point(user.getPoint())
-                .area(user.getLocationList().get(0).getDong())
+                .area(user.getLocationList().stream()
+                        .findFirst()
+                        .orElseThrow(() -> new UserHandler(ErrorStatus.LOCATION_VALUE_NOT_FOUND))
+                        .getDong())
                 .score((int) Math.round(user.getProductList().stream()
                         .mapToInt(Product::getScore)
                         .average()
