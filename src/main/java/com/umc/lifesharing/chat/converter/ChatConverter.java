@@ -33,6 +33,7 @@ public class ChatConverter {
                 .opponentName(chatRoom.getReceiver().getName())
                 .updatedAt(chatRoom.getUpdatedAt())
                 .opponentAddress(chatRoom.getReceiver().getLocationList().get(0).getRoadAddress())
+                .lastMessage(chatRoom.getLastMessage())
                 .build();
     }
 

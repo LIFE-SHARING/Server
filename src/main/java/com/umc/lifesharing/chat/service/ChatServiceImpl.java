@@ -54,28 +54,23 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public boolean chatMessage(ChatDTO.ChatMessageDTO messageDTO){
         chatRepository.save(ChatConverter.toChat(messageDTO));
+        chatRoomRepository.findById(messageDTO.getRoomId())
+                .orElseThrow(() -> new ChatHandler(ErrorStatus.CHATROOM_NOT_EXIST)).setLastMessage(messageDTO.getMessage());
         return true;
-    }
-
-
-    // 보내는 사람의 채팅방 리스트
-    @Override
-    public List<ChatResponseDTO.RoomDetailResponseDTO> roomList(Long sender){
-        User user = userRepository.findById(sender)
-                .orElseThrow(() -> new ChatHandler(ErrorStatus.USER_NOT_FOUNDED));
-        List<ChatRoom> chatRooms = chatRoomRepository.findAllBySender(user);
-        return ChatConverter.toRoomList(chatRooms);
     }
 
     // 보내는 사람의 채팅방 리스트 최신
     @Override
-    public List<ChatResponseDTO.RoomDetailDTO> roomListTemp(Long userId){
+    public List<ChatResponseDTO.RoomDetailDTO> roomList(Long userId){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ChatHandler(ErrorStatus.USER_NOT_FOUNDED));
+
         List<ChatRoom> chatRoomsSender = chatRoomRepository.findAllBySender(user);
         List<ChatRoom> chatRoomsReceiver = chatRoomRepository.findAllByReceiver(user);
         return ChatConverter.toRoomListTemp(chatRoomsSender, chatRoomsReceiver);
     }
+
+
 
     @Override
     public List<ChatResponseDTO.ChatMessageDTO> chatList(Long roomId){
@@ -136,4 +131,6 @@ public class ChatServiceImpl implements ChatService {
         chatRepository.deleteAll(chats);
         return true;
     }
+
+
 }

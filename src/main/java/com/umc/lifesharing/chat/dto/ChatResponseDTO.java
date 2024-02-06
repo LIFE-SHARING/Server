@@ -47,6 +47,7 @@ public class ChatResponseDTO {
         String opponentName;
         String opponentImage;
         String opponentAddress;
+        String lastMessage;
         LocalDateTime updatedAt;
     }
 
