@@ -4,12 +4,11 @@ import com.umc.lifesharing.user.entity.enum_class.SocialType;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 
 @Configuration
-@ConfigurationProperties(prefix = "kakao")
+@ConfigurationProperties(prefix = "google")
 @Data
-public class KakaoProperties implements SocialProperties {
+public class GoogleProperties implements SocialProperties {
     String restApiKey;
     String iss;
     String aud;
