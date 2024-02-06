@@ -61,7 +61,9 @@ public class InquiryService {
     @Transactional
     public InquiryResponseDTO.InquiryPreviewDTO getInquiry(UserAdapter userAdapter, Long lastInquiryId, Integer size) {
         User user = userRepository.findByEmail(userAdapter.getUser().getEmail()).get();
-        Slice<Inquiry> inquiryPage = inquiryRepository.findSliceByIdLessThanAndUser(lastInquiryId, user, PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "createdAt")));
+        Slice<Inquiry> inquiryPage = inquiryRepository.findSliceByIdLessThanAndUser(lastInquiryId, user,
+                PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "createdAt")));
+
         return InquiryConverter.toInquiryPreviewDTO(inquiryPage);
     }
 

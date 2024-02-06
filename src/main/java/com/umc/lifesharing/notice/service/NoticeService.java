@@ -25,7 +25,9 @@ public class NoticeService {
     private final NoticeRepository noticeRepository;
 
     public NoticeResponse.NoticePreviewDTO getNoticePreviewList(Long lastNoticeId, Integer size) {
-        Slice<Notice> noticeSlice = noticeRepository.findSliceByIdLessThan(lastNoticeId, PageRequest.of(0, size, Sort.by("updatedAt").descending()));
+        Slice<Notice> noticeSlice = noticeRepository.findSliceByIdLessThan(lastNoticeId,
+                PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "updatedAt")));
+
         return NoticeConverter.toNoticePreviewDTO(noticeSlice);
     }
 
