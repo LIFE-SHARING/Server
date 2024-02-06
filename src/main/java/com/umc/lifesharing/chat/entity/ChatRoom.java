@@ -29,11 +29,17 @@ public class ChatRoom  extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
 
+    private String lastMessage;
+
     public void deleteSender(){
         this.sender = null;
     }
 
     public void deleteReceiver(){
         this.receiver = null;
+    }
+
+    public void setLastMessage(String lastMessage){
+        this.lastMessage = lastMessage;
     }
 }

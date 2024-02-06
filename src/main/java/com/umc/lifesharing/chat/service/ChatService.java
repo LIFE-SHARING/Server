@@ -2,6 +2,7 @@ package com.umc.lifesharing.chat.service;
 
 import com.umc.lifesharing.chat.dto.ChatDTO;
 import com.umc.lifesharing.chat.dto.ChatResponseDTO;
+import com.umc.lifesharing.chat.entity.Chat;
 import com.umc.lifesharing.user.entity.User;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -13,9 +14,7 @@ public interface ChatService {
     boolean chatMessage(ChatDTO.ChatMessageDTO messageDTO);
 
     // 나중에 실제 유저 데이터와 연동 예정
-    List<ChatResponseDTO.RoomDetailResponseDTO> roomList(Long sender);
-    List<ChatResponseDTO.RoomDetailDTO> roomListTemp(Long sender);
-
+    List<ChatResponseDTO.RoomDetailDTO> roomList(Long userId);
     List<ChatResponseDTO.ChatMessageDTO> chatList(Long roomId);
 
     boolean chatRoomSenderDelete(Long roomId, Long senderId);
