@@ -74,5 +74,9 @@ public class User extends BaseEntity {
         this.password = password;
     }
 
+    public void setTemporaryNickname() {
+        this.name = this.name + getId().toString();
+    }
+
 
 }

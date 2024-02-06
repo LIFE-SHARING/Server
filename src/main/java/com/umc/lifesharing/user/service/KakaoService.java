@@ -13,7 +13,7 @@ import com.umc.lifesharing.user.entity.enum_class.SocialType;
 import com.umc.lifesharing.user.repository.RolesRepository;
 import com.umc.lifesharing.user.repository.UserRepository;
 import com.umc.lifesharing.user.social.JwtOIDCProvider;
-import com.umc.lifesharing.user.social.KakaoProperties;
+import com.umc.lifesharing.user.social.kakao.KakaoProperties;
 import io.jsonwebtoken.Jws;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +53,8 @@ public class KakaoService implements SocialService {
     }
 
     private Jws<Claims> getUserInfo2IdToken(String idToken) throws NoSuchAlgorithmException, InvalidKeySpecException, JsonProcessingException {
-        return jwtOIDCProvider.getKidFromSignedTokenClaims(idToken, kakaoProperties.getIss(), kakaoProperties.getAud());
+//        return jwtOIDCProvider.getKidFromSignedTokenClaims(idToken, kakaoProperties.getIss(), kakaoProperties.getAud());
+        return null;
     }
 
     private User validUserByEmail(String email)  {
