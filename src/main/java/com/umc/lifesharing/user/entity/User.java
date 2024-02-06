@@ -1,6 +1,7 @@
 package com.umc.lifesharing.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.umc.lifesharing.inquiry.entity.Inquiry;
 import com.umc.lifesharing.location.entity.Location;
 import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.reservation.entity.enum_class.Status;
@@ -55,7 +56,12 @@ public class User extends BaseEntity {
     private List<Product> productList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Location> locationList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Inquiry> inquiryList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval = true)
     @Builder.Default

@@ -2,8 +2,6 @@ package com.umc.lifesharing.user.dto;
 
 import com.umc.lifesharing.config.security.TokenDTO;
 import com.umc.lifesharing.location.dto.LocationDTO;
-import com.umc.lifesharing.review.dto.ReviewResponseDTO;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -98,35 +96,6 @@ public class UserResponseDTO {
     public static class CheckNicknameResponseDTO {
         private String message;
         private Boolean existNickname;
-    }
-
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Getter
-    public static class CreateInquiryDTO {
-        private Long inquiryId;
-        private LocalDateTime createdAt;
-    }
-
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Getter
-    public static class InquiryDTO {
-        private Long inquiryId;
-        private String title;
-        private String body;
-        private List<String> imageUrlList;
-        private LocalDateTime createdAt;
-    }
-
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Getter
-    public static class InquiryPreviewDTO {
-        private List<InquiryDTO> inquiryList;
     }
 
     @Builder

@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
 
 @Entity
+@Deprecated
 public class UserServiceLog {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
