@@ -16,7 +16,7 @@ public class ProductRequestDTO {
     @Getter
     @Setter
     public static class RegisterProductDTO{
-        @NotNull @ExistCategories
+        @NotNull
         Long categoryId;
         @NotNull @Size(max = 200)
         String name;
