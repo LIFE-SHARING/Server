@@ -241,8 +241,7 @@ public class ProductConverter {
     // 제품 정보 수정 페이지 진입 응답
     public static ProductResponseDTO.ForProductUpdateDTO forProductUpdate(Product product){
         return ProductResponseDTO.ForProductUpdateDTO.builder()
-                //.categoryId(product.getCategory().getId())
-                .categoryId(new ArrayList<>())
+                .categoryId(product.getCategory().getId())
                 .name(product.getName())
                 .deposit(product.getDeposit())
                 .dayPrice(product.getDayPrice())
