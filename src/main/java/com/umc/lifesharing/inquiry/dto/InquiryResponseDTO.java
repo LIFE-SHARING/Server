@@ -51,7 +51,7 @@ public class InquiryResponseDTO {
         private Long inquiryId;
         private String title;
         private String body;
-        private List<InquiryImage> imageUrlList;
+        private List<String> imageUrlList;
         private LocalDateTime createdAt;
     }
 }
