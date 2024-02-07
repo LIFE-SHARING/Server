@@ -15,13 +15,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ChatConverter {
-    public static ChatResponseDTO.RoomDetailResponseDTO toRoomDetail(ChatRoom chatRoom){
-        return ChatResponseDTO.RoomDetailResponseDTO.builder()
-                .roomId(chatRoom.getId())
-                .receiverId(chatRoom.getReceiver().getId())
-                .senderId(chatRoom.getSender().getId())
-                .build();
-    }
 
     public static ChatResponseDTO.RoomDetailDTO toRoomDetailReceiver(ChatRoom chatRoom){
         return ChatResponseDTO.RoomDetailDTO.builder()
@@ -34,6 +27,19 @@ public class ChatConverter {
                 .updatedAt(chatRoom.getUpdatedAt())
                 .opponentAddress(chatRoom.getReceiver().getLocationList().get(0).getRoadAddress())
                 .lastMessage(chatRoom.getLastMessage())
+                .build();
+    }
+
+    public static ChatResponseDTO.RoomDetailTempDTO toRoomDetailTempReceiver(ChatRoom chatRoom){
+        return ChatResponseDTO.RoomDetailTempDTO.builder()
+                .roomId(chatRoom.getId())
+                .receiverId(chatRoom.getReceiver().getId())
+                .senderId(chatRoom.getSender().getId())
+                .productId(chatRoom.getProduct().getId())
+                .opponentImage(chatRoom.getReceiver().getProfileUrl())
+                .opponentName(chatRoom.getReceiver().getName())
+                .updatedAt(chatRoom.getUpdatedAt())
+                .opponentAddress(chatRoom.getReceiver().getLocationList().get(0).getRoadAddress())
                 .build();
     }
 
@@ -82,17 +88,24 @@ public class ChatConverter {
                 .build();
     }
 
-    public static List<ChatResponseDTO.RoomDetailResponseDTO> toRoomList(List<ChatRoom> chatRooms){
-        return chatRooms.stream().map(ChatConverter::toRoomDetail).toList();
-    }
 
-    public static List<ChatResponseDTO.RoomDetailDTO> toRoomListTemp(List<ChatRoom> senderChatRooms, List<ChatRoom> receiverChatRooms){
+    public static List<ChatResponseDTO.RoomDetailDTO> toRoomList(List<ChatRoom> senderChatRooms, List<ChatRoom> receiverChatRooms){
         List<ChatResponseDTO.RoomDetailDTO> senderList = senderChatRooms.stream().map(ChatConverter::toRoomDetailReceiver).toList();
         List<ChatResponseDTO.RoomDetailDTO> receiverList = receiverChatRooms.stream().map(ChatConverter::toRoomDetailReceiver).toList();
         List<ChatResponseDTO.RoomDetailDTO> result = new ArrayList<>();
         result.addAll(senderList);
         result.addAll(receiverList);
         Stream<ChatResponseDTO.RoomDetailDTO> sortedResult = result.stream().sorted(Comparator.comparing(ChatResponseDTO.RoomDetailDTO::getUpdatedAt).reversed());
+        return sortedResult.toList();
+    }
+
+    public static List<ChatResponseDTO.RoomDetailTempDTO> toRoomListTemp(List<ChatRoom> senderChatRooms, List<ChatRoom> receiverChatRooms){
+        List<ChatResponseDTO.RoomDetailTempDTO> senderList = senderChatRooms.stream().map(ChatConverter::toRoomDetailTempReceiver).toList();
+        List<ChatResponseDTO.RoomDetailTempDTO> receiverList = receiverChatRooms.stream().map(ChatConverter::toRoomDetailTempReceiver).toList();
+        List<ChatResponseDTO.RoomDetailTempDTO> result = new ArrayList<>();
+        result.addAll(senderList);
+        result.addAll(receiverList);
+        Stream<ChatResponseDTO.RoomDetailTempDTO> sortedResult = result.stream().sorted(Comparator.comparing(ChatResponseDTO.RoomDetailTempDTO::getUpdatedAt).reversed());
         return sortedResult.toList();
     }
 

@@ -55,6 +55,22 @@ public class ChatResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class RoomDetailTempDTO {
+        Long roomId;
+        Long senderId;
+        Long receiverId;
+        Long productId;
+        String opponentName;
+        String opponentImage;
+        String opponentAddress;
+        LocalDateTime updatedAt;
+    }
+
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class ChatMessageDTO {
         Long roomId;
         Long senderId;
