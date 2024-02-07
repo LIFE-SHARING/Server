@@ -34,6 +34,9 @@ public class AwsS3Service {
     @Value("${cloud.aws.s3.path.user}")
     private String userPath;
 
+    @Value("${cloud.aws.s3.path.inquiry}")
+    private String InquiryPath;
+
     private final AmazonS3 amazonS3;
 
     private final ReviewImageRepository reviewImageRepository;
@@ -44,6 +47,10 @@ public class AwsS3Service {
 
     public List<String> uploadProductFiles(List<MultipartFile> multipartFiles){
         return uploadFiles(multipartFiles, productPath);
+    }
+
+    public List<String> uploadInquiryFiles(List<MultipartFile> multipartFiles){
+        return uploadFiles(multipartFiles, InquiryPath);
     }
 
     public String uploadUserFile(List<MultipartFile> multipartFiles){

@@ -24,7 +24,9 @@ public class InquiryConverter {
                 .inquiryId(inquiry.getId())
                 .title(inquiry.getTitle())
                 .body(inquiry.getBody())
-                .imageUrlList(inquiry.getInquiryImageList())
+                .imageUrlList(inquiry.getInquiryImageList().stream()
+                        .map(InquiryImage::getImageUrl)
+                        .collect(Collectors.toList()))
                 .createdAt(inquiry.getCreatedAt())
                 .build();
     }

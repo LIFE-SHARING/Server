@@ -99,7 +99,7 @@ public class InquiryService {
             if (!image.isEmpty()) check++;
         }
         if (check > 0)
-            imageUrlList = awsS3Service.uploadProductFiles(multipartFiles);
+            imageUrlList = awsS3Service.uploadInquiryFiles(multipartFiles);
 
         return imageUrlList;
     }
