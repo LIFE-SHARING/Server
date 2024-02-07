@@ -4,6 +4,7 @@ import com.umc.lifesharing.notice.dto.NoticeRequest;
 import com.umc.lifesharing.notice.dto.NoticeResponse;
 import com.umc.lifesharing.notice.entity.Notice;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -36,19 +37,16 @@ public class NoticeConverter {
                 .build();
     }
 
-    public static NoticeResponse.NoticePreviewDTO toNoticePreviewDTO(Page<Notice> noticePage) {
-        List<NoticeResponse.NoticeDTO> noticeList = noticePage.stream()
+    public static NoticeResponse.NoticePreviewDTO toNoticePreviewDTO(Slice<Notice> noticeSlice) {
+        List<NoticeResponse.NoticeDTO> noticeList = noticeSlice.stream()
 //                .sorted(Comparator.comparing(Notice::getCreatedAt).reversed())
                 .map(NoticeConverter::toNoticeDTO)
                 .toList();
 
         return NoticeResponse.NoticePreviewDTO.builder()
                 .noticeList(noticeList)
-                .listSize(noticePage.getSize())
-                .totalPage(noticePage.getTotalPages())
-                .totalElements(noticePage.getTotalElements())
-                .isFirst(noticePage.isFirst())
-                .isLast(noticePage.isLast())
+                .size(noticeSlice.getSize())
+                .hasNext(noticeSlice.hasNext())
                 .build();
     }
 

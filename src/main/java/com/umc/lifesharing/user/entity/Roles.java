@@ -22,7 +22,7 @@ public class Roles extends BaseEntity {
     @Builder.Default
     private UserRoles userAuth = UserRoles.ROLE_USER;
 
-    @JoinColumn(name = "user")
+    @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private User user;

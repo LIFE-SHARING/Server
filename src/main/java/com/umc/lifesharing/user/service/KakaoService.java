@@ -13,7 +13,7 @@ import com.umc.lifesharing.user.entity.enum_class.SocialType;
 import com.umc.lifesharing.user.repository.RolesRepository;
 import com.umc.lifesharing.user.repository.UserRepository;
 import com.umc.lifesharing.user.social.JwtOIDCProvider;
-import com.umc.lifesharing.user.social.KakaoProperties;
+import com.umc.lifesharing.user.social.kakao.KakaoProperties;
 import io.jsonwebtoken.Jws;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
+@Deprecated
 public class KakaoService implements SocialService {
     @Autowired
     private final KakaoProperties kakaoProperties;
@@ -39,9 +40,7 @@ public class KakaoService implements SocialService {
     private final JwtProvider jwtProvider;
 
     @Override
-    public UserResponseDTO.ResponseDTO socialJoin(String idToken) throws NoSuchAlgorithmException, InvalidKeySpecException, JsonProcessingException {
-        log.info("socialJoin");
-
+    public UserResponseDTO.ResponseDTO socialLogin(String idToken) throws NoSuchAlgorithmException, InvalidKeySpecException, JsonProcessingException {
         // 사용자가 있는지 검사 후 없으면 생성 있으면 로그인 처리
         User user = findOrCreateUser(idToken);
         Roles roles = new Roles().addUser(user);
@@ -53,16 +52,9 @@ public class KakaoService implements SocialService {
         return UserConverter.toResponseDTO(user, tokenDTO);
     }
 
-    @Override
-    public UserResponseDTO.ResponseDTO socialLogin(String idToken) throws NoSuchAlgorithmException, InvalidKeySpecException, JsonProcessingException {
-        Claims claims = getUserInfo2IdToken(idToken).getBody();
-        User user = validUserByEmail(claims.get("email").toString());
-        TokenDTO tokenDTO = jwtProvider.generateTokenByUser(user);
-        return UserConverter.toResponseDTO(user, tokenDTO);
-    }
-
     private Jws<Claims> getUserInfo2IdToken(String idToken) throws NoSuchAlgorithmException, InvalidKeySpecException, JsonProcessingException {
-        return jwtOIDCProvider.getKidFromSignedTokenClaims(idToken, kakaoProperties.getIss(), kakaoProperties.getAud());
+//        return jwtOIDCProvider.getKidFromSignedTokenClaims(idToken, kakaoProperties.getIss(), kakaoProperties.getAud());
+        return null;
     }
 
     private User validUserByEmail(String email)  {
@@ -83,5 +75,4 @@ public class KakaoService implements SocialService {
                 .socialType(SocialType.KAKAO)
                 .build();
     }
-
 }

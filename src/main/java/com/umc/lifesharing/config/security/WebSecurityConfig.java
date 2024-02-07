@@ -33,7 +33,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
                         .requestMatchers( "/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**",
-                                "/social/kakao/**", "/user/**", "/api-docs", "/v3/**", "/stomp/**", "/payments/**"
+                                "/social/**", "/user/login", "/user/join", "/api-docs", "/v3/**", "/stomp/**", "/payments/**"
                                 ).permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()

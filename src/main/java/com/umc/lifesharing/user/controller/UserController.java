@@ -1,15 +1,16 @@
 package com.umc.lifesharing.user.controller;
 
 import com.umc.lifesharing.apiPayload.ApiResponse;
+import com.umc.lifesharing.apiPayload.code.status.ErrorStatus;
+import com.umc.lifesharing.apiPayload.exception.GeneralException;
+import com.umc.lifesharing.apiPayload.exception.handler.UserHandler;
 import com.umc.lifesharing.config.security.UserAdapter;
-import com.umc.lifesharing.notice.dto.NoticeRequest;
-import com.umc.lifesharing.notice.dto.NoticeResponse;
-import com.umc.lifesharing.product.entity.Product;
+import com.umc.lifesharing.inquiry.dto.InquiryRequestDTO;
+import com.umc.lifesharing.inquiry.dto.InquiryResponseDTO;
+import com.umc.lifesharing.inquiry.service.InquiryService;
 import com.umc.lifesharing.review.rerpository.ReviewRepository;
-import com.umc.lifesharing.user.converter.UserConverter;
 import com.umc.lifesharing.user.dto.UserRequestDTO;
 import com.umc.lifesharing.user.dto.UserResponseDTO;
-import com.umc.lifesharing.user.entity.User;
 import com.umc.lifesharing.user.service.UserQueryService;
 import com.umc.lifesharing.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,12 +21,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.print.Pageable;
 import java.util.List;
 
 @RestController
@@ -128,7 +132,7 @@ public class UserController {
     @PatchMapping("/user/admin-role")
     public ApiResponse<String> getAdminRole(@AuthenticationPrincipal UserAdapter userAdapter) {
         log.info("getAdminAuth " + userAdapter.getUser().getName());
-        return ApiResponse.onSuccess(userService.getAdminAuth(userAdapter));
+        return ApiResponse.onSuccess(userService.getAdminRole(userAdapter));
     }
 
     // 회원이 등록한 제품 목록 - 다른 유저가 어떤 등록자의 프로필 클릭시 (대여물품)

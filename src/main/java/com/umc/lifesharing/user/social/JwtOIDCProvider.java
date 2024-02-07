@@ -23,17 +23,14 @@ import java.util.Base64;
 @Slf4j
 public class JwtOIDCProvider {
 
-    @Autowired
-    private final KakaoOauthClient kakaoOauthClient;
-
-    public Jws<Claims> getKidFromSignedTokenClaims(String token, String iss, String aud) throws JsonProcessingException, NoSuchAlgorithmException, InvalidKeySpecException {
+    public Jws<Claims> getKidFromSignedTokenClaims(String token, String iss, String aud, OauthClient OauthClient) throws JsonProcessingException, NoSuchAlgorithmException, InvalidKeySpecException {
         if(iss == null || aud == null)
-            throw new NullPointerException();
+            throw new NullPointerException();       // TODO: 핸들러에게 넘기기
 
         Jwt jwt = getUnsignedTokenClaims(token, iss, aud);
         String kid = jwt.getHeader().get("kid").toString();
 
-        OIDCPublicKeyDto key = kakaoOauthClient.getKakaoOIDCOpenKeys().getKeys()
+        OIDCPublicKeyDto key = OauthClient.getOIDCOpenKeys().getKeys()
                 .stream()
                 .filter(k -> k.getKid().equals(kid))
                 .findFirst()

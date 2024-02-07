@@ -1,5 +1,7 @@
 package com.umc.lifesharing.user.service;
 
+import com.umc.lifesharing.apiPayload.exception.GeneralException;
+import com.umc.lifesharing.apiPayload.exception.handler.UserHandler;
 import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.product.entity.ProductStatus;
 import java.util.Collections;
@@ -39,7 +41,7 @@ public class UserQueryServiceImpl implements UserQueryService {
     @Override
     public UserResponseDTO.MyPageResponseDTO getMyPage(UserAdapter userAdapter) {
         log.info("getMyPage");
-        User user = userRepository.findByEmail(userAdapter.getUser().getEmail()).get();
+        User user = validUserAdapter(userAdapter);
 
         return UserConverter.toMyPageResponseDTO(user);
     }
@@ -47,7 +49,7 @@ public class UserQueryServiceImpl implements UserQueryService {
     @Override
     public UserResponseDTO.UserInfoResponseDTO getUserInfo(UserAdapter userAdapter) {
         log.info("getUserInfo");
-        User user = userRepository.findByEmail(userAdapter.getUser().getEmail()).get();
+        User user = validUserAdapter(userAdapter);
 
         return UserConverter.toUserInfoResponseDTO(user);
     }
@@ -84,10 +86,14 @@ public class UserQueryServiceImpl implements UserQueryService {
     // email(username)로 user를 찾는 메서드
     private User validUserByEmail(String email) throws UsernameNotFoundException {
         log.info("validUserByEmail");
-        User user = userRepository.findByEmail(email).get();
-        if(user == null)
-            throw new UsernameNotFoundException(ErrorStatus.MEMBER_NOT_FOUND.getMessage());
-        return user;
+        return userRepository.findByEmail(email).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
+    }
+
+    private User validUserAdapter(UserAdapter userAdapter) throws UsernameNotFoundException {
+        log.info("validUserByEmail");
+        if(userAdapter.getUser() == null)
+            throw new GeneralException(ErrorStatus.TOKEN_NOT_EXIST);
+        return userRepository.findByEmail(userAdapter.getUser().getEmail()).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
     }
 
     private boolean existNickname(String nickname) {

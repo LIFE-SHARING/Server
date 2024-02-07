@@ -1,8 +1,8 @@
 package com.umc.lifesharing.user.service;
 
 import com.umc.lifesharing.config.security.UserAdapter;
-import com.umc.lifesharing.notice.dto.NoticeRequest;
-import com.umc.lifesharing.notice.dto.NoticeResponse;
+import com.umc.lifesharing.inquiry.dto.InquiryRequestDTO;
+import com.umc.lifesharing.inquiry.dto.InquiryResponseDTO;
 import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.review.entity.Review;
 import com.umc.lifesharing.user.dto.UserRequestDTO;
@@ -17,13 +17,12 @@ public interface UserService {
 
     UserResponseDTO.ChangePasswordResponseDTO changePassword(UserAdapter userAdapter, UserRequestDTO.ChangePasswordDTO changePasswordDTO);
 
-
     List<Product> getProductList(UserAdapter userAdapter, String filter);
 
 //    UserResponseDTO.ChangePasswordResponseDTO changeUserInfo(UserAdapter userAdapter, UserRequestDTO.ChangePasswordDTO changePasswordDTO);
 
 //    List<Product> getProductList(Long memberId);
-    String getAdminAuth(UserAdapter userAdapter);
+    String getAdminRole(UserAdapter userAdapter);
 
 //    NoticeResponse.CreateSuccessDTO createNotice(UserAdapter userAdapter, NoticeRequest.CreateDTO createDTO);
 

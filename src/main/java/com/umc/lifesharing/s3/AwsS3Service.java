@@ -46,7 +46,7 @@ public class AwsS3Service {
         return uploadFiles(multipartFiles, productPath);
     }
 
-    public String uploadUserFiles(List<MultipartFile> multipartFiles){
+    public String uploadUserFile(List<MultipartFile> multipartFiles){
         return uploadFiles(multipartFiles, userPath).get(0);
     }
 

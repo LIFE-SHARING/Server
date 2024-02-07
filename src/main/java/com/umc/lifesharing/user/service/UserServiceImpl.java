@@ -1,20 +1,22 @@
 package com.umc.lifesharing.user.service;
 
-import com.amazonaws.services.ec2.model.ReservationState;
 import com.umc.lifesharing.apiPayload.code.status.ErrorStatus;
 import com.umc.lifesharing.apiPayload.exception.handler.UserHandler;
 import com.umc.lifesharing.config.security.UserAdapter;
-import com.umc.lifesharing.product.converter.ProductConverter;
-import com.umc.lifesharing.product.dto.ProductResponseDTO;
+import com.umc.lifesharing.inquiry.converter.InquiryConverter;
+import com.umc.lifesharing.inquiry.dto.InquiryRequestDTO;
+import com.umc.lifesharing.inquiry.dto.InquiryResponseDTO;
+import com.umc.lifesharing.inquiry.repository.InquiryImageRepository;
+import com.umc.lifesharing.inquiry.repository.InquiryRepository;
+import com.umc.lifesharing.location.entity.Location;
+import com.umc.lifesharing.location.repository.LocationRepository;
 import com.umc.lifesharing.product.entity.Product;
-import com.umc.lifesharing.product.entity.enums.ProductStatus;
 import com.umc.lifesharing.config.security.*;
 import com.umc.lifesharing.product.repository.ProductRepository;
 import com.umc.lifesharing.product.service.ProductCommandService;
 import com.umc.lifesharing.reservation.entity.Reservation;
 import com.umc.lifesharing.reservation.entity.enum_class.Status;
 import com.umc.lifesharing.reservation.repository.ReservationRepository;
-import com.umc.lifesharing.review.converter.ReviewConverter;
 import com.umc.lifesharing.review.entity.Review;
 import com.umc.lifesharing.review.rerpository.ReviewRepository;
 import com.umc.lifesharing.review.service.ReviewCommandService;
@@ -22,6 +24,8 @@ import com.umc.lifesharing.s3.AwsS3Service;
 import com.umc.lifesharing.user.converter.UserConverter;
 import com.umc.lifesharing.user.dto.UserRequestDTO;
 import com.umc.lifesharing.user.dto.UserResponseDTO;
+import com.umc.lifesharing.inquiry.entity.Inquiry;
+import com.umc.lifesharing.inquiry.entity.InquiryImage;
 import com.umc.lifesharing.user.entity.Roles;
 import com.umc.lifesharing.user.entity.User;
 import com.umc.lifesharing.user.repository.RolesRepository;
@@ -30,10 +34,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.parameters.P;
+import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -50,7 +51,6 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
-//    private final JwtUtil jwtUtil;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
     private final RolesRepository rolesRepository;
@@ -59,21 +59,25 @@ public class UserServiceImpl implements UserService {
     private final ReviewCommandService reviewCommandService;
     private final ReviewRepository reviewRepository;
     private final ReservationRepository reservationRepository;
+    private final LocationRepository locationRepository;
+
 
     @Value("${s3.url}")
     private String url;
 
     @Override
     public UserResponseDTO.ResponseDTO join(UserRequestDTO.JoinDTO joinDTO, MultipartFile multipartFile) {
-        if(emailDuplicated(joinDTO.getEmail()) || nicknameDuplicated(joinDTO.getName())) {
+        if (emailDuplicated(joinDTO.getEmail()) || nicknameDuplicated(joinDTO.getName())) {
             throw new UserHandler(ErrorStatus.DUPLICATED_EMAIL_OR_NICKNAME);
         }
 
         String imageUrl = getImageUrl(multipartFile);
         User user = UserConverter.toUser(joinDTO, passwordEncoder, imageUrl);
         Roles roles = new Roles().addUser(user);
+        Location location = new Location().addUser(user);
 
         rolesRepository.save(roles);
+        locationRepository.save(location);
         user = userRepository.save(user);
 
         TokenDTO tokenDTO = jwtProvider.generateTokenByUser(user);
@@ -99,7 +103,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(userAdapter.getUser().getEmail()).get();
 
         // 비밀번호 불일치
-        if(!passwordEncoder.matches(changePasswordDTO.getOldPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(changePasswordDTO.getOldPassword(), user.getPassword())) {
             throw new UserHandler(ErrorStatus.INVALID_PASSWORD);
         }
 
@@ -113,7 +117,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String getAdminAuth(UserAdapter userAdapter) {
+    public String getAdminRole(UserAdapter userAdapter) {
         try {
             User user = validUserByEmail(userAdapter.getUser().getEmail());
             Roles roles = user.getRoles().get(0);
@@ -125,13 +129,14 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private User validUserByEmail(String email)  {
+    private User validUserByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUNDED));
     }
 
     private boolean emailDuplicated(String email) {
         return userRepository.findByEmail(email).isPresent();
     }
+
     private boolean nicknameDuplicated(String nickname) {
         return userRepository.existsByName(nickname);
     }
@@ -143,13 +148,11 @@ public class UserServiceImpl implements UserService {
 
         List<Product> productList = null;
 
-        if (filter.equals("recent")){
+        if (filter.equals("recent")) {
             productList = productRepository.findByUserIdOrderByCreatedAtDesc(userId);
-        }
-        else if (filter.equals("popular")){
+        } else if (filter.equals("popular")) {
             productList = productRepository.findByUserIdOrderByScoreDesc(userId);
-        }
-        else if (filter.equals("review")){
+        } else if (filter.equals("review")) {
             productList = productRepository.findByUserIdOrderByReviewCountDesc(userId);
         }
 
@@ -159,8 +162,8 @@ public class UserServiceImpl implements UserService {
 
     private String getImageUrl(MultipartFile multipartFile) {
         String url;
-        if(!multipartFile.isEmpty())
-            url = awsS3Service.uploadUserFiles(Arrays.asList(multipartFile));
+        if (!multipartFile.isEmpty())
+            url = awsS3Service.uploadUserFile(Arrays.asList(multipartFile));
         else
             url = "";   // TODO: 기본 image url로 변경
         return url;
@@ -251,10 +254,9 @@ public class UserServiceImpl implements UserService {
     public List<Review> getReviewByProductId(Long productId) {
         // 사용자를 가져온 후 해당 사용자가 등록한 제품들을 반환
         Product product = productRepository.findById(productId).orElse(null);
-        if (product != null){
+        if (product != null) {
             return reviewRepository.findByProductId(productId);
-        }
-        else{
+        } else {
             return Collections.emptyList();
         }
     }
