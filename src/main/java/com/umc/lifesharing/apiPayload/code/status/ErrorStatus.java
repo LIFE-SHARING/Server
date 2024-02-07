@@ -84,7 +84,9 @@ public enum ErrorStatus implements BaseErrorCode {
 
     LOCATION_VALUE_NOT_FOUND(HttpStatus.BAD_REQUEST, "LOCATION_400_1", "사용자의 인증된 위치 정보를 찾을 수 없습니다."),
 
-    NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTICEE_400_1","공지를 찾을 수 없습니다.");
+    NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTICEE_400_1","공지를 찾을 수 없습니다."),
+
+    INQUIRY_NOT_FOUND(HttpStatus.NOT_FOUND, "INQUIRY_400_1","문의를 찾을 수 없습니다.");
 
 
     private final HttpStatus httpStatus;

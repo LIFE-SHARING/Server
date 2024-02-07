@@ -9,7 +9,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
     Slice<Inquiry> findSliceByIdLessThanAndUser(Long Id, User user, Pageable pageable);
+
+    Optional<Inquiry> findByIdAndUser(Long Id, User user);
     void deleteByIdAndUser(Long id, User user);
 }

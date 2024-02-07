@@ -36,15 +36,26 @@ public class Inquiry extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     @OneToOne
     @JoinColumn(name = "reply_id", nullable = true)
+    @JsonIgnore
     private Reply reply;
 
     public Inquiry addUser(User user) {
         this.user = user;
         user.getInquiryList().add(this);
         return this;
+    }
+
+    public Inquiry addReply(Reply reply) {
+        this.reply = reply;
+        return this;
+    }
+
+    public void updateState() {
+        this.state = "답변";
     }
 }

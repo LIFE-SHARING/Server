@@ -19,4 +19,13 @@ public class InquiryRequestDTO {
         @NotEmpty
         private String body;
     }
+
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class ReplyDTO {
+        @NotEmpty
+        private String body;
+    }
 }

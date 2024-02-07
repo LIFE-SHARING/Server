@@ -4,14 +4,9 @@ import com.umc.lifesharing.inquiry.dto.InquiryRequestDTO;
 import com.umc.lifesharing.inquiry.dto.InquiryResponseDTO;
 import com.umc.lifesharing.inquiry.entity.Inquiry;
 import com.umc.lifesharing.inquiry.entity.InquiryImage;
-import com.umc.lifesharing.notice.entity.Notice;
-import com.umc.lifesharing.user.dto.UserRequestDTO;
-import com.umc.lifesharing.user.dto.UserResponseDTO;
-import org.springframework.data.domain.Page;
+import com.umc.lifesharing.inquiry.entity.Reply;
 import org.springframework.data.domain.Slice;
 
-import java.awt.print.Pageable;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,6 +52,13 @@ public class InquiryConverter {
                 .size(inquirySlice.getSize())
                 .hasNext(inquirySlice.hasNext())
                 .build();
-
     }
+
+    public static InquiryResponseDTO.InquiryAndReplyDTO toInquiryAndReplayDTO(Reply reply, Inquiry inquiry) {
+        return InquiryResponseDTO.InquiryAndReplyDTO.builder()
+                .inquiry(inquiry)
+                .reply(reply)
+                .build();
+    }
+
 }

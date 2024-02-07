@@ -2,7 +2,9 @@ package com.umc.lifesharing.inquiry.dto;
 
 import com.umc.lifesharing.inquiry.entity.Inquiry;
 import com.umc.lifesharing.inquiry.entity.InquiryImage;
+import com.umc.lifesharing.inquiry.entity.Reply;
 import com.umc.lifesharing.notice.dto.NoticeResponse;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,7 +29,16 @@ public class InquiryResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Getter
-    public static class CreateInquiryDTO {
+    public static class InquiryAndReplyDTO {
+        private Inquiry inquiry;
+        private Reply reply;
+    }
+
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class CreateInquiryDTO {      // inquiry 생성 요청에 대한 응답 dto
         private Long inquiryId;
         private LocalDateTime createdAt;
     }
@@ -36,7 +47,7 @@ public class InquiryResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Getter
-    public static class InquiryDTO {
+    public static class InquiryDTO {    //
         private Long inquiryId;
         private String title;
         private String body;

@@ -40,7 +40,6 @@ public class UserController {
     private final UserService userService;
     private final UserQueryService userQueryService;
     private final ReviewRepository reviewRepository;
-    private final InquiryService inquiryService;
 
     @PostMapping("/user/login")
     @Operation(
@@ -135,27 +134,6 @@ public class UserController {
         log.info("getAdminAuth " + userAdapter.getUser().getName());
         return ApiResponse.onSuccess(userService.getAdminRole(userAdapter));
     }
-
-    @PostMapping("/user/inquiry")
-    public ApiResponse<InquiryResponseDTO.InquiryDTO> createInquiry(@AuthenticationPrincipal UserAdapter userAdapter,
-                                                         @RequestPart(value = "inquiryDTO") InquiryRequestDTO.InquiryDTO inquiryDTO,
-                                                         @Nullable @RequestPart(value = "multipartFiles") List<MultipartFile> multipartFiles) {
-        return ApiResponse.onSuccess(inquiryService.createInquiry(userAdapter, inquiryDTO, multipartFiles));
-    }
-
-    @GetMapping("/user/inquiry")
-    public ApiResponse<InquiryResponseDTO.InquiryPreviewDTO> getInquiry(@AuthenticationPrincipal UserAdapter userAdapter,
-                                                                        @Positive @RequestParam(name = "lastInquiryId", defaultValue = "9223372036854775807") Long lastInquiryId,
-                                                                        @Positive @RequestParam(name = "size") Integer size) {
-        return ApiResponse.onSuccess(inquiryService.getInquiry(userAdapter, lastInquiryId, size));
-    }
-
-    @DeleteMapping("/user/inquiry/{inquiry-id}")
-    public ApiResponse<String> deleteInquiry(@AuthenticationPrincipal UserAdapter userAdapter,
-                                                                           @Positive @PathVariable(name = "inquiry-id") Long inquiryId){
-        return ApiResponse.onSuccess(inquiryService.deleteInquiry(userAdapter, inquiryId));
-    }
-
 
     // 회원이 등록한 제품 목록 - 다른 유저가 어떤 등록자의 프로필 클릭시 (대여물품)
 //    @GetMapping("/user/products")

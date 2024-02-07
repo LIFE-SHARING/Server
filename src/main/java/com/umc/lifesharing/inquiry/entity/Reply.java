@@ -1,5 +1,6 @@
 package com.umc.lifesharing.inquiry.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.umc.lifesharing.user.entity.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,6 +22,11 @@ public class Reply extends BaseEntity {
     @Column(nullable = false)
     private String body;
 
-    @OneToOne(mappedBy = "reply", fetch = FetchType.LAZY)
+    @OneToOne
+    @JsonIgnore
     private Inquiry inquiry;
+
+    public void updateBody(String body) {
+        this.body = body;
+    }
 }
