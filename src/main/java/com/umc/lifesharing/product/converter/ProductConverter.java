@@ -63,8 +63,8 @@ public class ProductConverter {
                 .productId(product.getId())
                 .userId(product.getUser().getId())
                 .name(product.getName())
-                .categoryId(product.getCategory().getId())
-                .categoryName(product.getCategory().getName())
+//                .categoryId(product.getCategory().getId())
+                .categoryName(new ArrayList<>())
                 .imageUrl(imageUrls)  // 등록된 제품 이미지 리스트
                 .score(product.getScore())
                 .reviewCount(product.getReviewCount())
@@ -241,7 +241,8 @@ public class ProductConverter {
     // 제품 정보 수정 페이지 진입 응답
     public static ProductResponseDTO.ForProductUpdateDTO forProductUpdate(Product product){
         return ProductResponseDTO.ForProductUpdateDTO.builder()
-                .categoryId(product.getCategory().getId())
+                //.categoryId(product.getCategory().getId())
+                .categoryId(new ArrayList<>())
                 .name(product.getName())
                 .deposit(product.getDeposit())
                 .dayPrice(product.getDayPrice())
