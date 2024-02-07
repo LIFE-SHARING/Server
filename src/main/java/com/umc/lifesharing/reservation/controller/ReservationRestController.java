@@ -6,8 +6,6 @@ import com.umc.lifesharing.reservation.converter.ReservationConverter;
 import com.umc.lifesharing.reservation.dto.ReservationResponseDto;
 import com.umc.lifesharing.reservation.entity.Reservation;
 import com.umc.lifesharing.reservation.service.ReservationCommandService;
-import com.umc.lifesharing.reservation.service.ReservationQueryService;
-import com.umc.lifesharing.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -26,7 +24,6 @@ import java.util.List;
 public class ReservationRestController {
 
     private final ReservationCommandService reservationCommandService;
-    private final ReservationQueryService reservationQueryService;
 
     @GetMapping("/list")
     @Operation(summary = "예약 목록 필터 조회 API",description = "예약 목록을 필터를 통해 조회합니다.")
