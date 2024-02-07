@@ -55,6 +55,10 @@ public class Inquiry extends BaseEntity {
         return this;
     }
 
+    public void setInquiryImageList(List<InquiryImage> inquiryImageList) {
+        this.inquiryImageList = inquiryImageList;
+    }
+
     public void updateState() {
         this.state = "답변";
     }

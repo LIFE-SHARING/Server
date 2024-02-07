@@ -48,9 +48,10 @@ public class InquiryService {
         Inquiry inquiry = InquiryConverter.toInquiry(inquiryDTO);
         List<InquiryImage> inquiryImageList = InquiryConverter.toInquiryImageList(imageUrlList, inquiry);
 
-        inquiryImageRepository.saveAll(inquiryImageList);
         inquiry.addUser(user);
+        inquiry.setInquiryImageList(inquiryImageList);
         inquiry = inquiryRepository.save(inquiry);
+        List<InquiryImage> inquiryImages = inquiryImageRepository.saveAll(inquiryImageList);
 
         return InquiryConverter.toInquiryResponseDTO(inquiry);
     }
