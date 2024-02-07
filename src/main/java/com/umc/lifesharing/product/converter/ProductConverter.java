@@ -63,8 +63,8 @@ public class ProductConverter {
                 .productId(product.getId())
                 .userId(product.getUser().getId())
                 .name(product.getName())
-//                .categoryId(product.getCategory().getId())
-                .categoryName(new ArrayList<>())
+                .categoryId(product.getCategory().getId())
+                .categoryName(product.getCategory().getName())
                 .imageUrl(imageUrls)  // 등록된 제품 이미지 리스트
                 .score(product.getScore())
                 .reviewCount(product.getReviewCount())
