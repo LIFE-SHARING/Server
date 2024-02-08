@@ -53,7 +53,7 @@ public class PaymentRestController {
         return ApiResponse.onSuccess(paymentResDto);
     }
 
-    @GetMapping("/toss/point")
+    @PostMapping("/toss/point")
     @Operation(summary = "포인트 결제 API",description = "포인트 충전용 API.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
