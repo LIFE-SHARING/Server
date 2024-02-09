@@ -51,7 +51,7 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
     private final UserQueryService userQueryService;
 
     @Override // 예약 결제 요청
-    public TossPaymentReqDto.TossPaymentResDto requestTossPaymentReservation(TossPaymentDto tossPaymentDto, Long userId, Long productId) {
+    public TossPaymentReqDto.TossReservationPaymentResDto requestTossPaymentReservation(TossPaymentDto tossPaymentDto, Long userId, Long productId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
         Product product = productRepository.findById(productId)
@@ -89,7 +89,7 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
         payment.setUser(user);
         tossPaymentRepository.save(payment);
 
-        return TossPaymentConverter.toPaymentResDto(payment, tossPaymentDto.getPaymentType());
+        return TossPaymentConverter.toReservationPaymentResDto(payment, tossPaymentDto.getPaymentType(), reservation.getId());
     }
     @Override // 포인트 결제 요청
     public TossPaymentReqDto.TossPaymentResDto requestTossPaymentPoint(TossPaymentPointDto.ChargePointRequestDto tossPaymentDto, Long userId) {

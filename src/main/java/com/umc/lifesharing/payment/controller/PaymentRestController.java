@@ -43,9 +43,9 @@ public class PaymentRestController {
     @Parameters({
             @Parameter(name = "productId", description = "제품 아이디, path variable 입니다!"),
     })
-    public ApiResponse<TossPaymentReqDto.TossPaymentResDto> requestTossPaymentReservation(@AuthenticationPrincipal UserAdapter userAdapter,
+    public ApiResponse<TossPaymentReqDto.TossReservationPaymentResDto> requestTossPaymentReservation(@AuthenticationPrincipal UserAdapter userAdapter,
                                                                                           @ExistProduct @PathVariable Long productId, @RequestBody @Valid TossPaymentDto tossPaymentDto) {
-        TossPaymentReqDto.TossPaymentResDto paymentResDto = paymentCommandService.requestTossPaymentReservation(tossPaymentDto, userAdapter.getUser().getId(), productId);
+        TossPaymentReqDto.TossReservationPaymentResDto paymentResDto = paymentCommandService.requestTossPaymentReservation(tossPaymentDto, userAdapter.getUser().getId(), productId);
 //        paymentResDto.setSuccessUrl(tossPaymentDto.getYourSuccessUrl() == null ? tossPaymentConfig.getSuccessUrl() : tossPaymentDto.getYourSuccessUrl());
 //        paymentResDto.setFailUrl(tossPaymentDto.getYourFailUrl() == null ? tossPaymentConfig.getFailUrl() : tossPaymentDto.getYourFailUrl());
         paymentResDto.setSuccessUrl(tossPaymentConfig.getSuccessUrl());

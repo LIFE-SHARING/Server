@@ -24,6 +24,22 @@ public class TossPaymentConverter {
                 .build();
     }
 
+    public static TossPaymentReqDto.TossReservationPaymentResDto toReservationPaymentResDto(TossPayment tossPayment, PaymentType paymentType, Long reservationId) {
+        return TossPaymentReqDto.TossReservationPaymentResDto.builder()
+                .reservationId(reservationId)
+                .method(String.valueOf(tossPayment.getMethod()))
+                .paymentType(paymentType)
+                .amount(tossPayment.getAmount())
+                .orderName(tossPayment.getOrderName())
+                .orderId(tossPayment.getOrderId())
+                .userEmail(tossPayment.getUser().getEmail())
+                .userName(tossPayment.getUser().getName())
+                .createdAt(String.valueOf(tossPayment.getCreatedAt()))
+                .cancelYN(false)
+                .failReason(tossPayment.getFailReason())
+                .build();
+    }
+
     public static TossPaymentReqDto.TossPaymentResDto toPaymentResDto(TossPayment tossPayment, PaymentType paymentType) {
         return TossPaymentReqDto.TossPaymentResDto.builder()
                 .method(String.valueOf(tossPayment.getMethod()))
