@@ -67,9 +67,19 @@ public class ChatServiceImpl implements ChatService {
 
         List<ChatRoom> chatRoomsSender = chatRoomRepository.findAllBySender(user);
         List<ChatRoom> chatRoomsReceiver = chatRoomRepository.findAllByReceiver(user);
-        return ChatConverter.toRoomListTemp(chatRoomsSender, chatRoomsReceiver);
+        return ChatConverter.toRoomList(chatRoomsSender, chatRoomsReceiver);
     }
 
+    // 보내는 사람의 채팅방 리스트 최신
+    @Override
+    public List<ChatResponseDTO.RoomDetailTempDTO> roomListTemp(Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ChatHandler(ErrorStatus.USER_NOT_FOUNDED));
+
+        List<ChatRoom> chatRoomsSender = chatRoomRepository.findAllBySender(user);
+        List<ChatRoom> chatRoomsReceiver = chatRoomRepository.findAllByReceiver(user);
+        return ChatConverter.toRoomListTemp(chatRoomsSender, chatRoomsReceiver);
+    }
 
 
     @Override
