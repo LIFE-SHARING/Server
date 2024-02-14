@@ -58,9 +58,9 @@ public class Product extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    private ProductCategory category;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "category_id")
+    private String category; // 카테고리 다중 선택을 위해 ProductCategory -> String 으로 수정
 
     @Builder.Default
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

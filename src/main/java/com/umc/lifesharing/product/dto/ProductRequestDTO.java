@@ -17,7 +17,7 @@ public class ProductRequestDTO {
     @Setter
     public static class RegisterProductDTO{
         @NotNull
-        Long categoryId;
+        String categoryIds; // 카테고리 다중 선택을 위해 Long -> String 으로 수정
         @NotNull @Size(max = 200)
         String name;
         @NotNull @Size(max = 200)

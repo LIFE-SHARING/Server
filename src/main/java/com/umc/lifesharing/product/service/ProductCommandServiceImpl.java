@@ -76,7 +76,7 @@ public class ProductCommandServiceImpl implements ProductCommandService{
         Product newProduct = ProductConverter.toProduct(request);
 
         User loggedInMember = userAdapter.getUser();
-
+        List<String> categoryList = List.of(request.getCategoryIds().split(","));
         ProductCategory category = productCategoryRepository.findById(request.getCategoryId())
                         .orElseThrow(() -> new ProductHandler(ErrorStatus.CATEGORY_NOT_FOUND));
 
