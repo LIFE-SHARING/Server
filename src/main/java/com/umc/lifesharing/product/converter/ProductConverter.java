@@ -23,6 +23,7 @@ public class ProductConverter {
 
     public static Product toProduct(ProductRequestDTO.RegisterProductDTO request){
         return Product.builder()
+                .category(request.getCategoryIds())
                 .name(request.getName())
                 .content(request.getContent())
                 .dayPrice(request.getDayPrice())

@@ -35,8 +35,8 @@ public class ProductRequestDTO {
     @Getter
     @Setter
     public static class UpdateProductDTO{
-        @ExistCategories
-        Long categoryId;
+        //@ExistCategories
+        String categoryIds; // 카테고리 다중 선택을 위해 Long -> String 으로 수정
         String name;
         String content;
         Integer dayPrice;

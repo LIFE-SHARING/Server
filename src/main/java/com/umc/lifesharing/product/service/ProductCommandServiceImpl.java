@@ -76,12 +76,13 @@ public class ProductCommandServiceImpl implements ProductCommandService{
         Product newProduct = ProductConverter.toProduct(request);
 
         User loggedInMember = userAdapter.getUser();
-        List<String> categoryList = List.of(request.getCategoryIds().split(","));
-        ProductCategory category = productCategoryRepository.findById(request.getCategoryId())
-                        .orElseThrow(() -> new ProductHandler(ErrorStatus.CATEGORY_NOT_FOUND));
 
+        // Body로 입력받은 카테고리 데이터 그대로 저장
+//        ProductCategory category = productCategoryRepository.findById(request.getCategoryId())
+//                        .orElseThrow(() -> new ProductHandler(ErrorStatus.CATEGORY_NOT_FOUND));
+//        newProduct.setCategory(category);
         newProduct.setUser(loggedInMember);
-        newProduct.setCategory(category);
+
 
         // 이미지 URL을 ProductImage 엔티티로 매핑하여 리스트에 추가
         for (String imageUrl : uploadedFileNames) {
@@ -136,11 +137,15 @@ public class ProductCommandServiceImpl implements ProductCommandService{
         if(!existProduct.getUser().getId().equals(loggedInUser.getId())){   // 등록자와 수정하고자 하는 사용자가 일치하지 않으면
             throw new UserHandler(ErrorStatus.USER_NOT_FOUNDED);
         }
-        if (request.getCategoryId() != null) {
-            ProductCategory category = productCategoryRepository.findById(request.getCategoryId())
-                    .orElseThrow(() -> new ProductHandler(ErrorStatus.CATEGORY_NOT_FOUND));
+        if (request.getCategoryIds() != null) { // 카테고리 다중 선택을 위해 수정
+//            ProductCategory category = productCategoryRepository.findById(request.getCategoryId())
+//                    .orElseThrow(() -> new ProductHandler(ErrorStatus.CATEGORY_NOT_FOUND));
+            List<String> categoryList = List.of(request.getCategoryIds().split(","));
+            if(categoryList.isEmpty()){
+                throw new ProductHandler(ErrorStatus.CATEGORY_NOT_FOUND);
+            }
             // 제품에 새로운 카테고리 설정
-            existProduct.setCategory(category);
+            existProduct.setCategory(request.getCategoryIds());
         }
         if (request.getName() != null){ existProduct.setName(request.getName()); }
         if (request.getContent() != null){ existProduct.setContent(request.getContent()); }

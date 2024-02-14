@@ -83,7 +83,7 @@ public class Product extends BaseEntity {
         this.user = user;
     }
 
-    public void setCategory(ProductCategory category){
+    public void setCategory(String category){ // 카테고리 다중 선택을 위해 ProductCategory -> String 으로 수정
         this.category = category;
     }
 }
