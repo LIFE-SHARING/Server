@@ -14,4 +14,6 @@ public interface ProductQueryService {
     Optional<ProductCategory> findByCategory(Long id);
 
     Optional<Product> findByProduct(Long id);
+
+    List<String> findNameByIdIn(List<Long> id);
 }

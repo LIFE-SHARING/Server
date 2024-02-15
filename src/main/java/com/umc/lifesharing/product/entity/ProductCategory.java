@@ -27,9 +27,9 @@ public class ProductCategory {
     @Column(columnDefinition = "VARCHAR(10) DEFAULT 'EXIST'")
     private ProductStatus status;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    private List<Product> productList = new ArrayList<>();
+//    @Builder.Default
+//    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+//    private List<Product> productList = new ArrayList<>();
 
 //    @Builder.Default
 //    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)

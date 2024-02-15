@@ -6,11 +6,15 @@ import com.umc.lifesharing.product.dto.ProductRequestDTO;
 import com.umc.lifesharing.product.dto.ProductResponseDTO;
 import com.umc.lifesharing.product.entity.Product;
 import com.umc.lifesharing.product.entity.ProductImage;
+import com.umc.lifesharing.product.service.ProductCommandService;
+import com.umc.lifesharing.product.service.ProductQueryService;
 import com.umc.lifesharing.reservation.entity.Reservation;
 import com.umc.lifesharing.review.entity.Review;
 import com.umc.lifesharing.review.entity.ReviewImage;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.parameters.P;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,11 +22,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ProductConverter {
 
     public static Product toProduct(ProductRequestDTO.RegisterProductDTO request){
         return Product.builder()
+                .categories(request.getCategoryIds())
                 .name(request.getName())
                 .content(request.getContent())
                 .dayPrice(request.getDayPrice())
@@ -41,7 +47,7 @@ public class ProductConverter {
     }
 
     // 제품 상세 조회 응답
-    public static ProductResponseDTO.ProductDetailDTO toDetailRes(Product product){
+    public static ProductResponseDTO.ProductDetailDTO toDetailRes(Product product, List<String> categoryList){
 
         List<ProductResponseDTO.ReviewListDTO> reviewList = product.getReviewList().stream()
                 .map(review -> new ProductResponseDTO.ReviewListDTO(
@@ -63,8 +69,8 @@ public class ProductConverter {
                 .productId(product.getId())
                 .userId(product.getUser().getId())
                 .name(product.getName())
-                .categoryId(product.getCategory().getId())
-                .categoryName(product.getCategory().getName())
+                //.categoryId(product.getCategory().getId())  // 카테고리 다중 선택 구현중 카테고리 이름만 배열로 출력하기 위해 제외하였음.
+                .categoryList(categoryList)  // 카테고리 다중 선택 구현을 위해 카테고리 이름만 배열로 출력
                 .imageUrl(imageUrls)  // 등록된 제품 이미지 리스트
                 .score(product.getScore())
                 .reviewCount(product.getReviewCount())
@@ -241,7 +247,7 @@ public class ProductConverter {
     // 제품 정보 수정 페이지 진입 응답
     public static ProductResponseDTO.ForProductUpdateDTO forProductUpdate(Product product){
         return ProductResponseDTO.ForProductUpdateDTO.builder()
-                .categoryId(product.getCategory().getId())
+                .categoryIds(product.getCategories())  // 카테고리 다중 선택을 위해 Long -> String 으로 수정
                 .name(product.getName())
                 .deposit(product.getDeposit())
                 .dayPrice(product.getDayPrice())

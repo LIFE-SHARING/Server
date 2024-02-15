@@ -49,6 +49,7 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @Service
@@ -77,11 +78,12 @@ public class ProductCommandServiceImpl implements ProductCommandService{
 
         User loggedInMember = userAdapter.getUser();
 
-        ProductCategory category = productCategoryRepository.findById(request.getCategoryId())
-                        .orElseThrow(() -> new ProductHandler(ErrorStatus.CATEGORY_NOT_FOUND));
-
+        // Body로 입력받은 카테고리 데이터 그대로 저장
+//        ProductCategory category = productCategoryRepository.findById(request.getCategoryId())
+//                        .orElseThrow(() -> new ProductHandler(ErrorStatus.CATEGORY_NOT_FOUND));
+//        newProduct.setCategory(category);
         newProduct.setUser(loggedInMember);
-        newProduct.setCategory(category);
+
 
         // 이미지 URL을 ProductImage 엔티티로 매핑하여 리스트에 추가
         for (String imageUrl : uploadedFileNames) {
@@ -136,11 +138,15 @@ public class ProductCommandServiceImpl implements ProductCommandService{
         if(!existProduct.getUser().getId().equals(loggedInUser.getId())){   // 등록자와 수정하고자 하는 사용자가 일치하지 않으면
             throw new UserHandler(ErrorStatus.USER_NOT_FOUNDED);
         }
-        if (request.getCategoryId() != null) {
-            ProductCategory category = productCategoryRepository.findById(request.getCategoryId())
-                    .orElseThrow(() -> new ProductHandler(ErrorStatus.CATEGORY_NOT_FOUND));
+        if (request.getCategoryIds() != null) { // 카테고리 다중 선택을 위해 수정
+//            ProductCategory category = productCategoryRepository.findById(request.getCategoryId())
+//                    .orElseThrow(() -> new ProductHandler(ErrorStatus.CATEGORY_NOT_FOUND));
+            List<String> categoryList = List.of(request.getCategoryIds().split(","));
+            if(categoryList.isEmpty()){
+                throw new ProductHandler(ErrorStatus.CATEGORY_NOT_FOUND);
+            }
             // 제품에 새로운 카테고리 설정
-            existProduct.setCategory(category);
+            existProduct.setCategory(request.getCategoryIds());
         }
         if (request.getName() != null){ existProduct.setName(request.getName()); }
         if (request.getContent() != null){ existProduct.setContent(request.getContent()); }
@@ -194,7 +200,19 @@ public class ProductCommandServiceImpl implements ProductCommandService{
         Product p = optionalProduct.get();
         User u = p.getUser();
 
-        ProductResponseDTO.ProductDetailDTO productDetailDTO = ProductConverter.toDetailRes(product);
+        List<Long> categoryIds = null;
+        if(!product.getCategories().contains(",")){
+            categoryIds.add(Long.parseLong(product.getCategories()));
+        }else{
+            categoryIds = Stream.of(product.getCategories().split(",")).map(Long::parseLong).toList(); // 카테고리 번호 리스트로 변환
+        }
+
+        List<ProductCategory> productCategoryList = productCategoryRepository.findAllByIdIn(categoryIds);
+        List<String> categoryList = productCategoryList.stream()
+                .map(ProductCategory::getName)
+                .collect(Collectors.toList());
+
+        ProductResponseDTO.ProductDetailDTO productDetailDTO = ProductConverter.toDetailRes(product, categoryList);
         productDetailDTO.setIsLiked(isLiked);
         productDetailDTO.setUserNickname(u.getName());
         productDetailDTO.setUserImage(u.getProfileUrl());
@@ -214,7 +232,13 @@ public class ProductCommandServiceImpl implements ProductCommandService{
     // 카테고리별 제품 조회
     @Override
     public List<Product> getProductsByCategory(Long categoryId) {
-        List<Product> productList = productRepository.findByCategoryIdOrderByCreatedAtDesc(categoryId);
+        // 다중 카테고리 선택 => 일단 임시 방편으로 구현하였기에.. 추가 개발에 들어간다면 카테고리 조회 방식 변경 필요.
+//        String categoryName = productCategoryRepository.findNameById(categoryId)
+//                .orElseThrow(() -> new NotFoundException(ErrorStatus.CATEGORY_NOT_FOUND.getMessage()));
+
+        // findByCategoryIdOrderByCreatedAtDesc -> findByCategoryLikeOrderByCreatedAtDesc
+
+        List<Product> productList = productRepository.findByCategoriesContainsOrderByCreatedAtDesc(categoryId.toString());
         return productList;
     }
 

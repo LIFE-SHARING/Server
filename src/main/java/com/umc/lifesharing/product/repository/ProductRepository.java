@@ -17,7 +17,9 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findById(Long id);
 
-    List<Product> findByCategoryIdOrderByCreatedAtDesc(Long categoryId);
+    //List<Product> findByCategoryIdOrderByCreatedAtDesc(Long categoryId);
+
+    List<Product> findByCategoriesContainsOrderByCreatedAtDesc(String categories); // 다중 카테고리 선택을 위해 추가
 
     // 제품의 평점과 리뷰 개수 업데이트
     @Modifying
