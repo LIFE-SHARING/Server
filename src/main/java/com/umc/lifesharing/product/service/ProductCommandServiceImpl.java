@@ -200,7 +200,7 @@ public class ProductCommandServiceImpl implements ProductCommandService{
         Product p = optionalProduct.get();
         User u = p.getUser();
 
-        List<Long> categoryIds = null;
+        List<Long> categoryIds = new ArrayList<>();
         if(!product.getCategories().contains(",")){
             categoryIds.add(Long.parseLong(product.getCategories()));
         }else{
