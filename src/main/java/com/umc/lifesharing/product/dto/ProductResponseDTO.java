@@ -52,9 +52,9 @@ public class ProductResponseDTO {
     @AllArgsConstructor
     public static class ProductDetailDTO{
         Long productId;
-        Long categoryId;
+        //Long categoryId; // 카테고리 다중 선택 구현중 카테고리 이름만 배열로 출력하기 위해 제외하였음.
         Long userId;
-        String categoryName;
+        List<String> categoryList; // 카테고리 다중 선택 구현을 위해 카테고리 이름만 배열로 출력
         String location;  // 위치정보
         String detailAddress;
         List<String> imageUrl;
@@ -177,7 +177,7 @@ public class ProductResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ForProductUpdateDTO{
-        private Long categoryId;
+        private String categoryIds;  // 카테고리 다중 선택을 위해 Long -> String 으로 수정
         private String name;
         private String content;
         private Integer dayPrice;

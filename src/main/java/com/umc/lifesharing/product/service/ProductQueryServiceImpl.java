@@ -33,4 +33,9 @@ public class ProductQueryServiceImpl implements ProductQueryService{
         return productRepository.findById(id);
     }
 
+    @Override
+    public List<String> findNameByIdIn(List<Long> id) {
+        return productCategoryRepository.findNameByIdIn(id);
+    }
+
 }

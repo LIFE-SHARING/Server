@@ -60,7 +60,7 @@ public class Product extends BaseEntity {
 
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "category_id")
-    private String category; // 카테고리 다중 선택을 위해 ProductCategory -> String 으로 수정
+    private String categories; // 카테고리 다중 선택을 위해 ProductCategory -> String 으로 수정
 
     @Builder.Default
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -83,7 +83,7 @@ public class Product extends BaseEntity {
         this.user = user;
     }
 
-    public void setCategory(String category){ // 카테고리 다중 선택을 위해 ProductCategory -> String 으로 수정
-        this.category = category;
+    public void setCategory(String categories){ // 카테고리 다중 선택을 위해 ProductCategory -> String 으로 수정
+        this.categories = categories;
     }
 }
