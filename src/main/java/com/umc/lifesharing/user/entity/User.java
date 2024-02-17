@@ -15,6 +15,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -81,8 +82,6 @@ public class User extends BaseEntity {
     }
 
     public void setTemporaryNickname() {
-        this.name = this.name + "#" + getSocialType() + "_" + getId().toString();
+        this.name = this.name + "#" + getSocialType() + getId() + UUID.randomUUID().toString().split("-")[0];
     }
-
-
 }

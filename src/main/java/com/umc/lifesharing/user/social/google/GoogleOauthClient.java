@@ -6,11 +6,14 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.Map;
+
 @FeignClient(
         name = "GoogleAuthClient",
-        url = "https://identitytoolkit.googleapis.com")
-public interface GoogleOauthClient extends OauthClient {
+        url = "https://www.googleapis.com")
+@Deprecated
+public interface GoogleOauthClient {
     @Cacheable(cacheNames = "GoogleOIDC", cacheManager = "cacheManager")
-    @GetMapping("/v1/sessionCookiePublicKeys")
-    OIDCPublicKeysResponse getOIDCOpenKeys();
+    @GetMapping("/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com")
+    Map<String, String> getOIDCOpenKeys();
 }

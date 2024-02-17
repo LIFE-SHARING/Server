@@ -60,6 +60,8 @@ dependencies {
     // @FeignClient 사용을 위해 추가
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.0.3'
     implementation 'org.springframework.cloud:spring-cloud-dependencies:2022.0.1'
+
+    implementation 'com.google.firebase:firebase-admin:9.2.0'
 }
 
 tasks.named('bootBuildImage') {
