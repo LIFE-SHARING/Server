@@ -9,5 +9,5 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class OIDCPublicKeysResponse {
-    private List<OIDCPublicKeyDto> keys = new ArrayList<>();
+    private final List<OIDCPublicKeyDto> keys = new ArrayList<>();
 }

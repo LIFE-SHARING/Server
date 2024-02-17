@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.umc.lifesharing.apiPayload.code.status.ErrorStatus;
 import com.umc.lifesharing.apiPayload.exception.GeneralException;
 import com.umc.lifesharing.user.dto.OIDCPublicKeyDto;
+import com.umc.lifesharing.user.social.google.GoogleOauthClient;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,14 +24,14 @@ import java.util.Base64;
 @Slf4j
 public class JwtOIDCProvider {
 
-    public Jws<Claims> getKidFromSignedTokenClaims(String token, String iss, String aud, OauthClient OauthClient) throws JsonProcessingException, NoSuchAlgorithmException, InvalidKeySpecException {
+    public Jws<Claims> getKidFromSignedTokenClaims(String token, String iss, String aud, OauthClient oauthClient) throws JsonProcessingException, NoSuchAlgorithmException, InvalidKeySpecException {
         if(iss == null || aud == null)
-            throw new NullPointerException();       // TODO: 핸들러에게 넘기기
+            throw new NullPointerException();
 
         Jwt jwt = getUnsignedTokenClaims(token, iss, aud);
         String kid = jwt.getHeader().get("kid").toString();
 
-        OIDCPublicKeyDto key = OauthClient.getOIDCOpenKeys().getKeys()
+        OIDCPublicKeyDto key = oauthClient.getOIDCOpenKeys().getKeys()
                 .stream()
                 .filter(k -> k.getKid().equals(kid))
                 .findFirst()
@@ -41,6 +42,26 @@ public class JwtOIDCProvider {
                 .build()
                 .parseClaimsJws(token);
     }
+
+//    public Jws<Claims> getGoogleSignedTokenClaims(String token, String iss, String aud) throws JsonProcessingException, NoSuchAlgorithmException, InvalidKeySpecException {
+//        if(iss == null || aud == null)
+//            throw new NullPointerException();
+//
+//        Jwt jwt = getUnsignedTokenClaims(token, iss, aud);
+//        String kid = jwt.getHeader().get("kid").toString();
+//        String key = null;
+//
+//        if(googleOauthClient.getOIDCOpenKeys().containsKey(kid)) {
+//            key = googleOauthClient.getOIDCOpenKeys().get(kid);
+//        } else {
+//            throw new GeneralException(ErrorStatus.ID_TOKEN_UNSUPPORTED);
+//        }
+//
+//        return Jwts.parserBuilder()
+//                .setSigningKey(key)
+//                .build()
+//                .parseClaimsJws(token);
+//    }
 
     private Jwt<Header, Claims> getUnsignedTokenClaims(String token, String iss, String aud) throws JsonProcessingException {
         try {

@@ -135,6 +135,7 @@ public class UserController {
         return ApiResponse.onSuccess(userService.getAdminRole(userAdapter));
     }
 
+
     // 회원이 등록한 제품 목록 - 다른 유저가 어떤 등록자의 프로필 클릭시 (대여물품)
 //    @GetMapping("/user/products")
 //    @Operation(summary = "회원이 등록한 제품 조회 API")

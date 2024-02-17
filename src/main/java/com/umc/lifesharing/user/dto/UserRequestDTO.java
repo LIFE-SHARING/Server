@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -81,6 +82,19 @@ public class UserRequestDTO {
         private String nickname;
     }
 
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class test {
+        String localId;
+        String email;
+        String displayName;
+        String idToken;
+        String registered;
+        String refreshToken;
+        String expiresIn;
+    }
 
 
 }
