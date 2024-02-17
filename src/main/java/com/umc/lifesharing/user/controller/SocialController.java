@@ -23,11 +23,13 @@ public class SocialController {
 
     @PostMapping("/kakao/login")
     public ApiResponse<UserResponseDTO.ResponseDTO> kakaoOIDCLogin(@RequestParam(name = "idToken") String idToken) throws NoSuchAlgorithmException, InvalidKeySpecException, JsonProcessingException {
+        log.info("kakaoLogin");
         return ApiResponse.onSuccess(oauthService.kakaoLogin(idToken));
     }
 
     @PostMapping("/google/login")
     public ApiResponse<UserResponseDTO.ResponseDTO> googleOIDCLogin(@RequestParam(name = "idToken") String idToken) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException, FirebaseAuthException {
+        log.info("googleLogin");
         return ApiResponse.onSuccess(oauthService.googleLogin(idToken));
     }
 

@@ -60,6 +60,7 @@ public class OauthService {
     }
 
     public UserResponseDTO.ResponseDTO googleLogin(String idToken) throws IOException, FirebaseAuthException {
+        log.info("googleLogin");
         FirebaseToken signedToken;
         FileInputStream config = new FileInputStream("service-account-file.json");
 
