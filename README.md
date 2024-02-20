@@ -17,11 +17,13 @@
   - 실시간 채팅
 - 구슬/반한슬
   - 제품 등록 및 조회, 검색
-<br>
 
 ## ⚙️ 개발 환경
 - `Java 17`
 - `JDK 17`
 - **Framework** : springboot(3.x)
 - **Database** : MySQL DB
-- 
+- **ORM** : JPA
+
+## ✈️ 랜딩 페이지
+https://makeus-challenge.notion.site/LIFE-SHARING-7818e4eae48f40c9939c74ead327a397?pvs=4
