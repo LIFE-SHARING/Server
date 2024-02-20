@@ -90,7 +90,7 @@ public class UserController {
     @Parameters({
             @Parameter(name = "checkNickname", description = "중복을 확읺할 닉네임을 넣어주세요..")
     })
-    public ApiResponse<UserResponseDTO.CheckNicknameResponseDTO> existNickname(@RequestBody UserRequestDTO.CheckNickname checkNickname) {
+    public ApiResponse<UserResponseDTO.CheckNicknameResponseDTO> existNickname(@Valid @RequestBody UserRequestDTO.CheckNickname checkNickname) {
         return ApiResponse.onSuccess(userQueryService.existNickname(checkNickname));
     }
 
