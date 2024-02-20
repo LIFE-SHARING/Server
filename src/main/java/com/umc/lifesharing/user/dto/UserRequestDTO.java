@@ -3,11 +3,12 @@ package com.umc.lifesharing.user.dto;
 import com.umc.lifesharing.location.dto.LocationDTO;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.List;
 
@@ -23,8 +24,8 @@ public class UserRequestDTO {
         private String email;
 
         @NotEmpty(message = "비밀번호는 필수 입력 값입니다.")
-//        @Length(min = 8, max = 16)
-//        @Pattern(regexp = "^[a-zA-Z0-9!@#$%^&*]{8,16}$", message = "비밀번호는 8~16자의 영문 대소문자, 숫자, 특수문자로 이루어져야 합니다.")
+        @Length(min = 8, max = 16)
+        @Pattern(regexp = "^[a-zA-Z0-9!@#$%^&*]{8,16}$", message = "비밀번호는 8~16자의 영문 대소문자, 숫자, 특수문자로 이루어져야 합니다.")
         private String password;
 
         private String name;
@@ -45,9 +46,10 @@ public class UserRequestDTO {
         private String email;
 
         @NotEmpty(message = "비밀번호는 필수 입력 값입니다.")
-//        @Length(min = 8, max = 16)
-//        @Pattern(regexp = "^[a-zA-Z0-9!@#$%^&*]{8,16}$", message = "비밀번호는 8~16자의 영문 대소문자, 숫자, 특수문자로 이루어져야 합니다.")
+        @Length(min = 8, max = 16)
+        @Pattern(regexp = "^[a-zA-Z0-9!@#$%^&*]{8,16}$", message = "비밀번호는 8~16자의 영문 대소문자, 숫자, 특수문자로 이루어져야 합니다.")
         private String password;
+
 //        private List<TermDto> terms;
     }
 
@@ -57,13 +59,13 @@ public class UserRequestDTO {
     @Getter
     public static class ChangePasswordDTO {
         @NotEmpty(message = "기존 비밀번호는 필수 입력 값입니다.")
-//        @Length(min = 8, max = 16)
-//        @Pattern(regexp = "^[a-zA-Z0-9!@#$%^&*]{8,16}$", message = "비밀번호는 8~16자의 영문 대소문자, 숫자, 특수문자로 이루어져야 합니다.")
+        @Length(min = 8, max = 16)
+        @Pattern(regexp = "^[a-zA-Z0-9!@#$%^&*]{8,16}$", message = "비밀번호는 8~16자의 영문 대소문자, 숫자, 특수문자로 이루어져야 합니다.")
         private String oldPassword;
 
         @NotEmpty(message = "새 비밀번호는 필수 입력 값입니다.")
-//        @Length(min = 8, max = 16)
-//        @Pattern(regexp = "^[a-zA-Z0-9!@#$%^&*]{8,16}$", message = "비밀번호는 8~16자의 영문 대소문자, 숫자, 특수문자로 이루어져야 합니다.")
+        @Length(min = 8, max = 16)
+        @Pattern(regexp = "^[a-zA-Z0-9!@#$%^&*]{8,16}$", message = "비밀번호는 8~16자의 영문 대소문자, 숫자, 특수문자로 이루어져야 합니다.")
         private String newPassword;
 
         // TODO: 확인 해야하나?..
